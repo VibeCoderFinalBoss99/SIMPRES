@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="12dp"
+        android:gravity="center_vertical">
+        <TextView
+            style="@style/T.TitleL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/history_riwayat_absensi"
+            android:layout_weight="1" />
+        <ImageView
+            style="@style/IconButton"
+            android:id="@+id/btnFilter"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_filter"
+            android:tint="@color/ink"
+            android:contentDescription="@string/history_filter" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp">
+            <LinearLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_pills">
+                <TextView
+                    style="@style/T.Item"
+                    android:id="@+id/tabAll"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/common_semua"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/bg_tab"
+                    android:textColor="@color/tab_text" />
+                <TextView
+                    style="@style/T.Item"
+                    android:id="@+id/tabRoutine"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/history_rutin"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/bg_tab"
+                    android:textColor="@color/tab_text" />
+                <TextView
+                    style="@style/T.Item"
+                    android:id="@+id/tabField"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/common_lapangan"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/bg_tab"
+                    android:textColor="@color/tab_text" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_stat_primary"
+                    android:padding="13dp">
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_hadir"
+                        android:textSize="12.5sp" />
+                    <TextView
+                        style="@style/T.TitleL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_18"
+                        android:textColor="@color/primary_on_tint"
+                        android:layout_marginTop="14dp" />
+                </LinearLayout>
+                <View android:layout_width="10dp" android:layout_height="0dp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_stat_warn"
+                    android:padding="13dp">
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_terlambat"
+                        android:textSize="12.5sp" />
+                    <TextView
+                        style="@style/T.TitleL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_2"
+                        android:textColor="@color/warn"
+                        android:layout_marginTop="14dp" />
+                </LinearLayout>
+                <View android:layout_width="10dp" android:layout_height="0dp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_stat_teal"
+                    android:padding="13dp">
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_lapangan"
+                        android:textSize="12.5sp" />
+                    <TextView
+                        style="@style/T.TitleL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_4"
+                        android:textColor="@color/teal"
+                        android:layout_marginTop="14dp" />
+                </LinearLayout>
+            </LinearLayout>
+            <TextView
+                style="@style/T.Caps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history_hari_ini"
+                android:layout_marginTop="16dp" />
+            <LinearLayout
+                android:id="@+id/itemToday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_marginTop="12dp">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile_success">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        android:tint="@color/success"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        style="@style/T.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_check_in" />
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_08_02_puskesmas_simbang"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_diterima"
+                    android:background="@drawable/bg_chip_success"
+                    android:textColor="@color/success" />
+            </LinearLayout>
+            <TextView
+                style="@style/T.Caps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history_kemarin"
+                android:layout_marginTop="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_marginTop="12dp">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile_success">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        android:tint="@color/success"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        style="@style/T.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_check_out" />
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_14_41_puskesmas_simbang"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_diterima"
+                    android:background="@drawable/bg_chip_success"
+                    android:textColor="@color/success" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_marginTop="12dp">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile_warn">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_clock"
+                        android:tint="@color/warn_text"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        style="@style/T.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_check_in" />
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_07_22_terlambat_22"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_terlambat"
+                    android:background="@drawable/bg_chip_warn"
+                    android:textColor="@color/warn_text" />
+            </LinearLayout>
+            <TextView
+                style="@style/T.Caps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history_senin_26_okt"
+                android:layout_marginTop="16dp" />
+            <LinearLayout
+                android:id="@+id/itemField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_marginTop="12dp">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile_teal">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@color/teal_text"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        style="@style/T.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_tugas_lapangan" />
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_08_15_desa_jenetaesa"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_perlu_review"
+                    android:background="@drawable/bg_chip_teal"
+                    android:textColor="@color/teal_text" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/itemRejected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_marginTop="12dp">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile_danger">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_close"
+                        android:tint="@color/danger"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        style="@style/T.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_check_in" />
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history_07_05_di_luar"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_ditolak"
+                    android:background="@drawable/bg_chip_danger"
+                    android:textColor="@color/danger" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <include android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/view_bottom_nav" />
+</LinearLayout>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.simpres.app.ui.auth.SplashFragment"
+        tools:layout="@layout/fragment_splash" />
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.simpres.app.ui.auth.OnboardingFragment"
+        tools:layout="@layout/fragment_onboarding" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.simpres.app.ui.auth.LoginFragment"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/forgotFragment"
+        android:name="com.simpres.app.ui.auth.ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password" />
+
+    <fragment
+        android:id="@+id/resetSentFragment"
+        android:name="com.simpres.app.ui.auth.ResetSentFragment"
+        tools:layout="@layout/fragment_reset_sent" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.simpres.app.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.simpres.app.ui.home.HistoryFragment"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/attendanceDetailFragment"
+        android:name="com.simpres.app.ui.home.AttendanceDetailFragment"
+        tools:layout="@layout/fragment_attendance_detail" />
+
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.simpres.app.ui.home.ScheduleFragment"
+        tools:layout="@layout/fragment_schedule" />
+
+    <fragment
+        android:id="@+id/correctionFragment"
+        android:name="com.simpres.app.ui.home.CorrectionFragment"
+        tools:layout="@layout/fragment_correction" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.simpres.app.ui.home.ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.simpres.app.ui.home.NotificationFragment"
+        tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/checkInFragment"
+        android:name="com.simpres.app.ui.attendance.CheckInFragment"
+        tools:layout="@layout/fragment_checkin" />
+
+    <fragment
+        android:id="@+id/outsideRadiusFragment"
+        android:name="com.simpres.app.ui.attendance.OutsideRadiusFragment"
+        tools:layout="@layout/fragment_outside_radius" />
+
+    <fragment
+        android:id="@+id/facePhotoFragment"
+        android:name="com.simpres.app.ui.attendance.FacePhotoFragment"
+        tools:layout="@layout/fragment_face_photo" />
+
+    <fragment
+        android:id="@+id/checkInSuccessFragment"
+        android:name="com.simpres.app.ui.attendance.CheckInSuccessFragment"
+        tools:layout="@layout/fragment_checkin_success" />
+
+    <fragment
+        android:id="@+id/checkOutSuccessFragment"
+        android:name="com.simpres.app.ui.attendance.CheckOutSuccessFragment"
+        tools:layout="@layout/fragment_checkout_success" />
+
+    <fragment
+        android:id="@+id/offlineSavedFragment"
+        android:name="com.simpres.app.ui.attendance.OfflineSavedFragment"
+        tools:layout="@layout/fragment_offline_saved" />
+
+    <fragment
+        android:id="@+id/fieldDutyFragment"
+        android:name="com.simpres.app.ui.attendance.FieldDutyFragment"
+        tools:layout="@layout/fragment_field_duty" />
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.simpres.app.ui.attendance.CameraFragment"
+        tools:layout="@layout/fragment_camera" />
+
+    <fragment
+        android:id="@+id/leaveListFragment"
+        android:name="com.simpres.app.ui.leave.LeaveListFragment"
+        tools:layout="@layout/fragment_leave_list" />
+
+    <fragment
+        android:id="@+id/leaveFormFragment"
+        android:name="com.simpres.app.ui.leave.LeaveFormFragment"
+        tools:layout="@layout/fragment_leave_form" />
+
+    <fragment
+        android:id="@+id/leaveSentFragment"
+        android:name="com.simpres.app.ui.leave.LeaveSentFragment"
+        tools:layout="@layout/fragment_leave_sent" />
+
+    <fragment
+        android:id="@+id/leaveAcceptedFragment"
+        android:name="com.simpres.app.ui.leave.LeaveAcceptedFragment"
+        tools:layout="@layout/fragment_leave_accepted" />
+
+    <fragment
+        android:id="@+id/leaveRejectedFragment"
+        android:name="com.simpres.app.ui.leave.LeaveRejectedFragment"
+        tools:layout="@layout/fragment_leave_rejected" />
+
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="com.simpres.app.ui.settings.ConfigFragment"
+        tools:layout="@layout/fragment_config" />
+
+    <fragment
+        android:id="@+id/syncFragment"
+        android:name="com.simpres.app.ui.settings.SyncFragment"
+        tools:layout="@layout/fragment_sync" />
+
+    <fragment
+        android:id="@+id/privacyFragment"
+        android:name="com.simpres.app.ui.settings.PrivacyFragment"
+        tools:layout="@layout/fragment_privacy" />
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.simpres.app.ui.settings.AboutFragment"
+        tools:layout="@layout/fragment_about" />
+</navigation>

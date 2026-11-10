@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="12dp"
+        android:gravity="center_vertical">
+        <TextView
+            style="@style/T.TitleL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/schedule_jadwal_kerja"
+            android:layout_weight="1" />
+        <TextView
+            style="@style/T.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/schedule_okt_2026"
+            android:textColor="@color/primary_on_tint" />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_arrow_drop_down"
+            android:tint="@color/primary_on_tint" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="-3dp"
+                android:layout_marginEnd="-3dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_sen"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_26"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/success"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_sel"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_27"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/success"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week_on"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_rab"
+                        android:textSize="11sp"
+                        android:textColor="@color/splash_text" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_28"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="4dp" />
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/white"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_kam"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_29"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View android:layout_width="5dp" android:layout_height="5dp" android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_jum"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_30"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View android:layout_width="5dp" android:layout_height="5dp" android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_sab"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_31"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View android:layout_width="5dp" android:layout_height="5dp" android:layout_marginTop="8dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/bg_week"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="13dp">
+                    <TextView
+                        style="@style/T.Caps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_min"
+                        android:textSize="11sp"
+                        android:textColor="@color/ink_muted" />
+                    <TextView
+                        style="@style/T.Subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_1"
+                        android:textSize="16sp"
+                        android:textColor="@color/ink"
+                        android:layout_marginTop="4dp" />
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/danger"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_note_primary"
+                android:padding="16dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical">
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle"
+                    android:backgroundTint="@color/surface">
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_clock"
+                        android:tint="@color/primary_on_tint"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp">
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_jadwal_hari_ini_non"
+                        android:textColor="@color/navy" />
+                    <TextView
+                        style="@style/T.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_07_00_14_30"
+                        android:textColor="@color/navy"
+                        android:fontFamily="@font/lexend_semibold"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+                <TextView
+                    style="@style/T.Key"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule_batas_absen_pulang"
+                    android:layout_weight="1" />
+                <TextView
+                    style="@style/T.Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule_15_00"
+                    android:gravity="end" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
+                <TextView
+                    style="@style/T.Key"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule_toleransi_terlambat"
+                    android:layout_weight="1" />
+                <TextView
+                    style="@style/T.Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule_maks_30_menit"
+                    android:gravity="end" />
+            </LinearLayout>
+            <TextView
+                style="@style/T.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/schedule_minggu_ini"
+                android:layout_marginTop="22dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card_primary"
+                android:gravity="center_vertical"
+                android:layout_marginTop="14dp"
+                android:padding="15dp">
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_bar"
+                    android:backgroundTint="@color/primary" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            style="@style/T.Item"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/schedule_rabu_28_okt" />
+                        <TextView
+                            style="@style/T.Chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/common_hari_ini"
+                            android:background="@drawable/bg_chip_primary"
+                            android:textColor="@color/primary_on_tint"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_poli_umum_non_shift"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_07_0014_30"
+                    android:background="@drawable/bg_chip_primary"
+                    android:textColor="@color/primary_on_tint"
+                    android:textSize="13sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp"
+                android:padding="15dp">
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_bar"
+                    android:backgroundTint="@color/primary" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            style="@style/T.Item"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/schedule_kamis_29_okt" />
+                    </LinearLayout>
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_poli_umum_non_shift"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_07_0014_30"
+                    android:background="@drawable/bg_chip_primary"
+                    android:textColor="@color/primary_on_tint"
+                    android:textSize="13sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp"
+                android:padding="15dp">
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_bar"
+                    android:backgroundTint="@color/danger" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            style="@style/T.Item"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/schedule_minggu_1_nov" />
+                    </LinearLayout>
+                    <TextView
+                        style="@style/T.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/schedule_hari_libur"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule_libur"
+                    android:background="@drawable/bg_chip_danger"
+                    android:textColor="@color/danger"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <include android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/view_bottom_nav" />
+</LinearLayout>

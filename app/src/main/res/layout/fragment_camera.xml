@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/camera_bg">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back"
+            android:tint="@color/white"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/common_kembali" />
+        <TextView
+            style="@style/T.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_foto_bukti_lapangan"
+            android:textColor="@color/white"
+            android:layout_gravity="center" />
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_refresh"
+            android:tint="@color/white"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@string/camera_balik_kamera" />
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="470dp"
+        android:background="@drawable/bg_camera"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp">
+        <TextView
+            style="@style/T.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_kamera_aplikasi"
+            android:background="@drawable/bg_chip_primary"
+            android:textColor="@color/primary_on_tint"
+            android:layout_gravity="top|start"
+            android:layout_margin="12dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_scrim"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+            <TextView
+                style="@style/T.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camera_rabu_28_okt_2026"
+                android:textSize="12sp"
+                android:textColor="@color/white" />
+            <TextView
+                style="@style/T.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camera_desa_jenetaesa_5_0671"
+                android:textSize="11sp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </FrameLayout>
+    <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginBottom="24dp">
+        <FrameLayout
+            android:id="@+id/btnShutter"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:background="@drawable/bg_shutter_ring_white"
+            android:layout_gravity="center"
+            android:contentDescription="@string/common_ambil_foto">
+            <View
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_shutter"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </FrameLayout>
+</LinearLayout>

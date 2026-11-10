@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
+        <ImageView
+            style="@style/IconButton"
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:tint="@color/ink"
+            android:contentDescription="@string/common_kembali"
+            android:layout_gravity="center_vertical|start" />
+        <TextView
+            style="@style/T.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/common_check_in"
+            android:layout_gravity="center" />
+        <ImageView
+            style="@style/IconButton"
+            android:id="@+id/btnLocate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_my_location"
+            android:tint="@color/ink"
+            android:contentDescription="@string/common_perbarui_lokasi"
+            android:layout_gravity="center_vertical|end" />
+    </FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="24dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/bg_map">
+                <View
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:background="@drawable/bg_geofence_out"
+                    android:layout_gravity="center" />
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_location"
+                    android:tint="@color/danger"
+                    android:layout_gravity="center" />
+                <TextView
+                    style="@style/T.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/outside_radius_212_m_dari_titik"
+                    android:background="@drawable/bg_chip_danger"
+                    android:textColor="@color/danger"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="12dp" />
+            </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card_danger"
+                android:layout_marginTop="16dp"
+                android:padding="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_tile_danger">
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_location"
+                            android:tint="@color/danger"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:layout_gravity="center_vertical">
+                        <TextView
+                            style="@style/T.Subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/outside_radius_kamu_di_luar_area" />
+                        <TextView
+                            style="@style/T.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/outside_radius_absen_hanya_bisa_dalam"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                    style="@style/Divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="14dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="14dp">
+                    <TextView
+                        style="@style/T.Key"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_jarak_dari_titik"
+                        android:layout_weight="1" />
+                    <TextView
+                        style="@style/T.Value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/outside_radius_212_m"
+                        android:textColor="@color/danger"
+                        android:gravity="end" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+                    <TextView
+                        style="@style/T.Key"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/outside_radius_batas_radius"
+                        android:layout_weight="1" />
+                    <TextView
+                        style="@style/T.Value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/outside_radius_150_m"
+                        android:gravity="end" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+                    <TextView
+                        style="@style/T.Key"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_akurasi_gps"
+                        android:layout_weight="1" />
+                    <TextView
+                        style="@style/T.Value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/outside_radius_9_m"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/rowFieldDuty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_note_primary"
+                android:padding="16dp"
+                android:layout_marginTop="16dp">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/primary_on_tint" />
+                <TextView
+                    style="@style/T.Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/outside_radius_sedang_bertugas_di_desa"
+                    android:textColor="@color/navy"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:textSize="12.5sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="20dp">
+        <Button
+            style="@style/Button.Secondary"
+            android:id="@+id/btnRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/common_perbarui_lokasi"
+            android:drawableStart="@drawable/ic_refresh" />
+        <Button
+            style="@style/Button.Disabled"
+            android:id="@+id/btnUnavailable"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/outside_radius_check_in_tidak_tersedia"
+            android:drawableStart="@drawable/ic_lock"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+</LinearLayout>

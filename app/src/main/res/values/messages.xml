@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_fill_credentials">Isi NIP/email dan kata sandi terlebih dahulu</string>
+    <string name="msg_still_offline">Masih offline, data tetap tersimpan di antrean</string>
+    <string name="msg_request_sent">Pengajuan terkirim</string>
+    <string name="msg_saved">Perubahan disimpan</string>
+    <string name="msg_syncing">Menyinkronkan data…</string>
+    <string name="msg_photo_saved">Foto bukti tersimpan</string>
+</resources>

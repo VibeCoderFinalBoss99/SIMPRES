@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog"
+    android:padding="24dp"
+    android:paddingTop="24dp">
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_tile_danger_r14"
+        android:layout_gravity="center_horizontal">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_logout"
+            android:tint="@color/danger"
+            android:layout_gravity="center" />
+    </FrameLayout>
+    <TextView
+        style="@style/T.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_logout_keluar_dari_akun"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
+    <TextView
+        style="@style/T.BodyMuted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_logout_absensi_yang_belum_terkirim"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+        <Button
+            style="@style/Button.Secondary"
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:text="@string/dialog_logout_batal"
+            android:layout_weight="1" />
+        <Button
+            style="@style/Button.Danger"
+            android:id="@+id/btnConfirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:text="@string/common_keluar"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp" />
+    </LinearLayout>
+</LinearLayout>
