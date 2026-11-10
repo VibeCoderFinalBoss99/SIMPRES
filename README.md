@@ -11,6 +11,20 @@ Layout previews from Android Studio (light theme).
 |---|---|---|---|---|
 | <img src="docs/screenshots/01_splash.png" width="160" alt="Splash"> | <img src="docs/screenshots/02_login.png" width="160" alt="Login"> | <img src="docs/screenshots/03_beranda.png" width="160" alt="Beranda"> | <img src="docs/screenshots/04_riwayat.png" width="160" alt="Riwayat absensi"> | <img src="docs/screenshots/05_profil.png" width="160" alt="Profil"> |
 
+## Screenshot tampilan yang disertakan
+
+Screenshot berikut menjadi dokumentasi tampilan proyek dan disimpan di `docs/screenshots/submitted`.
+
+| Profil | Splash | Login | Riwayat |
+|---|---|---|---|
+| <img src="docs/screenshots/submitted/01_profile.png" width="180" alt="Halaman profil"> | <img src="docs/screenshots/submitted/02_splash.png" width="180" alt="Halaman splash"> | <img src="docs/screenshots/submitted/03_login.png" width="180" alt="Halaman login"> | <img src="docs/screenshots/submitted/04_history.png" width="180" alt="Halaman riwayat absensi"> |
+
+| Tentang aplikasi | Dialog keluar | Onboarding | Notifikasi |
+|---|---|---|---|
+| <img src="docs/screenshots/submitted/05_about.png" width="180" alt="Halaman tentang aplikasi"> | <img src="docs/screenshots/submitted/06_logout_dialog.png" width="180" alt="Dialog keluar akun"> | <img src="docs/screenshots/submitted/07_onboarding.png" width="180" alt="Halaman onboarding"> | <img src="docs/screenshots/submitted/08_notifications.png" width="180" alt="Halaman notifikasi"> |
+
+> Catatan: gambar di atas adalah dokumentasi tampilan Android. Admin Web merupakan bagian terpisah dari aplikasi Android dan akan dikelola pada proyek web tersendiri.
+
 ## Open the project
 1. Android Studio (Koala or newer) → **Open** → select this `SIMPRES` folder.
 2. Let Gradle sync (needs internet the first time), then run the `app` configuration on a device/emulator (Android 8.0+).
