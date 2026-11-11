@@ -28,6 +28,7 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
         view.onClick(R.id.btnBack) { findNavController().popBackStack() }
         view.onClick(R.id.btnClose) { backTo(R.id.homeFragment) }
         onReady(view)
+        IconMotion.apply(view)
     }
 
     protected abstract fun onReady(view: View)
@@ -68,7 +69,9 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
             val color = ContextCompat.getColor(
                 requireContext(), if (active) R.color.primary_on_tint else R.color.ink_faint
             )
-            (item.getChildAt(0) as ImageView).imageTintList = ColorStateList.valueOf(color)
+            val icon = item.getChildAt(0) as ImageView
+            icon.imageTintList = ColorStateList.valueOf(color)
+            if (active) icon.bounce()
             (item.getChildAt(1) as TextView).setTextColor(color)
             item.setOnClickListener {
                 if (!active) {

@@ -28,6 +28,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_arrow_drop_down"
+            android:layout_marginStart="4dp"
             android:tint="@color/primary_on_tint" />
     </LinearLayout>
     <ScrollView

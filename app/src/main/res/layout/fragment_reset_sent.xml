@@ -42,6 +42,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_mail"
+                    android:tag="pop"
                     android:tint="@color/primary_on_tint"
                     android:layout_gravity="center" />
                 <FrameLayout

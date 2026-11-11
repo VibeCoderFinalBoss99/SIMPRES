@@ -35,6 +35,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:src="@drawable/ic_clock"
+                    android:tag="pop"
                     android:tint="@color/warn_text"
                     android:layout_gravity="center" />
             </FrameLayout>

@@ -192,6 +192,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_chevron_right"
+                        android:layout_marginStart="8dp"
                         android:tint="@color/ink_faint" />
                 </LinearLayout>
                 <View
@@ -244,6 +245,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_chevron_right"
+                        android:layout_marginStart="8dp"
                         android:tint="@color/ink_faint" />
                 </LinearLayout>
                 <View
@@ -296,6 +298,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_chevron_right"
+                        android:layout_marginStart="8dp"
                         android:tint="@color/ink_faint" />
                 </LinearLayout>
                 <View
@@ -342,6 +345,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_chevron_right"
+                        android:layout_marginStart="8dp"
                         android:tint="@color/ink_faint" />
                 </LinearLayout>
                 <View
@@ -394,6 +398,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_chevron_right"
+                        android:layout_marginStart="8dp"
                         android:tint="@color/ink_faint" />
                 </LinearLayout>
             </LinearLayout>
