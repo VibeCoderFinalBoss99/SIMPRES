@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +19,6 @@ Route::prefix('admin')->group(function () {
     Route::middleware(['auth', 'admin', 'cache.headers:no_store;no_cache;must_revalidate;private'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-        Route::get('/', fn () => view('admin.dashboard'))->name('admin.dashboard');
+        Route::get('/', DashboardController::class)->name('admin.dashboard');
     });
 });
