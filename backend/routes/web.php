@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,5 +21,11 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
         Route::get('/', DashboardController::class)->name('admin.dashboard');
+
+        Route::resource('pegawai', EmployeeController::class)
+            ->except(['show', 'destroy'])
+            ->parameters(['pegawai' => 'user'])
+            ->names('admin.pegawai');
+        Route::patch('/pegawai/{user}/status', [EmployeeController::class, 'toggleActive'])->name('admin.pegawai.toggle');
     });
 });
