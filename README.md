@@ -24,6 +24,29 @@ Riwayat perubahan lengkap per versi ada di [docs/CHANGELOG.md](docs/CHANGELOG.md
 
 ---
 
+## v0.1.0 – Prototipe tampilan Android
+
+Minggu 12 (11 November 2026). Checkpoint: implementasi halaman Android, Splash Screen, onboarding, login, navigasi, dashboard.
+
+| Profil | Splash | Login | Riwayat |
+|---|---|---|---|
+| <img src="docs/screenshots/submitted/01_profile.png" width="180" alt="Halaman profil"> | <img src="docs/screenshots/submitted/02_splash.png" width="180" alt="Halaman splash"> | <img src="docs/screenshots/submitted/03_login.png" width="180" alt="Halaman login"> | <img src="docs/screenshots/submitted/04_history.png" width="180" alt="Halaman riwayat absensi"> |
+
+| Tentang aplikasi | Dialog keluar | Onboarding | Notifikasi |
+|---|---|---|---|
+| <img src="docs/screenshots/submitted/05_about.png" width="180" alt="Halaman tentang aplikasi"> | <img src="docs/screenshots/submitted/06_logout_dialog.png" width="180" alt="Dialog keluar akun"> | <img src="docs/screenshots/submitted/07_onboarding.png" width="180" alt="Halaman onboarding"> | <img src="docs/screenshots/submitted/08_notifications.png" width="180" alt="Halaman notifikasi"> |
+
+Pratinjau layout dari Android Studio (tema terang):
+
+| Splash | Login | Beranda | Riwayat | Profil |
+|---|---|---|---|---|
+| <img src="docs/screenshots/01_splash.png" width="160" alt="Splash"> | <img src="docs/screenshots/02_login.png" width="160" alt="Login"> | <img src="docs/screenshots/03_beranda.png" width="160" alt="Beranda"> | <img src="docs/screenshots/04_riwayat.png" width="160" alt="Riwayat absensi"> | <img src="docs/screenshots/05_profil.png" width="160" alt="Profil"> |
+
+Isi versi ini: 29 layout dari Figma, tema terang dan gelap, font Lexend, Navigation Graph, BaseFragment dan bottom navigation,
+alur check-in dengan radius 150 m (data contoh), jarak ikon dan animasi ikon ringan.
+
+---
+
 ## v0.2.0 – Backend, Admin Web, dan integrasi aplikasi
 
 Minggu 13 (18 November 2026). Checkpoint: implementasi fitur utama, basis data, CRUD, REST API, dan aturan validasi absensi.
@@ -60,29 +83,6 @@ Minggu 13 (18 November 2026). Checkpoint: implementasi fitur utama, basis data, 
 | Aplikasi Android | Login, check-in GPS, check-out geser, riwayat, jadwal, izin, koreksi, tugas lapangan, notifikasi, profil, antrean offline |
 | Tampilan | Intro animasi Lottie, onboarding 3 halaman, panduan awal (coach mark) saat pertama masuk Beranda |
 | Pengujian | 133 test otomatis backend lulus; alur aplikasi dan web diuji di emulator dan browser |
-
----
-
-## v0.1.0 – Prototipe tampilan Android
-
-Minggu 12 (11 November 2026). Checkpoint: implementasi halaman Android, Splash Screen, onboarding, login, navigasi, dashboard.
-
-| Profil | Splash | Login | Riwayat |
-|---|---|---|---|
-| <img src="docs/screenshots/submitted/01_profile.png" width="180" alt="Halaman profil"> | <img src="docs/screenshots/submitted/02_splash.png" width="180" alt="Halaman splash"> | <img src="docs/screenshots/submitted/03_login.png" width="180" alt="Halaman login"> | <img src="docs/screenshots/submitted/04_history.png" width="180" alt="Halaman riwayat absensi"> |
-
-| Tentang aplikasi | Dialog keluar | Onboarding | Notifikasi |
-|---|---|---|---|
-| <img src="docs/screenshots/submitted/05_about.png" width="180" alt="Halaman tentang aplikasi"> | <img src="docs/screenshots/submitted/06_logout_dialog.png" width="180" alt="Dialog keluar akun"> | <img src="docs/screenshots/submitted/07_onboarding.png" width="180" alt="Halaman onboarding"> | <img src="docs/screenshots/submitted/08_notifications.png" width="180" alt="Halaman notifikasi"> |
-
-Pratinjau layout dari Android Studio (tema terang):
-
-| Splash | Login | Beranda | Riwayat | Profil |
-|---|---|---|---|---|
-| <img src="docs/screenshots/01_splash.png" width="160" alt="Splash"> | <img src="docs/screenshots/02_login.png" width="160" alt="Login"> | <img src="docs/screenshots/03_beranda.png" width="160" alt="Beranda"> | <img src="docs/screenshots/04_riwayat.png" width="160" alt="Riwayat absensi"> | <img src="docs/screenshots/05_profil.png" width="160" alt="Profil"> |
-
-Isi versi ini: 29 layout dari Figma, tema terang dan gelap, font Lexend, Navigation Graph, BaseFragment dan bottom navigation,
-alur check-in dengan radius 150 m (data contoh), jarak ikon dan animasi ikon ringan.
 
 ---
 

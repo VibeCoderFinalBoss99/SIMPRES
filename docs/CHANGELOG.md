@@ -1,27 +1,19 @@
 # Riwayat Perubahan SIMPRES
 
-Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**. Versi yang belum dirilis ditandai *rencana*.
+Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**. Diurutkan dari versi paling awal. Versi yang belum dirilis ditandai *rencana*.
 
-## [1.0.0] – 2 Desember 2026 (rencana, Minggu 15)
-
-### Ditambah
-- Backend dan Admin Web dipasang di hosting dengan HTTPS.
-- APK rilis untuk pegawai.
-- Video demonstrasi dan laporan akhir PjBL.
-
-### Diubah
-- Akun contoh diganti akun asli pegawai, kata sandi awal dibuat oleh admin.
-
-## [0.3.0] – 25 November 2026 (rencana, Minggu 14)
+## [0.1.0] – 11 November 2026 (Minggu 12)
 
 ### Ditambah
-- Notifikasi push Firebase Cloud Messaging saat izin, koreksi, atau tugas lapangan diputuskan.
-- Pengiriman ulang antrean offline otomatis (WorkManager).
-- Kamera bukti tugas lapangan (CameraX) dan peta di halaman check-in.
-- Token login terenkripsi dengan Android Keystore.
+- Proyek Android Kotlin dengan layout XML (package `com.simpres.app`, Android 8.0 ke atas) dan Navigation Component.
+- 29 layout halaman dari desain Figma, termasuk Splash, Onboarding, Login, Lupa Kata Sandi, Beranda, Tentang Aplikasi, dialog keluar.
+- Tema terang dan gelap, font Lexend, ikon, dan latar komponen (kartu, chip, tombol, input).
+- BaseFragment, bottom navigation, dan pemeriksaan koneksi internet.
+- Alur check-in dengan aturan radius 150 m (data contoh), halaman Di Luar Radius dan Tersimpan Offline.
+- Dokumentasi screenshot tampilan di README.
 
-### Pengujian
-- Pengujian sistem bersama pegawai Puskesmas, evaluasi mitra, dan demo prototipe.
+### Diperbaiki
+- Jarak ikon pada tombol dan menu, ditambah animasi ikon ringan.
 
 ## [0.2.0] – 18 November 2026 (Minggu 13)
 
@@ -56,15 +48,23 @@ Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**.
 - Alur aplikasi diuji di emulator: login, check-in, check-out, izin, riwayat, jadwal, notifikasi.
 - Admin Web diuji di browser: semua halaman terbuka, persetujuan izin mengirim notifikasi ke aplikasi.
 
-## [0.1.0] – 11 November 2026 (Minggu 12)
+## [0.3.0] – 25 November 2026 (rencana, Minggu 14)
 
 ### Ditambah
-- Proyek Android Kotlin dengan layout XML (package `com.simpres.app`, Android 8.0 ke atas) dan Navigation Component.
-- 29 layout halaman dari desain Figma, termasuk Splash, Onboarding, Login, Lupa Kata Sandi, Beranda, Tentang Aplikasi, dialog keluar.
-- Tema terang dan gelap, font Lexend, ikon, dan latar komponen (kartu, chip, tombol, input).
-- BaseFragment, bottom navigation, dan pemeriksaan koneksi internet.
-- Alur check-in dengan aturan radius 150 m (data contoh), halaman Di Luar Radius dan Tersimpan Offline.
-- Dokumentasi screenshot tampilan di README.
+- Notifikasi push Firebase Cloud Messaging saat izin, koreksi, atau tugas lapangan diputuskan.
+- Pengiriman ulang antrean offline otomatis (WorkManager).
+- Kamera bukti tugas lapangan (CameraX) dan peta di halaman check-in.
+- Token login terenkripsi dengan Android Keystore.
 
-### Diperbaiki
-- Jarak ikon pada tombol dan menu, ditambah animasi ikon ringan.
+### Pengujian
+- Pengujian sistem bersama pegawai Puskesmas, evaluasi mitra, dan demo prototipe.
+
+## [1.0.0] – 2 Desember 2026 (rencana, Minggu 15)
+
+### Ditambah
+- Backend dan Admin Web dipasang di hosting dengan HTTPS.
+- APK rilis untuk pegawai.
+- Video demonstrasi dan laporan akhir PjBL.
+
+### Diubah
+- Akun contoh diganti akun asli pegawai, kata sandi awal dibuat oleh admin.
