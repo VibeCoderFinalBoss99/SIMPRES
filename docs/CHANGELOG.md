@@ -6,7 +6,7 @@ Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**.
 
 ### Ditambah
 - Proyek Android Kotlin dengan layout XML (package `com.simpres.app`, Android 8.0 ke atas) dan Navigation Component.
-- 29 layout halaman dari desain Figma, termasuk Splash, Onboarding, Login, Lupa Kata Sandi, Beranda, Tentang Aplikasi, dialog keluar.
+- 29 layout halaman, termasuk Splash, Onboarding, Login, Lupa Kata Sandi, Beranda, Tentang Aplikasi, dialog keluar.
 - Tema terang dan gelap, font Lexend, ikon, dan latar komponen (kartu, chip, tombol, input).
 - BaseFragment, bottom navigation, dan pemeriksaan koneksi internet.
 - Alur check-in dengan aturan radius 150 m (data contoh), halaman Di Luar Radius dan Tersimpan Offline.
@@ -18,14 +18,14 @@ Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**.
 ## [0.2.0] – 18 November 2026 (Minggu 13)
 
 ### Ditambah – Basis data dan REST API
-- Rancangan ERD 10 tabel dan skrip `docs/database/simpres.sql` (pegawai, lokasi kerja, shift, jadwal, absensi, izin, koreksi, tugas lapangan, notifikasi, token perangkat).
+- ERD 10 tabel (`docs/diagram/erd_simpres.png`), flowchart absensi dan izin, serta skrip `docs/database/simpres.sql` (pegawai, lokasi kerja, shift, jadwal, absensi, izin, koreksi, tugas lapangan, notifikasi, token perangkat).
 - Proyek Laravel di `backend/` dengan login token Laravel Sanctum.
 - 32 endpoint REST API (`backend/API.md`): login, absensi, riwayat, izin, koreksi, tugas lapangan, jadwal, lokasi, notifikasi.
 - Aturan validasi absensi di server: jarak Haversine maksimal radius lokasi (150 m), batas akurasi GPS, penolakan lokasi palsu,
   satu check-in per hari, check-out setelah check-in, status terlambat sesuai shift, pegawai berizin tidak perlu check-in.
 - CRUD izin dan cuti (dengan lampiran foto), koreksi absensi, tugas lapangan (dengan foto), file tersimpan di storage private.
 
-### Ditambah – Admin Web (sesuai desain Figma A1–A8)
+### Ditambah – Admin Web
 - Dashboard: kartu ringkasan, grafik kehadiran 7 hari, daftar perlu ditinjau, aktivitas terbaru.
 - Review & Persetujuan: daftar dan detail berdampingan, terima atau tolak dengan catatan, notifikasi ke pegawai.
 - Data Pegawai, Lokasi Kerja (peta dan radius), Roster mingguan dan pengaturan per bulan, Rekap & Ekspor CSV.

@@ -46,7 +46,7 @@ Pratinjau layout dari Android Studio (tema terang):
 |---|---|---|---|---|
 | <img src="docs/screenshots/01_splash.png" width="160" alt="Splash"> | <img src="docs/screenshots/02_login.png" width="160" alt="Login"> | <img src="docs/screenshots/03_beranda.png" width="160" alt="Beranda"> | <img src="docs/screenshots/04_riwayat.png" width="160" alt="Riwayat absensi"> | <img src="docs/screenshots/05_profil.png" width="160" alt="Profil"> |
 
-Isi versi ini: 29 layout dari Figma, tema terang dan gelap, font Lexend, Navigation Graph, BaseFragment dan bottom navigation,
+Isi versi ini: 29 layout halaman, tema terang dan gelap, font Lexend, Navigation Graph, BaseFragment dan bottom navigation,
 alur check-in dengan radius 150 m (data contoh), jarak ikon dan animasi ikon ringan.
 
 ---
@@ -74,7 +74,7 @@ Tampilan bisa dipilih di **Profil > Pengaturan & tampilan > Mode terang / gelap*
 |---|---|---|---|---|
 | <img src="docs/screenshots/v0.2/app_beranda_terang.jpg" width="150" alt="Beranda mode terang"> | <img src="docs/screenshots/v0.2/app_beranda_gelap.jpg" width="150" alt="Beranda mode gelap"> | <img src="docs/screenshots/v0.2/app_pengaturan_tema.jpg" width="150" alt="Pengaturan mode tampilan"> | <img src="docs/screenshots/v0.2/app_login_logo.jpg" width="150" alt="Logo di halaman login"> | <img src="docs/screenshots/v0.2/app_tentang_logo.jpg" width="150" alt="Logo di halaman tentang aplikasi"> |
 
-### Admin Web (sesuai desain Figma A1–A8)
+### Admin Web
 
 | Dashboard | Review & Persetujuan | Roster |
 |---|---|---|
@@ -84,11 +84,39 @@ Tampilan bisa dipilih di **Profil > Pengaturan & tampilan > Mode terang / gelap*
 |---|---|---|
 | <img src="docs/screenshots/v0.2/web_rekap.jpg" width="300" alt="Rekap absensi"> | <img src="docs/screenshots/v0.2/web_audit.jpg" width="300" alt="Audit log"> | <img src="docs/screenshots/v0.2/web_konfigurasi.jpg" width="300" alt="Konfigurasi"> |
 
+### ERD database
+
+10 tabel MySQL. Garis memakai notasi crow's foot: `||` tepat satu, `o|` nol atau satu, `o<` nol atau banyak.
+
+<img src="docs/diagram/erd_simpres.png" alt="ERD database SIMPRES">
+
+### Flowchart
+
+| Absensi (check-in dan check-out) | Pengajuan izin, koreksi, dan tugas lapangan |
+|---|---|
+| <img src="docs/diagram/flowchart_absensi.png" width="420" alt="Flowchart absensi"> | <img src="docs/diagram/flowchart_izin.png" width="420" alt="Flowchart pengajuan izin"> |
+
+### Cuplikan kode
+
+Validasi absensi di server (`backend/app/Services/AttendanceValidator.php`): jarak dihitung dengan rumus Haversine,
+lalu dicek lokasi palsu, akurasi GPS, dan radius lokasi kerja.
+
+<img src="docs/screenshots/v0.2/code_validator.png" alt="Kode validasi absensi">
+
+Check-in di aplikasi (`ui/attendance/AttendanceScreens.kt`): ambil GPS, kirim ke server, lalu pindah halaman sesuai hasil.
+Kalau tidak ada internet, absensi disimpan ke antrean offline.
+
+<img src="docs/screenshots/v0.2/code_checkin.png" alt="Kode check-in Android">
+
+Daftar endpoint REST API (`backend/routes/api.php`), semua kecuali login memakai token Sanctum.
+
+<img src="docs/screenshots/v0.2/code_routes.png" width="640" alt="Kode route API">
+
 ### Fitur yang selesai
 
 | Agenda | Hasil |
 |---|---|
-| Basis data | 10 tabel MySQL sesuai ERD (`docs/database/ERD_SIMPRES.drawio`, `docs/database/simpres.sql`) |
+| Basis data | 10 tabel MySQL (ERD di atas, skrip `docs/database/simpres.sql`) |
 | REST API | 32 endpoint, login token Sanctum, dokumentasi di `backend/API.md` |
 | Aturan validasi absensi | Jarak Haversine maks. 150 m, akurasi GPS, tolak lokasi palsu, satu check-in per hari, status terlambat, izin diterima |
 | CRUD | Izin dan cuti, koreksi absensi, tugas lapangan dengan foto, pegawai, shift, jadwal |
@@ -144,11 +172,11 @@ Akun contoh dari data awal (ganti sebelum online): `admin@simpres.test`, `siti@s
 | `ui/<fitur>/*Screens.kt` | Satu Fragment per halaman: auth, home, attendance, leave, settings |
 | `ui/CoachMarks.kt` | Panduan awal yang menyorot tombol penting, tampil sekali |
 | `res/raw/` | Animasi Lottie intro dan onboarding |
-| `res/layout` | 29 layout halaman dari Figma + komponen baris daftar |
+| `res/layout` | 29 layout halaman + komponen baris daftar |
 
-## Halaman Figma → layout Android
+## Daftar halaman dan layout Android
 
-| Figma | Layout | | Figma | Layout |
+| Halaman | Layout | | Halaman | Layout |
 |---|---|---|---|---|
 | 01 Splash | `fragment_splash` | | 16 Profil | `fragment_profile` (+ `dialog_logout`) |
 | 02 Onboarding | `fragment_onboarding` | | 17 Konfigurasi | `fragment_config` |
