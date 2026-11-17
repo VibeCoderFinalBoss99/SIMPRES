@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\ShiftController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,5 +30,14 @@ Route::prefix('admin')->group(function () {
             ->parameters(['pegawai' => 'user'])
             ->names('admin.pegawai');
         Route::patch('/pegawai/{user}/status', [EmployeeController::class, 'toggleActive'])->name('admin.pegawai.toggle');
+
+        Route::get('/lokasi', [LocationController::class, 'edit'])->name('admin.lokasi.edit');
+        Route::put('/lokasi', [LocationController::class, 'update'])->name('admin.lokasi.update');
+
+        Route::resource('shift', ShiftController::class)->except(['show'])->names('admin.shift');
+
+        Route::get('/jadwal', [ScheduleController::class, 'index'])->name('admin.jadwal.index');
+        Route::post('/jadwal', [ScheduleController::class, 'store'])->name('admin.jadwal.store');
+        Route::put('/jadwal/bulan', [ScheduleController::class, 'updateMonth'])->name('admin.jadwal.month');
     });
 });
