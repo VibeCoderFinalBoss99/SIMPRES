@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\RecapController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\Admin\SubmissionController;
@@ -46,5 +47,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/pengajuan/{type}/{id}', [SubmissionController::class, 'show'])->whereNumber('id')->name('admin.pengajuan.show');
         Route::get('/pengajuan/{type}/{id}/file', [SubmissionController::class, 'file'])->whereNumber('id')->name('admin.pengajuan.file');
         Route::post('/pengajuan/{type}/{id}/keputusan', [SubmissionController::class, 'review'])->whereNumber('id')->name('admin.pengajuan.review');
+
+        Route::get('/rekap', [RecapController::class, 'index'])->name('admin.rekap.index');
+        Route::get('/rekap/csv', [RecapController::class, 'csv'])->name('admin.rekap.csv');
     });
 });
