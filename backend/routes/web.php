@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ShiftController;
+use App\Http\Controllers\Admin\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,5 +40,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/jadwal', [ScheduleController::class, 'index'])->name('admin.jadwal.index');
         Route::post('/jadwal', [ScheduleController::class, 'store'])->name('admin.jadwal.store');
         Route::put('/jadwal/bulan', [ScheduleController::class, 'updateMonth'])->name('admin.jadwal.month');
+
+        Route::get('/pengajuan', [SubmissionController::class, 'index'])->name('admin.pengajuan.index');
+        // {type}: izin, koreksi, atau tugas (dicek di SubmissionController).
+        Route::get('/pengajuan/{type}/{id}', [SubmissionController::class, 'show'])->whereNumber('id')->name('admin.pengajuan.show');
+        Route::get('/pengajuan/{type}/{id}/file', [SubmissionController::class, 'file'])->whereNumber('id')->name('admin.pengajuan.file');
+        Route::post('/pengajuan/{type}/{id}/keputusan', [SubmissionController::class, 'review'])->whereNumber('id')->name('admin.pengajuan.review');
     });
 });
