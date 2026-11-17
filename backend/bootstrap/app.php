@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(
             fn (Request $request) => $request->is('api/*') ? null : route('login'),
         );
+        // Admin yang sudah login lalu membuka /admin/login diarahkan ke dashboard.
+        $middleware->redirectUsersTo('/admin');
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,

@@ -1,0 +1,277 @@
+/* SIMPRES Admin Web. Satu file CSS, tanpa build tool. */
+
+:root {
+    --primary: #0f766e;
+    --primary-dark: #115e59;
+    --primary-soft: #ccfbf1;
+    --sidebar: #0b3b38;
+    --sidebar-text: #b8d8d4;
+    --bg: #f3f6f8;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --green: #15803d;
+    --green-soft: #dcfce7;
+    --amber: #b45309;
+    --amber-soft: #fef3c7;
+    --red: #b91c1c;
+    --red-soft: #fee2e2;
+    --blue: #1d4ed8;
+    --blue-soft: #dbeafe;
+    --gray-soft: #f3f4f6;
+    --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.5;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1 { font-size: 22px; margin: 0; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+
+/* ---------- Tata letak ---------- */
+
+.layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: 230px;
+    flex-shrink: 0;
+    background: var(--sidebar);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.brand strong { display: block; color: #fff; font-size: 20px; letter-spacing: 1px; }
+.brand span { font-size: 12px; }
+
+.menu { list-style: none; margin: 12px 0; padding: 0 10px; flex: 1; }
+.menu a {
+    display: block;
+    padding: 10px 14px;
+    margin-bottom: 2px;
+    border-radius: 8px;
+    color: var(--sidebar-text);
+}
+.menu a:hover { background: rgba(255, 255, 255, .06); color: #fff; text-decoration: none; }
+.menu a.active { background: var(--primary); color: #fff; font-weight: 600; }
+.menu .count {
+    float: right;
+    background: var(--amber-soft);
+    color: var(--amber);
+    border-radius: 999px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 13px; }
+.sidebar-footer .name { color: #fff; font-weight: 600; }
+.sidebar-footer form { margin-top: 8px; }
+.sidebar-footer button {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, .25);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.sidebar-footer button:hover { background: rgba(255, 255, 255, .1); }
+
+.main { flex: 1; min-width: 0; padding: 26px 32px; }
+
+.page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.page-head p { margin: 2px 0 0; color: var(--muted); }
+
+/* ---------- Kartu ---------- */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.card.flush { padding: 0; overflow: hidden; }
+.card.flush > h2 { padding: 16px 20px 0; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+}
+.stat .label { color: var(--muted); font-size: 13px; }
+.stat .value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+.stat.green { border-left-color: var(--green); }
+.stat.amber { border-left-color: var(--amber); }
+.stat.blue { border-left-color: var(--blue); }
+.stat.red { border-left-color: var(--red); }
+
+/* ---------- Tabel ---------- */
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+th { background: #f9fafb; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; }
+td .sub { display: block; color: var(--muted); font-size: 12px; }
+.empty { padding: 28px; text-align: center; color: var(--muted); }
+
+/* ---------- Badge status ---------- */
+
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--gray-soft);
+    color: var(--muted);
+    white-space: nowrap;
+}
+.badge.hadir, .badge.diterima, .badge.aktif { background: var(--green-soft); color: var(--green); }
+.badge.terlambat, .badge.menunggu { background: var(--amber-soft); color: var(--amber); }
+.badge.alpa, .badge.ditolak, .badge.nonaktif { background: var(--red-soft); color: var(--red); }
+.badge.izin, .badge.admin { background: var(--blue-soft); color: var(--blue); }
+
+/* ---------- Form ---------- */
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 20px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-weight: 600; margin-bottom: 5px; }
+.field .hint { color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=date],
+input[type=time], input[type=month], input[type=search], select, textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+    color: var(--text);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary-soft); border-color: var(--primary); }
+textarea { min-height: 80px; resize: vertical; }
+.is-invalid { border-color: var(--red) !important; }
+.error { color: var(--red); font-size: 12px; margin-top: 4px; }
+
+.checkbox { display: flex; align-items: center; gap: 8px; font-weight: normal; }
+
+.toolbar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+.toolbar .field { margin: 0; }
+.toolbar input, .toolbar select { width: auto; min-width: 180px; }
+
+.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.actions form { margin: 0; }
+
+/* ---------- Tombol ---------- */
+
+.btn {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1.2;
+}
+.btn:hover { background: var(--primary-dark); text-decoration: none; }
+.btn.secondary { background: #fff; color: var(--text); border-color: #d1d5db; }
+.btn.secondary:hover { background: var(--gray-soft); }
+.btn.danger { background: var(--red); border-color: var(--red); }
+.btn.success { background: var(--green); border-color: var(--green); }
+.btn.small { padding: 5px 10px; font-size: 13px; font-weight: 500; }
+.btn.block { width: 100%; }
+
+/* ---------- Pesan ---------- */
+
+.alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; border: 1px solid transparent; }
+.alert.success { background: var(--green-soft); color: var(--green); border-color: #bbf7d0; }
+.alert.error { background: var(--red-soft); color: var(--red); border-color: #fecaca; }
+.alert ul { margin: 0; padding-left: 18px; }
+
+/* ---------- Tab ---------- */
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-wrap: wrap; }
+.tabs a { padding: 9px 16px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs a:hover { color: var(--text); text-decoration: none; }
+.tabs a.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* ---------- Detail ---------- */
+
+.detail { display: grid; grid-template-columns: 180px 1fr; gap: 8px 16px; margin: 0; }
+.detail dt { color: var(--muted); }
+.detail dd { margin: 0; }
+.photo { max-width: 100%; max-height: 420px; border-radius: 8px; border: 1px solid var(--border); }
+
+/* ---------- Pagination ---------- */
+
+.pagination { display: flex; gap: 4px; list-style: none; padding: 14px 20px; margin: 0; flex-wrap: wrap; align-items: center; }
+.pagination a, .pagination span {
+    display: inline-block;
+    min-width: 34px;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-align: center;
+    background: #fff;
+    color: var(--text);
+}
+.pagination .current span { background: var(--primary); border-color: var(--primary); color: #fff; }
+.pagination .disabled span { color: #c0c4cc; }
+.pagination .info { border: none; background: none; color: var(--muted); margin-right: auto; padding-left: 0; }
+
+/* ---------- Halaman login ---------- */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--sidebar) 0%, var(--primary) 100%);
+    padding: 20px;
+}
+.login-box { width: 100%; max-width: 380px; background: #fff; border-radius: 14px; padding: 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, .2); }
+.login-box .logo { text-align: center; margin-bottom: 24px; }
+.login-box .logo strong { display: block; font-size: 26px; color: var(--primary); letter-spacing: 2px; }
+.login-box .logo span { color: var(--muted); font-size: 13px; }
+
+/* ---------- Layar kecil ---------- */
+
+@media (max-width: 800px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .menu { display: flex; flex-wrap: wrap; gap: 4px; }
+    .main { padding: 18px; }
+    .detail { grid-template-columns: 1fr; }
+}

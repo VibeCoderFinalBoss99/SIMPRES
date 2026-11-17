@@ -12,7 +12,9 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->role === 'admin') {
+        $user = $request->user();
+
+        if ($user && $user->role === 'admin' && $user->is_active) {
             return $next($request);
         }
 
