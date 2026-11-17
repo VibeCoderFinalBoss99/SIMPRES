@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\Attendance;
+use App\Models\AttendanceCorrection;
 use App\Models\LeaveRequest;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -17,6 +19,8 @@ use Illuminate\Validation\ValidationException;
  */
 class SubmissionReviewer
 {
+    public function __construct(private AttendanceValidator $validator) {}
+
     public function review(Model $submission, User $admin, string $status, ?string $note): void
     {
         if ($submission->status !== 'menunggu') {
@@ -36,7 +40,45 @@ class SubmissionReviewer
             if ($status === 'diterima' && $submission instanceof LeaveRequest) {
                 $this->recordLeaveDays($submission);
             }
+
+            if ($status === 'diterima' && $submission instanceof AttendanceCorrection) {
+                $this->applyCorrection($submission);
+            }
         });
+    }
+
+    /**
+     * Koreksi yang diterima mengganti jam masuk dan/atau pulang di tabel attendances.
+     * Jika hari itu belum ada absensi sama sekali, absensi baru dibuat.
+     * Jika jam masuk dikoreksi, status hadir/terlambat dihitung ulang dari jadwal shift.
+     */
+    private function applyCorrection(AttendanceCorrection $correction): void
+    {
+        $date = $correction->date->toDateString();
+        $schedule = $this->validator->scheduleFor($correction->user, $date);
+
+        $attendance = $correction->attendance
+            ?? Attendance::where('user_id', $correction->user_id)->whereDate('date', $date)->first()
+            ?? new Attendance([
+                'user_id' => $correction->user_id,
+                'schedule_id' => $schedule?->id,
+                'date' => $date,
+                'status' => 'hadir',
+                'source' => 'online',
+            ]);
+
+        if ($correction->corrected_check_in) {
+            $checkIn = Carbon::parse("{$date} {$correction->corrected_check_in}");
+            [$status, $lateMinutes] = $this->validator->lateStatus($schedule, $checkIn);
+            $attendance->fill(['check_in_at' => $checkIn, 'status' => $status, 'late_minutes' => $lateMinutes]);
+        }
+
+        if ($correction->corrected_check_out) {
+            $attendance->check_out_at = Carbon::parse("{$date} {$correction->corrected_check_out}");
+        }
+
+        $attendance->save();
+        $correction->update(['attendance_id' => $attendance->id]);
     }
 
     /**

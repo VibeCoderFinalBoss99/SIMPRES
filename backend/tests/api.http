@@ -212,3 +212,107 @@ Content-Type: application/json
 Authorization: Bearer {{tokenAdmin}}
 
 {"status": "diterima", "admin_note": "Disetujui, semoga lancar."}
+
+### =====================================================================
+### Langkah 7. Koreksi absensi dan tugas lapangan
+### =====================================================================
+
+### 25. Ajukan koreksi jam pulang (minimal salah satu: corrected_check_in / corrected_check_out) -> 201
+### Lampiran opsional: kirim multipart dengan field "lampiran" (jpg/png maks 2 MB).
+POST {{baseUrl}}/corrections
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"date": "2026-11-17", "corrected_check_out": "14:00", "reason": "Lupa absen pulang"}
+
+### 26. Koreksi tanpa jam -> 422
+POST {{baseUrl}}/corrections
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"date": "2026-11-17", "reason": "Lupa absen"}
+
+### 27. Daftar, detail, dan batalkan koreksi (batal hanya jika masih menunggu)
+GET {{baseUrl}}/corrections?status=menunggu
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/corrections/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+DELETE {{baseUrl}}/corrections/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 28. Admin: terima koreksi -> jam di tabel attendances ikut berubah
+PATCH {{baseUrl}}/admin/corrections/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{"status": "diterima"}
+
+### 29. Laporkan tugas lapangan dengan foto (multipart, field "foto" jpg maks 2 MB) -> 201
+POST {{baseUrl}}/field-duties
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=SimpresBatas
+
+--SimpresBatas
+Content-Disposition: form-data; name="date"
+
+2026-11-17
+--SimpresBatas
+Content-Disposition: form-data; name="location_name"
+
+Posyandu Melati
+--SimpresBatas
+Content-Disposition: form-data; name="description"
+
+Imunisasi balita
+--SimpresBatas
+Content-Disposition: form-data; name="latitude"
+
+-5.0300000
+--SimpresBatas
+Content-Disposition: form-data; name="longitude"
+
+119.6700000
+--SimpresBatas
+Content-Disposition: form-data; name="foto"; filename="kegiatan.jpg"
+Content-Type: image/jpeg
+
+< D:/foto/kegiatan.jpg
+--SimpresBatas--
+
+### 30. Daftar dan detail tugas lapangan milik sendiri
+GET {{baseUrl}}/field-duties
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/field-duties/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 31. Foto tugas lapangan (pemilik dan admin; pegawai lain -> 403)
+GET {{baseUrl}}/field-duties/1/photo
+Authorization: Bearer {{token}}
+
+### 32. Batalkan tugas lapangan yang masih menunggu
+DELETE {{baseUrl}}/field-duties/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 33. Admin: tolak tugas lapangan dengan catatan
+PATCH {{baseUrl}}/admin/field-duties/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{"status": "ditolak", "admin_note": "Foto tidak jelas, mohon kirim ulang."}

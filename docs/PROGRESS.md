@@ -23,6 +23,8 @@ Branch kerja: `backend-setup` (belum di-push).
 | 5. API absensi | selesai | `Api/AttendanceController`, `CheckInRequest`, `CheckOutRequest`, `AttendanceResource`, `lang/id/validation.php`, `tests/Feature/AttendanceApiTest.php` | 46 | Detail absensi orang lain dijawab 404. client_uuid hanya untuk check-in (kolomnya satu). Sudah diuji curl ke database asli |
 | 6. CRUD izin dan cuti | selesai | `Api/LeaveController`, `Api/Admin/LeaveReviewController`, `StoreLeaveRequest`, `UpdateLeaveRequest`, `ReviewSubmissionRequest`, `LeaveRequestPolicy`, `LeaveRequestResource`, `Services/SubmissionReviewer`, middleware `admin`, `tests/Feature/LeaveApiTest.php` | 62 | Field file bernama `lampiran`. Izin diterima (selain izin keluar) dicatat sebagai baris `attendances` status `izin` per hari. Disk `local` tidak lagi melayani `/storage/...`. Sudah diuji curl dengan upload foto |
 
+| 7. Koreksi dan tugas lapangan | selesai | `Api/CorrectionController`, `Api/FieldDutyController`, `Api/Admin/CorrectionReviewController`, `Api/Admin/FieldDutyReviewController`, `StoreCorrectionRequest`, `StoreFieldDutyRequest`, 2 Policy, 2 Resource, `tests/Feature/CorrectionApiTest.php`, `FieldDutyApiTest.php` | 80 | Koreksi diterima mengubah jam di `attendances` (jam masuk dikoreksi = status terlambat dihitung ulang; belum ada absensi = dibuat baru). Lampiran koreksi di `lampiran-koreksi`. Foto tugas lapangan field `foto`, hanya jpg |
+
 ## Perlu keputusan
 
 1. **Zona waktu.** `.env` memakai `APP_TIMEZONE=Asia/Jakarta` (WIB, sesuai instruksi Langkah 1), tetapi koordinat Puskesmas
