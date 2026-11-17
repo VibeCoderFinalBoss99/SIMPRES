@@ -15,10 +15,32 @@ import com.simpres.app.ui.Tone
 import com.simpres.app.ui.addMessage
 import com.simpres.app.ui.addRow
 import com.simpres.app.ui.clearAfter
+import com.simpres.app.ui.ThemeMode
+import androidx.appcompat.app.AlertDialog
 
 class ConfigFragment : BaseFragment(R.layout.fragment_config) {
     override fun onReady(view: View) {
         view.onClick(R.id.rowResetPassword) { go(R.id.forgotFragment) }
+        com.simpres.app.data.Session.user?.let { u ->
+            view.findViewById<TextView>(R.id.tvUserName).text = u.name
+            view.findViewById<TextView>(R.id.tvUserRole).text = listOfNotNull(u.position, u.unit).joinToString(" · ")
+        }
+
+        // Mode tampilan: Ikuti sistem / Terang / Gelap. Layar langsung berganti setelah dipilih.
+        val themeValue = view.findViewById<TextView>(R.id.tvThemeValue)
+        themeValue.text = ThemeMode.label(requireContext())
+        view.onClick(R.id.rowTheme) {
+            val keys = ThemeMode.options.map { it.first }
+            val checked = keys.indexOf(ThemeMode.current(requireContext()))
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.config_mode_tampilan)
+                .setSingleChoiceItems(ThemeMode.options.map { it.second }.toTypedArray(), checked) { dialog, which ->
+                    dialog.dismiss()
+                    ThemeMode.set(requireContext().applicationContext, keys[which])
+                }
+                .show()
+        }
+
         view.onClick(R.id.btnSave) {
             toast(R.string.msg_saved)
             findNavController().popBackStack()

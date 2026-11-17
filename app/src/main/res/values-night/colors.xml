@@ -36,4 +36,6 @@
     <color name="splash_text">#D3DDEF</color>
     <color name="splash_end">#0F2A5C</color>
     <color name="disabled_bg">#2A303B</color>
+    <color name="logo_pin">#E8EEFB</color>
+    <color name="logo_check">#1B3F8F</color>
 </resources>

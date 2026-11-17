@@ -38,8 +38,12 @@ Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**.
 - Antrean offline: absensi tanpa internet disimpan di HP dan dikirim ulang saat online.
 - Intro animasi Lottie di Splash dan onboarding 3 halaman dengan animasi.
 - Panduan awal (coach mark) yang menyorot tombol penting saat pertama kali masuk Beranda, bisa diulang dari Profil.
+- Logo SIMPRES (pin lokasi, tanda centang, cincin radius emas) sebagai ikon aplikasi dan di halaman Login serta Tentang Aplikasi.
+- Pilihan mode tampilan Ikuti sistem / Terang / Gelap di Pengaturan, tersimpan di HP.
 
 ### Diubah
+- Ikon aplikasi tidak lagi memakai latar hijau bawaan Android Studio.
+- Warna ikon status bar mengikuti mode terang atau gelap.
 - Tugas lapangan yang diterima admin dihitung hadir di rekap.
 - Tombol "Geser untuk Check-out" kini benar-benar bisa digeser.
 

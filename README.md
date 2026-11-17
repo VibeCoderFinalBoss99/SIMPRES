@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" width="96" alt="Logo SIMPRES">
+</p>
+
 # SIMPRES – Sistem Presensi Simbang
 
 Aplikasi presensi pegawai UPTD Puskesmas Simbang. Terdiri dari tiga bagian:
@@ -61,6 +65,15 @@ Minggu 13 (18 November 2026). Checkpoint: implementasi fitur utama, basis data, 
 |---|---|---|---|
 | <img src="docs/screenshots/v0.2/app_izin.jpg" width="180" alt="Daftar izin"> | <img src="docs/screenshots/v0.2/app_riwayat.jpg" width="180" alt="Riwayat absensi"> | <img src="docs/screenshots/v0.2/app_notifikasi.jpg" width="180" alt="Notifikasi izin diterima"> | <img src="docs/screenshots/v0.2/app_profil.jpg" width="180" alt="Profil pegawai"> |
 
+### Logo, mode terang, dan mode gelap
+
+Logo aplikasi: pin lokasi dengan tanda centang dan cincin radius emas, dipakai sebagai ikon aplikasi, di halaman Login, dan Tentang Aplikasi.
+Tampilan bisa dipilih di **Profil > Pengaturan & tampilan > Mode terang / gelap** (Ikuti sistem, Terang, atau Gelap).
+
+| Beranda – terang | Beranda – gelap | Pilihan tampilan | Logo di Login | Tentang aplikasi |
+|---|---|---|---|---|
+| <img src="docs/screenshots/v0.2/app_beranda_terang.jpg" width="150" alt="Beranda mode terang"> | <img src="docs/screenshots/v0.2/app_beranda_gelap.jpg" width="150" alt="Beranda mode gelap"> | <img src="docs/screenshots/v0.2/app_pengaturan_tema.jpg" width="150" alt="Pengaturan mode tampilan"> | <img src="docs/screenshots/v0.2/app_login_logo.jpg" width="150" alt="Logo di halaman login"> | <img src="docs/screenshots/v0.2/app_tentang_logo.jpg" width="150" alt="Logo di halaman tentang aplikasi"> |
+
 ### Admin Web (sesuai desain Figma A1–A8)
 
 | Dashboard | Review & Persetujuan | Roster |
@@ -81,7 +94,7 @@ Minggu 13 (18 November 2026). Checkpoint: implementasi fitur utama, basis data, 
 | CRUD | Izin dan cuti, koreksi absensi, tugas lapangan dengan foto, pegawai, shift, jadwal |
 | Admin Web | Dashboard, Review & Persetujuan, Data Pegawai, Lokasi Kerja, Roster, Rekap & Ekspor CSV, Audit Log, Konfigurasi |
 | Aplikasi Android | Login, check-in GPS, check-out geser, riwayat, jadwal, izin, koreksi, tugas lapangan, notifikasi, profil, antrean offline |
-| Tampilan | Intro animasi Lottie, onboarding 3 halaman, panduan awal (coach mark) saat pertama masuk Beranda |
+| Tampilan | Logo dan ikon aplikasi, pilihan mode terang/gelap, intro animasi Lottie, onboarding 3 halaman, panduan awal (coach mark) saat pertama masuk Beranda |
 | Pengujian | 133 test otomatis backend lulus; alur aplikasi dan web diuji di emulator dan browser |
 
 ---

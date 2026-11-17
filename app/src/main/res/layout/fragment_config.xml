@@ -68,14 +68,59 @@
                         style="@style/T.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvUserName"
                         android:text="@string/config_nama_pegawai" />
                     <TextView
                         style="@style/T.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvUserRole"
                         android:text="@string/config_shift_non_shift_petugas"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
+            </LinearLayout>
+            <TextView
+                style="@style/T.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/config_tampilan"
+                android:layout_marginTop="26dp" />
+            <LinearLayout
+                android:id="@+id/rowTheme"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_card"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:layout_marginTop="12dp">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_eye"
+                    android:tint="@color/ink_muted"
+                    android:importantForAccessibility="no" />
+                <TextView
+                    style="@style/T.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/config_mode_tampilan"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/tvThemeValue"
+                    style="@style/T.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_on_tint" />
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:layout_marginStart="8dp"
+                    android:tint="@color/ink_faint"
+                    android:importantForAccessibility="no" />
             </LinearLayout>
             <TextView
                 style="@style/T.Section"

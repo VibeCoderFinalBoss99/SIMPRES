@@ -340,7 +340,7 @@
     <string name="profile_nip">NIP</string>
     <string name="profile_nur_aisyah_a_md">Nur Aisyah, A.Md.Kep</string>
     <string name="profile_pegawai_non_shift">Pegawai non-shift</string>
-    <string name="profile_pengaturan">Pengaturan</string>
+    <string name="profile_pengaturan">Pengaturan &amp; tampilan</string>
     <string name="profile_perangkat_terdaftar">Perangkat terdaftar</string>
     <string name="profile_poli_umum">Poli Umum</string>
     <string name="profile_samsung_a35">Samsung A35</string>
@@ -385,4 +385,6 @@
     <string name="sync_sinkronkan_sekarang">Sinkronkan Sekarang</string>
     <string name="sync_terakhir_sinkron_08_03">Terakhir sinkron 08.03 WITA</string>
     <string name="sync_terhubung_ke_internet">Terhubung ke internet</string>
+    <string name="config_tampilan">Tampilan</string>
+    <string name="config_mode_tampilan">Mode terang / gelap</string>
 </resources>
