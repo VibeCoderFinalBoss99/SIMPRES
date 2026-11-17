@@ -1,4 +1,6 @@
 ### Contoh request API SIMPRES
+### Penjelasan setiap endpoint (aturan, contoh respons, kode status) ada di backend/API.md.
+### Semua 32 endpoint dari "php artisan route:list --path=api" punya contoh di file ini.
 ### Bisa dijalankan dengan ekstensi VS Code "REST Client" atau HTTP Client PhpStorm.
 ### Jalankan server dulu dari folder backend:  php artisan serve
 ### Akun contoh dari simpres.sql, password semua akun: simpres123

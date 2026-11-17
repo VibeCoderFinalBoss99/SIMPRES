@@ -30,6 +30,7 @@ Branch kerja: `backend-setup` (belum di-push).
 | 9d. Lokasi, shift, jadwal | selesai | `Admin/LocationController`, `Admin/ShiftController`, `Admin/ScheduleController`, `views/admin/location.blade.php`, `views/admin/shifts/*`, `views/admin/schedules/*`, `tests/Feature/Admin/LocationShiftScheduleTest.php` | 116 | Jadwal: isian per bulan untuk satu pegawai (tiap tanggal: shift/libur/kosong) dan form tambah satu jadwal yang menolak jadwal ganda. Menu Shift ada sebagai tab di halaman Jadwal |
 | 9e. Persetujuan pengajuan | selesai | `Admin/SubmissionController`, `views/admin/submissions/index.blade.php`, `show.blade.php`, `tests/Feature/Admin/SubmissionTest.php` | 126 | Tab Izin/Koreksi/Tugas lapangan, filter status (bawaan: menunggu). Lampiran/foto dibuka lewat route admin berlogin. Keputusan memakai `SubmissionReviewer` yang sama dengan API (reviewed_by, reviewed_at, koreksi jam, notifikasi) |
 | 9f. Rekap | selesai | `Admin/RecapController`, `views/admin/recap.blade.php`, `tests/Feature/Admin/RecapTest.php` | 130 | Hadir/terlambat/izin/menit terlambat dari `attendances` (test membandingkan dengan query nomor 6 PANDUAN). Alpa = status alpa + hari kerja terjadwal yang sudah lewat tanpa absensi. CSV pemisah `;` dengan BOM UTF-8, NIP ditulis sebagai teks. Tampilan semua halaman admin dicek dengan screenshot Chrome headless |
+| 10. Dokumentasi API | selesai | `backend/API.md`, `backend/tests/api.http` | 130 | 32 endpoint di API.md = 32 di `route:list --path=api`. Setiap endpoint punya contoh request, respons sukses/gagal, kode status |
 
 ## Perlu keputusan
 
