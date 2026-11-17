@@ -3,7 +3,7 @@
 ### Jalankan server dulu dari folder backend:  php artisan serve
 ### Akun contoh dari simpres.sql, password semua akun: simpres123
 
-@baseUrl = http://localhost:8000/api
+@baseUrl = http://127.0.0.1:8000/api
 # Isi dengan nilai "token" dari respons login.
 @token = TEMPEL_TOKEN_DI_SINI
 
@@ -45,5 +45,73 @@ Accept: application/json
 
 ### 6. Logout (token jadi tidak berlaku) -> 200 "Logout berhasil."
 POST {{baseUrl}}/logout
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### =====================================================================
+### Langkah 5. Absensi (token pegawai)
+### Titik Puskesmas di database: -5.0222565, 119.6653682 (radius 150 m).
+### Dekat (sekitar 22 m): latitude -5.0224565. Jauh (sekitar 200 m): latitude -5.0240565.
+### =====================================================================
+
+### 7. Status absensi hari ini (sudah/belum check-in, jadwal hari ini)
+GET {{baseUrl}}/attendance/today
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 8. Check-in jauh -> 422 "Anda berada di luar radius Puskesmas ..." dan distance_m sekitar 200
+POST {{baseUrl}}/attendance/check-in
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"latitude": -5.0240565, "longitude": 119.6653682, "accuracy": 10, "is_mock": false}
+
+### 9. Check-in akurasi buruk -> 422 "Akurasi GPS terlalu rendah ..."
+POST {{baseUrl}}/attendance/check-in
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"latitude": -5.0224565, "longitude": 119.6653682, "accuracy": 500, "is_mock": false}
+
+### 10. Check-in lokasi palsu -> 422 "Terdeteksi lokasi palsu ..."
+POST {{baseUrl}}/attendance/check-in
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"latitude": -5.0224565, "longitude": 119.6653682, "accuracy": 10, "is_mock": true}
+
+### 11. Check-in dekat -> 201 status hadir/terlambat. Kirim ulang dengan client_uuid sama -> 200, data yang sama
+POST {{baseUrl}}/attendance/check-in
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "latitude": -5.0224565,
+    "longitude": 119.6653682,
+    "accuracy": 10,
+    "is_mock": false,
+    "client_uuid": "0b7d3c1e-2f4a-4b5c-8d6e-7f8091a2b3c4",
+    "device_info": "Samsung A15, Android 14"
+}
+
+### 12. Check-out -> 200. Kirim kedua kali -> 422 "Anda sudah check-out hari ini."
+POST {{baseUrl}}/attendance/check-out
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"latitude": -5.0224565, "longitude": 119.6653682, "accuracy": 10, "is_mock": false}
+
+### 13. Riwayat absensi per bulan (format YYYY-MM)
+GET {{baseUrl}}/attendance?month=2026-11
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 14. Detail absensi (hanya milik sendiri, milik orang lain -> 404)
+GET {{baseUrl}}/attendance/1
 Accept: application/json
 Authorization: Bearer {{token}}

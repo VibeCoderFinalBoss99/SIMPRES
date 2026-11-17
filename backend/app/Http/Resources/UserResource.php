@@ -22,8 +22,8 @@ class UserResource extends JsonResource
             'work_location' => $this->whenLoaded('workLocation', fn () => $this->workLocation ? [
                 'id' => $this->workLocation->id,
                 'name' => $this->workLocation->name,
-                'latitude' => $this->workLocation->latitude,
-                'longitude' => $this->workLocation->longitude,
+                'latitude' => (float) $this->workLocation->latitude,
+                'longitude' => (float) $this->workLocation->longitude,
                 'radius_m' => $this->workLocation->radius_m,
             ] : null),
         ];
