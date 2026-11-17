@@ -17,7 +17,11 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import androidx.navigation.navOptions
 import com.simpres.app.R
 
@@ -35,12 +39,24 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
 
     // --- navigation -----------------------------------------------------------------------------
 
-    protected fun go(@IdRes destination: Int) = findNavController().navigate(destination)
+    protected fun go(@IdRes destination: Int, args: Bundle? = null) = findNavController().navigate(destination, args)
+
+    /** Runs a coroutine tied to the screen's view; cancelled automatically when the screen closes. */
+    protected fun launch(block: suspend CoroutineScope.() -> Unit) =
+        viewLifecycleOwner.lifecycleScope.launch(block = block)
+
+    /** Shows a server/validation message in a simple dialog. */
+    protected fun alert(message: String, title: String? = null) {
+        AlertDialog.Builder(requireContext()).setTitle(title).setMessage(message)
+            .setPositiveButton(android.R.string.ok, null).show()
+    }
+
+    protected fun toast(message: String) = Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
 
     /** Navigate and remove the current screen from the back stack. */
-    protected fun replace(@IdRes destination: Int) {
+    protected fun replace(@IdRes destination: Int, args: Bundle? = null) {
         val current = findNavController().currentDestination?.id ?: return
-        findNavController().navigate(destination, null, navOptions { popUpTo(current) { inclusive = true } })
+        findNavController().navigate(destination, args, navOptions { popUpTo(current) { inclusive = true } })
     }
 
     /** Navigate and clear everything up to (and including) [popTo]. */

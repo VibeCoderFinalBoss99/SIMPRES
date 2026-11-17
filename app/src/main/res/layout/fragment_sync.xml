@@ -74,12 +74,14 @@
                             style="@style/T.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvNetwork"
                             android:text="@string/sync_terhubung_ke_internet"
                             android:textSize="16sp" />
                         <TextView
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvLastSync"
                             android:text="@string/sync_terakhir_sinkron_08_03"
                             android:layout_marginTop="2dp"
                             android:textSize="12.5sp" />
@@ -104,6 +106,7 @@
                             style="@style/T.Headline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvQueued"
                             android:text="@string/sync_3"
                             android:textColor="@color/warn_text" />
                         <TextView
@@ -122,6 +125,7 @@
                             style="@style/T.Headline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvFailed"
                             android:text="@string/common_1"
                             android:textColor="@color/danger_text" />
                         <TextView
@@ -140,6 +144,7 @@
                 android:text="@string/common_antrean"
                 android:layout_marginTop="20dp" />
             <LinearLayout
+                android:id="@+id/queueList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

@@ -365,11 +365,13 @@
                             style="@style/T.Value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvFileName"
                             android:text="@string/common_surat_dokter_26okt_pdf" />
                         <TextView
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvFileSize"
                             android:text="@string/leave_form_214_kb_terunggah"
                             android:textColor="@color/success"
                             android:layout_marginTop="2dp" />

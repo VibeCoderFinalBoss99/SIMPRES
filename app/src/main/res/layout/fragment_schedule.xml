@@ -22,6 +22,7 @@
             style="@style/T.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tvMonth"
             android:text="@string/schedule_okt_2026"
             android:textColor="@color/primary_on_tint" />
         <ImageView
@@ -39,6 +40,7 @@
         android:scrollbars="none"
         android:overScrollMode="never">
         <LinearLayout
+            android:id="@+id/listContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

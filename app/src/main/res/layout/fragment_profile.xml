@@ -48,6 +48,7 @@
                         style="@style/T.TitleL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvAvatar"
                         android:text="@string/common_na"
                         android:textColor="@color/navy"
                         android:fontFamily="@font/lexend_semibold" />
@@ -62,17 +63,20 @@
                         style="@style/T.Subtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvName"
                         android:text="@string/profile_nur_aisyah_a_md" />
                     <TextView
                         style="@style/T.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvPosition"
                         android:text="@string/common_perawat_poli_umum"
                         android:layout_marginTop="2dp" />
                     <TextView
                         style="@style/T.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvRole"
                         android:text="@string/profile_pegawai_non_shift"
                         android:background="@drawable/bg_chip_primary"
                         android:textColor="@color/primary_on_tint"
@@ -101,6 +105,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvNip"
                         android:text="@string/profile_19900512_201503_2_001"
                         android:gravity="end" />
                 </LinearLayout>
@@ -119,6 +124,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvUnit"
                         android:text="@string/profile_poli_umum"
                         android:gravity="end" />
                 </LinearLayout>
@@ -137,6 +143,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvDevice"
                         android:text="@string/profile_samsung_a35"
                         android:gravity="end" />
                 </LinearLayout>
@@ -410,6 +417,14 @@
                 android:text="@string/common_keluar"
                 android:drawableStart="@drawable/ic_logout"
                 android:layout_marginTop="14dp" />
+            <TextView
+                style="@style/T.Link"
+                android:id="@+id/tvShowGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:text="@string/profile_show_guide" />
         </LinearLayout>
     </ScrollView>
     <include android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/view_bottom_nav" />

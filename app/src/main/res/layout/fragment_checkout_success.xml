@@ -53,6 +53,7 @@
                 style="@style/T.Display"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/tvTitle"
                 android:text="@string/checkout_success_check_out_berhasil"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp" />
@@ -60,6 +61,7 @@
                 style="@style/T.BodyMuted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/tvSubtitle"
                 android:text="@string/common_kamu_di_area_kerja"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
@@ -90,6 +92,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvTime"
                         android:text="@string/checkout_success_15_04_wita"
                         android:gravity="end" />
                 </LinearLayout>
@@ -108,6 +111,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvPlace"
                         android:text="@string/checkout_success_puskesmas_simbang_31_m"
                         android:gravity="end" />
                 </LinearLayout>
@@ -145,6 +149,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvNote"
                         android:text="@string/checkout_success_sesuai_jadwal"
                         android:textColor="@color/success"
                         android:gravity="end" />
@@ -170,6 +175,7 @@
                         style="@style/T.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvStatus"
                         android:text="@string/common_diterima"
                         android:background="@drawable/bg_chip_success"
                         android:textColor="@color/success" />

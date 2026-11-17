@@ -34,6 +34,7 @@
                         android:background="@drawable/bg_round_primary"
                         android:gravity="center">
                         <TextView
+                            android:id="@+id/tvAvatar"
                             style="@style/T.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -50,12 +51,14 @@
                         android:layout_marginStart="14dp"
                         android:layout_gravity="center_vertical">
                         <TextView
+                            android:id="@+id/tvName"
                             style="@style/T.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/home_nur_aisyah"
                             android:textSize="19sp" />
                         <TextView
+                            android:id="@+id/tvPosition"
                             style="@style/T.Key"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -92,6 +95,7 @@
                     android:scrollbars="none"
                     android:overScrollMode="never">
                     <LinearLayout
+                        android:id="@+id/weekStrip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -232,6 +236,7 @@
                         android:textSize="16sp"
                         android:layout_weight="1" />
                     <TextView
+                        android:id="@+id/tvShift"
                         style="@style/T.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -240,6 +245,7 @@
                         android:textColor="@color/primary_on_tint" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/gridToday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -275,6 +281,7 @@
                                 android:layout_marginStart="10dp" />
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/tvCheckInTime"
                             style="@style/T.TitleL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -282,6 +289,7 @@
                             android:textColor="@color/ink"
                             android:layout_marginTop="12dp" />
                         <TextView
+                            android:id="@+id/tvCheckInStatus"
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -321,6 +329,7 @@
                                 android:layout_marginStart="10dp" />
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/tvCheckOutTime"
                             style="@style/T.TitleL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -328,6 +337,7 @@
                             android:textColor="@color/ink"
                             android:layout_marginTop="12dp" />
                         <TextView
+                            android:id="@+id/tvCheckOutNote"
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -372,6 +382,7 @@
                                 android:layout_marginStart="10dp" />
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/tvDistance"
                             style="@style/T.TitleL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -379,6 +390,7 @@
                             android:textColor="@color/ink"
                             android:layout_marginTop="12dp" />
                         <TextView
+                            android:id="@+id/tvDistanceNote"
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -419,6 +431,7 @@
                                 android:layout_marginStart="10dp" />
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/tvSyncTitle"
                             style="@style/T.TitleL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -426,6 +439,7 @@
                             android:textColor="@color/ink"
                             android:layout_marginTop="12dp" />
                         <TextView
+                            android:id="@+id/tvSyncNote"
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -457,6 +471,7 @@
                         android:padding="4dp" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/rowActivity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -483,11 +498,13 @@
                         android:layout_marginStart="12dp"
                         android:layout_gravity="center_vertical">
                         <TextView
+                            android:id="@+id/tvActivityTitle"
                             style="@style/T.Item"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/common_check_in" />
                         <TextView
+                            android:id="@+id/tvActivityDate"
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -495,18 +512,30 @@
                             android:layout_marginTop="1dp" />
                     </LinearLayout>
                 </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/btnCheckOut"
+                <FrameLayout
+                    android:id="@+id/swipeCheckOut"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:orientation="horizontal"
                     android:background="@drawable/bg_swipe"
-                    android:gravity="center_vertical"
                     android:padding="8dp"
-                    android:layout_marginTop="14dp">
+                    android:layout_marginTop="14dp"
+                    android:contentDescription="@string/home_geser_untuk_check_out">
+                    <TextView
+                        android:id="@+id/tvSwipeLabel"
+                        style="@style/T.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/home_geser_untuk_check_out"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:paddingStart="40dp"
+                        android:gravity="center"
+                        android:importantForAccessibility="no" />
                     <FrameLayout
+                        android:id="@+id/swipeKnob"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_gravity="center_vertical|start"
                         android:background="@drawable/bg_swipe_knob">
                         <ImageView
                             android:layout_width="22dp"
@@ -515,16 +544,7 @@
                             android:tint="@color/white"
                             android:layout_gravity="center" />
                     </FrameLayout>
-                    <TextView
-                        style="@style/T.Body"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_geser_untuk_check_out"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:gravity="center" />
-                </LinearLayout>
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -70,6 +70,7 @@
                     style="@style/T.Chip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvHeadline"
                     android:text="@string/outside_radius_212_m_dari_titik"
                     android:background="@drawable/bg_chip_danger"
                     android:textColor="@color/danger"
@@ -114,6 +115,7 @@
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvMessage"
                             android:text="@string/outside_radius_absen_hanya_bisa_dalam"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -138,6 +140,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvDistance"
                         android:text="@string/outside_radius_212_m"
                         android:textColor="@color/danger"
                         android:gravity="end" />
@@ -157,6 +160,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvRadius"
                         android:text="@string/outside_radius_150_m"
                         android:gravity="end" />
                 </LinearLayout>
@@ -175,6 +179,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvAccuracy"
                         android:text="@string/outside_radius_9_m"
                         android:gravity="end" />
                 </LinearLayout>

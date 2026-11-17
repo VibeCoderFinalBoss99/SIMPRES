@@ -23,6 +23,7 @@
             style="@style/T.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tvScreenTitle"
             android:text="@string/common_check_in"
             android:layout_gravity="center" />
         <ImageView
@@ -110,11 +111,13 @@
                             style="@style/T.Subtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvAreaTitle"
                             android:text="@string/checkin_kamu_berada_di_area" />
                         <TextView
                             style="@style/T.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/tvAreaSub"
                             android:text="@string/checkin_puskesmas_simbang_radius_150"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -139,6 +142,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvDistance"
                         android:text="@string/common_42_m"
                         android:gravity="end" />
                 </LinearLayout>
@@ -157,6 +161,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvAccuracy"
                         android:text="@string/checkin_8_m_baik"
                         android:textColor="@color/success"
                         android:gravity="end" />
@@ -176,6 +181,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSchedule"
                         android:text="@string/checkin_non_shift_07_00"
                         android:gravity="end" />
                 </LinearLayout>
@@ -194,6 +200,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvServerTime"
                         android:text="@string/checkin_08_02_37_wita"
                         android:gravity="end" />
                 </LinearLayout>
@@ -214,6 +221,7 @@
                     style="@style/T.Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvHint"
                     android:text="@string/checkin_kamu_berada_di_area_2"
                     android:textColor="@color/teal_text"
                     android:layout_weight="1"

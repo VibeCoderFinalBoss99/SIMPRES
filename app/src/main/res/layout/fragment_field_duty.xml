@@ -154,6 +154,7 @@
                     style="@style/T.Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvPhotoLabel"
                     android:text="@string/field_duty_ambil_foto_dengan_kamera"
                     android:textColor="@color/primary_on_tint"
                     android:layout_marginTop="8dp" />
@@ -191,11 +192,13 @@
                         style="@style/T.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvGpsPlace"
                         android:text="@string/field_duty_desa_jenetaesa_simbang" />
                     <TextView
                         style="@style/T.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvGpsCoords"
                         android:text="@string/field_duty_5_0671_119_6935"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>

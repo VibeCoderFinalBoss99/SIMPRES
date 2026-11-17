@@ -23,19 +23,16 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center_horizontal">
-        <FrameLayout
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:background="@drawable/bg_logo_white">
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@drawable/ic_location"
-                android:tag="drop"
-                android:tint="@color/primary"
-                android:layout_gravity="center" />
-        </FrameLayout>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieIntro"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:importantForAccessibility="no"
+            app:lottie_rawRes="@raw/intro_simpres"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false" />
         <TextView
+            android:id="@+id/tvAppName"
             style="@style/T.Display"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,8 +40,9 @@
             android:textSize="30sp"
             android:textColor="@color/white"
             android:fontFamily="@font/lexend_semibold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="-40dp" />
         <View
+            android:id="@+id/vGoldBar"
             android:layout_width="40dp"
             android:layout_height="3dp"
             android:background="@color/gold"
@@ -53,6 +51,7 @@
             style="@style/T.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tvTagline"
             android:text="@string/common_sistem_presensi_simbang"
             android:textColor="@color/splash_text"
             android:layout_marginTop="8dp" />

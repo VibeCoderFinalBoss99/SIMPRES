@@ -104,6 +104,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvType"
                         android:text="@string/common_check_in"
                         android:gravity="end" />
                 </LinearLayout>
@@ -116,12 +117,14 @@
                         style="@style/T.Key"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvTimeLabel"
                         android:text="@string/offline_saved_waktu_tercatat"
                         android:layout_weight="1" />
                     <TextView
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvTime"
                         android:text="@string/common_08_02_wita"
                         android:gravity="end" />
                 </LinearLayout>
@@ -140,6 +143,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvQueue"
                         android:text="@string/offline_saved_1_transaksi"
                         android:gravity="end" />
                 </LinearLayout>
