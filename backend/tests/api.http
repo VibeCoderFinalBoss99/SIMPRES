@@ -115,3 +115,100 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/attendance/1
 Accept: application/json
 Authorization: Bearer {{token}}
+
+### =====================================================================
+### Langkah 6. Izin dan cuti (token pegawai, kecuali bagian admin)
+### Jenis: izin_keluar (wajib start_time & end_time), sakit (wajib lampiran jpg/png maks 2 MB), cuti, lainnya.
+### =====================================================================
+
+@tokenAdmin = TEMPEL_TOKEN_ADMIN_DI_SINI
+
+### 15. Ajukan cuti 2 hari -> 201 status menunggu
+POST {{baseUrl}}/leaves
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"type": "cuti", "start_date": "2026-11-20", "end_date": "2026-11-21", "reason": "Acara keluarga"}
+
+### 16. Tanggal selesai sebelum tanggal mulai -> 422
+POST {{baseUrl}}/leaves
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"type": "cuti", "start_date": "2026-11-20", "end_date": "2026-11-19", "reason": "Acara keluarga"}
+
+### 17. Izin keluar dengan jam -> 201 (tanpa jam -> 422)
+POST {{baseUrl}}/leaves
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"type": "izin_keluar", "start_date": "2026-11-18", "end_date": "2026-11-18", "start_time": "10:00", "end_time": "11:30", "reason": "Ke bank"}
+
+### 18. Izin sakit dengan foto (multipart/form-data, field "lampiran") -> 201
+### Ganti path file di bawah dengan foto jpg/png di komputer kamu.
+POST {{baseUrl}}/leaves
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=SimpresBatas
+
+--SimpresBatas
+Content-Disposition: form-data; name="type"
+
+sakit
+--SimpresBatas
+Content-Disposition: form-data; name="start_date"
+
+2026-11-18
+--SimpresBatas
+Content-Disposition: form-data; name="end_date"
+
+2026-11-18
+--SimpresBatas
+Content-Disposition: form-data; name="reason"
+
+Demam
+--SimpresBatas
+Content-Disposition: form-data; name="lampiran"; filename="surat.jpg"
+Content-Type: image/jpeg
+
+< D:/foto/surat.jpg
+--SimpresBatas--
+
+### 19. Daftar izin milik sendiri (filter status opsional: menunggu, diterima, ditolak)
+GET {{baseUrl}}/leaves?status=menunggu
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 20. Detail izin
+GET {{baseUrl}}/leaves/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 21. Lampiran izin (hanya pemilik dan admin)
+GET {{baseUrl}}/leaves/2/attachment
+Authorization: Bearer {{token}}
+
+### 22. Ubah izin yang masih menunggu (cukup kirim kolom yang berubah)
+### Untuk mengganti lampiran: POST multipart ke /leaves/{id} dengan field _method=PUT.
+PUT {{baseUrl}}/leaves/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"reason": "Menghadiri pernikahan saudara"}
+
+### 23. Batalkan izin yang masih menunggu -> 200
+DELETE {{baseUrl}}/leaves/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 24. Admin: terima atau tolak izin (token pegawai -> 403)
+PATCH {{baseUrl}}/admin/leaves/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{"status": "diterima", "admin_note": "Disetujui, semoga lancar."}

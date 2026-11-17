@@ -33,7 +33,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // File private (lampiran izin, foto tugas lapangan) hanya lewat endpoint yang butuh login.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],
