@@ -10,8 +10,8 @@
 <div class="login-page">
     <div class="login-box">
         <div class="logo">
-            <strong>SIMPRES</strong>
-            <span>Admin Web UPTD Puskesmas Simbang</span>
+            <span class="brand-logo">@include('admin.icon', ['name' => 'shield'])</span>
+            <span><strong>SIMPRES</strong><small>Admin Web UPTD Puskesmas Simbang</small></span>
         </div>
 
         @if ($errors->any())

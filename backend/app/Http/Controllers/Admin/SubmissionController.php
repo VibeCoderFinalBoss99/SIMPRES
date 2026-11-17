@@ -45,16 +45,29 @@ class SubmissionController extends Controller
         return view('admin.submissions.index', compact('type', 'status', 'items', 'waitingCounts'));
     }
 
-    public function show(string $type, int $id): View
+    public function show(Request $request, string $type, int $id): View
     {
         $item = $this->find($type, $id);
         $item->load('user', 'reviewer');
 
+        // Daftar di sebelah kiri: jenis yang sama, status sesuai filter (default semua supaya item terpilih ikut tampil).
+        $status = in_array($request->query('status'), ['menunggu', 'diterima', 'ditolak', 'semua'], true)
+            ? $request->query('status')
+            : 'semua';
+        [$model] = self::TYPES[$type];
+        $items = $model::with('user')
+            ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+        $waitingCounts = collect(self::TYPES)->map(fn ($config) => $config[0]::where('status', 'menunggu')->count());
+
         return view('admin.submissions.show', [
             'type' => $type,
-            'title' => self::TYPES[$type][1],
-            'item' => $item,
-            'filePath' => $item->{self::TYPES[$type][2]},
+            'status' => $status,
+            'items' => $items,
+            'waitingCounts' => $waitingCounts,
+            'selected' => $item,
         ]);
     }
 

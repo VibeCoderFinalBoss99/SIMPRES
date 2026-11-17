@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Attendance;
+use App\Support\Settings;
 use App\Models\LeaveRequest;
 use App\Models\Schedule;
 use App\Models\User;
@@ -147,12 +148,14 @@ class AttendanceValidator
 
     private function locationError(?WorkLocation $location, ?float $distance, float $accuracy, bool $isMock): ?string
     {
-        if ($isMock) {
+        // Batas akurasi dan penolakan lokasi palsu bisa diatur admin di halaman Konfigurasi.
+        if ($isMock && Settings::get('reject_mock')) {
             return 'Terdeteksi lokasi palsu (fake GPS). Matikan aplikasi lokasi palsu lalu coba lagi.';
         }
 
-        if ($accuracy > self::MAX_ACCURACY_M) {
-            return 'Akurasi GPS terlalu rendah ('.round($accuracy).' m, maksimal '.self::MAX_ACCURACY_M.' m). Pindah ke tempat terbuka lalu coba lagi.';
+        $maxAccuracy = (int) (Settings::get('max_accuracy_m') ?? self::MAX_ACCURACY_M);
+        if ($accuracy > $maxAccuracy) {
+            return 'Akurasi GPS terlalu rendah ('.round($accuracy).' m, maksimal '.$maxAccuracy.' m). Pindah ke tempat terbuka lalu coba lagi.';
         }
 
         if (! $location) {

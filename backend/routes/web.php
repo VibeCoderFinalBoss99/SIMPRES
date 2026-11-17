@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ConfigController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\LocationController;
@@ -50,5 +52,9 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/rekap', [RecapController::class, 'index'])->name('admin.rekap.index');
         Route::get('/rekap/csv', [RecapController::class, 'csv'])->name('admin.rekap.csv');
+        Route::get('/audit', [AuditController::class, 'index'])->name('admin.audit.index');
+        Route::get('/audit/csv', [AuditController::class, 'csv'])->name('admin.audit.csv');
+        Route::get('/konfigurasi', [ConfigController::class, 'edit'])->name('admin.konfigurasi.edit');
+        Route::put('/konfigurasi', [ConfigController::class, 'update'])->name('admin.konfigurasi.update');
     });
 });

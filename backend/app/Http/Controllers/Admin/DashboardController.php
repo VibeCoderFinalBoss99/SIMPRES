@@ -30,7 +30,29 @@ class DashboardController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Grafik: jumlah pegawai yang hadir (hadir + terlambat) per hari, 7 hari terakhir.
+        $week = collect(range(6, 0))->map(function ($daysAgo) {
+            $day = now()->subDays($daysAgo);
+
+            return [
+                'label' => $day->translatedFormat('D'),
+                'count' => Attendance::whereDate('date', $day->toDateString())->whereIn('status', ['hadir', 'terlambat'])->count(),
+            ];
+        });
+
+        // Daftar "Perlu ditinjau": 4 pengajuan menunggu terbaru dari ketiga jenis.
+        $pending = collect([
+            ['izin', LeaveRequest::class], ['koreksi', AttendanceCorrection::class], ['tugas', FieldDuty::class],
+        ])->flatMap(fn ($t) => $t[1]::with('user')->where('status', 'menunggu')->latest()->take(4)->get()
+            ->map(fn ($item) => ['type' => $t[0], 'item' => $item]))
+            ->sortByDesc(fn ($row) => $row['item']->created_at)
+            ->take(4)
+            ->values();
+
         return view('admin.dashboard', [
+            'week' => $week,
+            'pending' => $pending,
+            'totalEmployees' => User::where('role', 'pegawai')->where('is_active', true)->count(),
             'today' => now(),
             'attendances' => $attendances,
             'notYet' => $notYet,

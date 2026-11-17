@@ -34,11 +34,14 @@ class AdminAuthTest extends TestCase
         $this->get('/admin')
             ->assertOk()
             ->assertSee('Dashboard')
-            ->assertSee('Pegawai')
-            ->assertSee('Pengajuan')
-            ->assertSee('Jadwal')
-            ->assertSee('Lokasi')
-            ->assertSee('Rekap')
+            // Menu sidebar mengikuti desain Figma Admin Web (A1-A8).
+            ->assertSee('Data Pegawai')
+            ->assertSee('Review & Persetujuan')
+            ->assertSee('Roster')
+            ->assertSee('Lokasi Kerja')
+            ->assertSee('Rekap & Ekspor')
+            ->assertSee('Audit Log')
+            ->assertSee('Konfigurasi')
             ->assertSee('Admin Puskesmas');
     }
 

@@ -1,16 +1,74 @@
 @extends('admin.layout')
 
-@section('title', 'Jadwal')
+@section('title', 'Roster')
+@section('subtitle', 'Jadwal shift dan libur per pegawai. Atur per bulan di bagian bawah halaman.')
+
+@php
+    // Roster mingguan: Senin s.d. Minggu, bisa digeser dengan ?minggu=YYYY-MM-DD.
+    $weekStart = \Illuminate\Support\Carbon::parse(request('minggu', now()->toDateString()))->startOfWeek();
+    $weekDays = collect(range(0, 6))->map(fn ($i) => $weekStart->copy()->addDays($i));
+    $weekRows = \App\Models\Schedule::with('shift')
+        ->whereBetween('date', [$weekStart->toDateString(), $weekStart->copy()->addDays(6)->toDateString()])
+        ->get()
+        ->groupBy('user_id');
+    $initials = fn ($name) => collect(explode(' ', $name))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->join('');
+    $chip = fn ($name) => match ($name) { 'Pagi' => 'green', 'Siang' => 'amber', 'Malam' => '', default => 'blue' };
+@endphp
 
 @section('content')
-    <div class="page-head">
-        <div>
-            <h1>Jadwal</h1>
-            <p>Atur shift atau libur pegawai per bulan.</p>
+    <div class="toolbar">
+        <a class="btn secondary" href="{{ route('admin.jadwal.index', ['minggu' => $weekStart->copy()->subWeek()->toDateString()]) }}" title="Minggu sebelumnya">@include('admin.icon', ['name' => 'chevron-left'])</a>
+        <span class="btn secondary" style="cursor:default">@include('admin.icon', ['name' => 'calendar']) {{ $weekStart->translatedFormat('d M') }} – {{ $weekStart->copy()->addDays(6)->translatedFormat('d M Y') }}</span>
+        <a class="btn secondary" href="{{ route('admin.jadwal.index', ['minggu' => $weekStart->copy()->addWeek()->toDateString()]) }}" title="Minggu berikutnya">@include('admin.icon', ['name' => 'chevron-right'])</a>
+        <span class="grow"></span>
+        <a class="btn secondary" href="{{ route('admin.shift.index') }}">Kelola shift</a>
+        <a class="btn" href="#atur-roster">@include('admin.icon', ['name' => 'plus']) Atur Roster</a>
+    </div>
+
+    <div class="card flush">
+        <div class="table-wrap">
+            <table class="roster">
+                <thead>
+                <tr>
+                    <th>Pegawai</th>
+                    @foreach ($weekDays as $day)
+                        <th class="{{ $day->isToday() ? 'today' : '' }}">{{ $day->translatedFormat('D d') }}</th>
+                    @endforeach
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($employees as $employee)
+                    @php $rows = ($weekRows[$employee->id] ?? collect())->keyBy(fn ($s) => $s->date->toDateString()); @endphp
+                    <tr>
+                        <td>
+                            <div class="person">
+                                <span class="avatar">{{ $initials($employee->name) }}</span>
+                                <span><strong>{{ $employee->name }}</strong><small>{{ $employee->unit }}</small></span>
+                            </div>
+                        </td>
+                        @foreach ($weekDays as $day)
+                            @php $s = $rows[$day->toDateString()] ?? null; @endphp
+                            <td>
+                                @if (! $s)
+                                    <span class="muted">-</span>
+                                @elseif ($s->is_day_off)
+                                    <span class="badge">Libur</span>
+                                @else
+                                    <span class="badge {{ $chip($s->shift?->name) }}">{{ $s->shift?->name }}</span>
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="legend">Keterangan:
+            <span class="badge green">Pagi</span><span class="badge amber">Siang</span><span class="badge">Malam / Libur</span><span class="badge blue">Shift lain</span>
         </div>
     </div>
 
-    @include('admin.schedules.tabs')
+    <h2 id="atur-roster" style="margin-top:26px">Atur roster per bulan</h2>
 
     <form method="GET" class="toolbar">
         <div class="field">

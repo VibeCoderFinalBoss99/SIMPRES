@@ -72,18 +72,35 @@ class RecapController extends Controller
 
         // Hari kerja terjadwal yang sudah lewat (sampai kemarin) tetapi tidak ada absensinya.
         $lastPastDay = min($end, now()->subDay()->toDateString());
+        // Tugas lapangan yang diterima admin dihitung hadir, karena pegawai bertugas resmi di luar gedung.
+        $acceptedDuty = fn ($query) => $query->from('field_duties as f')
+            ->whereColumn('f.user_id', 's.user_id')->whereColumn('f.date', 's.date')->where('f.status', 'diterima');
+
         $missing = DB::table('schedules as s')
             ->leftJoin('attendances as a', fn ($join) => $join->on('a.user_id', '=', 's.user_id')->on('a.date', '=', 's.date'))
             ->where('s.is_day_off', false)
             ->whereBetween('s.date', [$start, $lastPastDay])
             ->whereNull('a.id')
+            ->whereNotExists($acceptedDuty)
             ->groupBy('s.user_id')
             ->pluck(DB::raw('COUNT(*)'), 's.user_id');
 
-        return $rows->map(function ($row) use ($missing) {
+        // Hari tugas lapangan diterima yang tidak punya data absensi (supaya tidak dihitung dua kali).
+        $fieldDays = DB::table('field_duties as f')
+            ->leftJoin('attendances as a', fn ($join) => $join->on('a.user_id', '=', 'f.user_id')->on('a.date', '=', 'f.date'))
+            ->where('f.status', 'diterima')
+            ->whereBetween('f.date', [$start, $end])
+            ->whereNull('a.id')
+            ->groupBy('f.user_id')
+            ->selectRaw('f.user_id, COUNT(DISTINCT f.date) AS days')
+            ->pluck('days', 'user_id');
+
+        return $rows->map(function ($row) use ($missing, $fieldDays) {
             foreach (['hadir', 'terlambat', 'izin', 'alpa', 'late_minutes'] as $column) {
                 $row->$column = (int) $row->$column;
             }
+            $row->lapangan = (int) ($fieldDays[$row->id] ?? 0);
+            $row->hadir += $row->lapangan;
             $row->alpa += (int) ($missing[$row->id] ?? 0);
 
             return $row;
