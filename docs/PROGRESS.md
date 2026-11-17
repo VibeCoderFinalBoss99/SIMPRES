@@ -31,6 +31,7 @@ Branch kerja: `backend-setup` (belum di-push).
 | 9e. Persetujuan pengajuan | selesai | `Admin/SubmissionController`, `views/admin/submissions/index.blade.php`, `show.blade.php`, `tests/Feature/Admin/SubmissionTest.php` | 126 | Tab Izin/Koreksi/Tugas lapangan, filter status (bawaan: menunggu). Lampiran/foto dibuka lewat route admin berlogin. Keputusan memakai `SubmissionReviewer` yang sama dengan API (reviewed_by, reviewed_at, koreksi jam, notifikasi) |
 | 9f. Rekap | selesai | `Admin/RecapController`, `views/admin/recap.blade.php`, `tests/Feature/Admin/RecapTest.php` | 130 | Hadir/terlambat/izin/menit terlambat dari `attendances` (test membandingkan dengan query nomor 6 PANDUAN). Alpa = status alpa + hari kerja terjadwal yang sudah lewat tanpa absensi. CSV pemisah `;` dengan BOM UTF-8, NIP ditulis sebagai teks. Tampilan semua halaman admin dicek dengan screenshot Chrome headless |
 | 10. Dokumentasi API | selesai | `backend/API.md`, `backend/tests/api.http` | 130 | 32 endpoint di API.md = 32 di `route:list --path=api`. Setiap endpoint punya contoh request, respons sukses/gagal, kode status |
+| 11. Panduan deploy | selesai | `backend/DEPLOY.md` | 130 | Hanya dokumen, tidak menghubungi server. Checklist hosting di PANDUAN belum bisa dicek (butuh hosting) |
 
 ## Perlu keputusan
 
@@ -38,3 +39,8 @@ Branch kerja: `backend-setup` (belum di-push).
    (-5.02, 119.66) berada di Sulawesi Selatan yang memakai WITA (`Asia/Makassar`, UTC+8). Jam Windows komputer ini juga UTC+8.
    Dengan WIB, jam absen tercatat 1 jam lebih awal dan status terlambat ikut meleset 1 jam.
    Jika memang WITA: ubah `APP_TIMEZONE=Asia/Makassar` di `backend/.env` (dan `.env.example`), lalu `php artisan config:clear`.
+2. **Push notification FCM** belum dibuat (token sudah disimpan). Butuh kredensial Firebase dan kemungkinan package baru.
+3. **Tugas lapangan diterima** belum dihitung sebagai hadir di rekap. Perlu aturan: apakah tugas lapangan = hadir?
+4. **Desain Figma A1-A8** tidak bisa dibuka dari sesi ini; tampilan Admin Web dibuat sederhana sendiri.
+5. **Akun contoh** (password `simpres123`) harus diganti sebelum online (lihat DEPLOY.md langkah 5).
+6. Branch `backend-setup` belum di-merge ke `main` dan belum di-push.
