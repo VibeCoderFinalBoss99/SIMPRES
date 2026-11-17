@@ -316,3 +316,40 @@ Content-Type: application/json
 Authorization: Bearer {{tokenAdmin}}
 
 {"status": "ditolak", "admin_note": "Foto tidak jelas, mohon kirim ulang."}
+
+### =====================================================================
+### Langkah 8. Jadwal, notifikasi, lokasi kerja, token FCM
+### =====================================================================
+
+### 34. Jadwal per bulan beserta jam shift
+GET {{baseUrl}}/schedules?month=2026-11
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 35. Titik dan radius lokasi kerja (tanpa token -> 401)
+GET {{baseUrl}}/work-location
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 36. Notifikasi (terbaru dulu, ada unread_count)
+GET {{baseUrl}}/notifications
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 37. Tandai satu notifikasi sudah dibaca (milik orang lain -> 404)
+POST {{baseUrl}}/notifications/1/read
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 38. Tandai semua notifikasi sudah dibaca
+POST {{baseUrl}}/notifications/read-all
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 39. Simpan token FCM dari HP -> 201 (token sama dikirim ulang -> 200)
+POST {{baseUrl}}/device-token
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"fcm_token": "contoh-token-fcm-dari-firebase", "platform": "android"}

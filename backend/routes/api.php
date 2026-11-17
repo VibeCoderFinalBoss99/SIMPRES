@@ -6,8 +6,12 @@ use App\Http\Controllers\Api\Admin\LeaveReviewController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CorrectionController;
+use App\Http\Controllers\Api\DeviceTokenController;
 use App\Http\Controllers\Api\FieldDutyController;
 use App\Http\Controllers\Api\LeaveController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ScheduleController;
+use App\Http\Controllers\Api\WorkLocationController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,6 +35,14 @@ Route::middleware('auth:sanctum')->group(function () {
         ->only(['index', 'store', 'show', 'destroy'])
         ->parameters(['field-duties' => 'fieldDuty']);
     Route::get('/field-duties/{fieldDuty}/photo', [FieldDutyController::class, 'photo']);
+
+    Route::get('/schedules', [ScheduleController::class, 'index']);
+    Route::get('/work-location', [WorkLocationController::class, 'show']);
+    Route::post('/device-token', [DeviceTokenController::class, 'store']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->whereNumber('id');
 
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::patch('/leaves/{leave}', [LeaveReviewController::class, 'update']);

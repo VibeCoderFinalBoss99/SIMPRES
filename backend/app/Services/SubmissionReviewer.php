@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
+use App\Models\FieldDuty;
 use App\Models\LeaveRequest;
 use App\Models\Schedule;
 use App\Models\User;
+use App\Models\UserNotification;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -44,7 +46,37 @@ class SubmissionReviewer
             if ($status === 'diterima' && $submission instanceof AttendanceCorrection) {
                 $this->applyCorrection($submission);
             }
+
+            $this->notifyEmployee($submission, $status, $note);
         });
+    }
+
+    /** Notifikasi di aplikasi untuk pegawai pemilik pengajuan. */
+    private function notifyEmployee(Model $submission, string $status, ?string $note): void
+    {
+        [$type, $label, $detail] = match (true) {
+            $submission instanceof LeaveRequest => [
+                'izin', 'Izin',
+                'Pengajuan '.str_replace('_', ' ', $submission->type).' tanggal '.$submission->start_date->format('d/m/Y')
+                    .($submission->end_date->isSameDay($submission->start_date) ? '' : ' s.d. '.$submission->end_date->format('d/m/Y')),
+            ],
+            $submission instanceof AttendanceCorrection => [
+                'koreksi', 'Koreksi absensi',
+                'Koreksi absensi tanggal '.$submission->date->format('d/m/Y'),
+            ],
+            $submission instanceof FieldDuty => [
+                'tugas_lapangan', 'Tugas lapangan',
+                'Laporan tugas lapangan di '.$submission->location_name.' tanggal '.$submission->date->format('d/m/Y'),
+            ],
+        };
+
+        UserNotification::create([
+            'user_id' => $submission->user_id,
+            'type' => $type,
+            'title' => "{$label} {$status}",
+            'body' => "{$detail} {$status} oleh admin.".($note ? " Catatan: {$note}" : ''),
+            'data' => ['submission_type' => $type, 'submission_id' => $submission->id, 'status' => $status],
+        ]);
     }
 
     /**
