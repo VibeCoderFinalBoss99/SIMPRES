@@ -1,0 +1,49 @@
+### Contoh request API SIMPRES
+### Bisa dijalankan dengan ekstensi VS Code "REST Client" atau HTTP Client PhpStorm.
+### Jalankan server dulu dari folder backend:  php artisan serve
+### Akun contoh dari simpres.sql, password semua akun: simpres123
+
+@baseUrl = http://localhost:8000/api
+# Isi dengan nilai "token" dari respons login.
+@token = TEMPEL_TOKEN_DI_SINI
+
+### 1. Login berhasil -> 200, berisi token dan data pegawai
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "siti@simpres.test",
+    "password": "simpres123"
+}
+
+### 2. Login password salah -> 422 "Email atau password salah."
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "siti@simpres.test",
+    "password": "salah123"
+}
+
+### 3. Login tanpa isi -> 422 "Email wajib diisi. (dan 1 kesalahan lainnya)"
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### 4. Data pegawai yang sedang login -> 200
+GET {{baseUrl}}/me
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 5. /me tanpa token -> 401 "Anda belum login atau token tidak valid. Silakan login kembali."
+GET {{baseUrl}}/me
+Accept: application/json
+
+### 6. Logout (token jadi tidak berlaku) -> 200 "Logout berhasil."
+POST {{baseUrl}}/logout
+Accept: application/json
+Authorization: Bearer {{token}}

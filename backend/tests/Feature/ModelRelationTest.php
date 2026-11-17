@@ -24,8 +24,8 @@ class ModelRelationTest extends TestCase
     {
         $location = WorkLocation::create([
             'name' => 'UPTD Puskesmas Simbang',
-            'latitude' => -6.9,
-            'longitude' => 109.6,
+            'latitude' => -5.0222565,
+            'longitude' => 119.6653682,
             'radius_m' => 150,
         ]);
         $shift = Shift::create(['name' => 'Pagi', 'start_time' => '07:30:00', 'end_time' => '14:00:00', 'late_tolerance_min' => 10]);
@@ -35,7 +35,8 @@ class ModelRelationTest extends TestCase
         $this->assertTrue($user->workLocation->is($location));
         $this->assertTrue($location->users->first()->is($user));
         $this->assertSame(150, $location->fresh()->radius_m);
-        $this->assertSame('-6.9000000', $location->fresh()->latitude);
+        $this->assertSame('-5.0222565', $location->fresh()->latitude);
+        $this->assertSame('119.6653682', $location->fresh()->longitude);
         $this->assertTrue($user->schedules->first()->shift->is($shift));
         $this->assertSame('2026-11-17', $schedule->fresh()->date->format('Y-m-d'));
         $this->assertFalse($schedule->fresh()->is_day_off);
