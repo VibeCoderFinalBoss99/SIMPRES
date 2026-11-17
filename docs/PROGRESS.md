@@ -19,3 +19,4 @@ Branch kerja: `backend-setup` (belum di-push).
 | 1. Proyek Laravel | selesai | `backend/`, `.env`, `config/app.php` | 2 | Extension zip PHP diaktifkan di Laragon |
 | 2. Database dan Model | selesai | 10 model di `app/Models`, migration tanpa `users` | 7 | |
 | 3. Login API (Sanctum) | selesai | `Api/AuthController`, `LoginRequest`, `UserResource`, `tests/Feature/AuthTest.php`, `tests/api.http` | 15 | Pesan 401/403/404/405 dan validasi bahasa Indonesia |
+| 4. Aturan validasi absensi | selesai | `app/Services/AttendanceValidator.php`, `tests/Feature/AttendanceValidatorTest.php`, helper data uji di `tests/TestCase.php` | 32 | 17 test untuk 7 aturan. Menit terlambat dihitung dari jam masuk shift. Izin keluar tidak membebaskan check-in |
