@@ -123,7 +123,6 @@ Daftar endpoint REST API (`backend/routes/api.php`), semua kecuali login memakai
 | Admin Web | Dashboard, Review & Persetujuan, Data Pegawai, Lokasi Kerja, Roster, Rekap & Ekspor CSV, Audit Log, Konfigurasi |
 | Aplikasi Android | Login, check-in GPS, check-out geser, riwayat, jadwal, izin, koreksi, tugas lapangan, notifikasi, profil, antrean offline |
 | Tampilan | Logo dan ikon aplikasi, pilihan mode terang/gelap, intro animasi Lottie, onboarding 3 halaman, panduan awal (coach mark) saat pertama masuk Beranda |
-| Pengujian | 133 test otomatis backend lulus; alur aplikasi dan web diuji di emulator dan browser |
 
 ---
 
