@@ -215,6 +215,9 @@
     <string name="leave_form_izin_keluar_jam_kerja">Izin keluar jam kerja perlu dikonfirmasi atasan atau admin. Kamu akan mendapat notifikasi saat diputuskan.</string>
     <string name="leave_form_izin_sakit_lebih_dari">Izin sakit wajib melampirkan foto surat dokter. Absensi pada tanggal izin dicatat otomatis sebagai Izin.</string>
     <string name="leave_form_cuti">Cuti</string>
+    <string name="profile_koreksi">Koreksi Absensi</string>
+    <string name="profile_koreksi_sub">Betulkan jam masuk atau pulang hari ini</string>
+    <string name="msg_need_camera">Izin kamera diperlukan untuk memotret bukti kegiatan. Aktifkan di Pengaturan aplikasi.</string>
     <string name="leave_all_day">Sepanjang hari</string>
     <string name="leave_form_cuti_info">Cuti dikonfirmasi admin. Setelah diterima, absensi pada tanggal cuti dicatat otomatis sebagai Izin.</string>
     <string name="leave_form_lampiran">Lampiran</string>

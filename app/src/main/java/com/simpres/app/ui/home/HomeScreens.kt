@@ -348,6 +348,7 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
         view.onClick(R.id.rowPermission) { go(R.id.privacyFragment) }
         view.onClick(R.id.rowPrivacy) { go(R.id.privacyFragment) }
         view.onClick(R.id.rowSettings) { go(R.id.configFragment) }
+        view.onClick(R.id.rowCorrection) { go(R.id.correctionFragment) }
         view.onClick(R.id.rowAbout) { go(R.id.aboutFragment) }
         view.onClick(R.id.btnLogout) { showLogoutDialog() }
         view.onClick(R.id.tvShowGuide) {

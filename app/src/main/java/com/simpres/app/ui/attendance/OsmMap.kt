@@ -11,6 +11,11 @@ import android.widget.ImageView
 import com.simpres.app.R
 import com.simpres.app.data.WorkLocation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -31,10 +36,11 @@ import kotlin.math.tan
  */
 object OsmMap {
     private const val TILE = 256
-    private val client = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build()
-    private val cache = HashMap<String, Bitmap>()
+    private const val LAND = 0xFFF2EFE9.toInt() // warna dasar peta OSM, untuk tile yang gagal diunduh
+    private val client = OkHttpClient.Builder().callTimeout(20, TimeUnit.SECONDS).build()
+    private val cache = java.util.concurrent.ConcurrentHashMap<String, Bitmap>()
+    private val lock = Mutex() // satu gambar peta dibuat dalam satu waktu
 
-    /** Mengisi [image] di dalam kotak [box]. Jika gagal (tidak ada internet), gambar bawaan tetap tampil. */
     /** Satu piksel gambar peta = [scale] piksel layar (supaya tulisan peta tidak terlalu kecil). */
     fun scale(view: View) = max(1f, view.resources.displayMetrics.density / 1.5f)
 
@@ -42,6 +48,7 @@ object OsmMap {
      * [zoomDelta] menambah zoom otomatis. [panX]/[panY] menggeser pusat peta, dalam piksel gambar peta
      * pada zoom yang dipakai (hasil seret jari).
      */
+    /** Mengisi [image] di dalam kotak [box]. Jika gagal (tidak ada internet), gambar bawaan tetap tampil. */
     suspend fun show(
         box: View, image: ImageView, place: WorkLocation, me: Location?, color: Int,
         zoomDelta: Int = 0, panX: Double = 0.0, panY: Double = 0.0,
@@ -50,7 +57,9 @@ object OsmMap {
         val scale = scale(box)
         val w = (box.width / scale).toInt()
         val h = (box.height / scale).toInt()
-        val bmp = withContext(Dispatchers.IO) { runCatching { draw(w, h, place, me, color, zoomDelta, panX, panY) }.getOrNull() } ?: return
+        val bmp = lock.withLock {
+            withContext(Dispatchers.IO) { runCatching { draw(w, h, place, me, color, zoomDelta, panX, panY) }.getOrNull() }
+        } ?: return
         image.setImageBitmap(bmp)
         image.visibility = View.VISIBLE
         // Lingkaran dan pin hiasan dari desain disembunyikan, sudah diganti gambar peta asli.
@@ -60,9 +69,9 @@ object OsmMap {
         box.findViewById<View>(R.id.mapZoom)?.visibility = View.VISIBLE
     }
 
-    private fun draw(
+    private suspend fun draw(
         w: Int, h: Int, place: WorkLocation, me: Location?, color: Int, zoomDelta: Int, panX: Double, panY: Double,
-    ): Bitmap? {
+    ): Bitmap? = coroutineScope {
         val metersPerPx0 = 156543.03392 * cos(Math.toRadians(place.latitude))
         var span = place.radiusM * 2.6
         if (me != null) {
@@ -80,13 +89,18 @@ object OsmMap {
         val left = cx - w / 2.0
         val top = cy - h / 2.0
 
+        // Semua tile diunduh bersamaan supaya cepat di jaringan lambat.
+        val keys = (floor(left / TILE).toInt()..floor((left + w) / TILE).toInt()).flatMap { tx ->
+            (floor(top / TILE).toInt()..floor((top + h) / TILE).toInt()).map { ty -> tx to ty }
+        }
+        val tiles = keys.map { (tx, ty) -> async { tile(zoom, tx, ty) } }.awaitAll()
+        if (tiles.all { it == null }) return@coroutineScope null
+
         val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(out)
-        for (tx in floor(left / TILE).toInt()..floor((left + w) / TILE).toInt()) {
-            for (ty in floor(top / TILE).toInt()..floor((top + h) / TILE).toInt()) {
-                val tile = tile(zoom, tx, ty) ?: return null
-                canvas.drawBitmap(tile, (tx * TILE - left).toFloat(), (ty * TILE - top).toFloat(), null)
-            }
+        canvas.drawColor(LAND)
+        keys.zip(tiles).forEach { (key, tile) ->
+            if (tile != null) canvas.drawBitmap(tile, (key.first * TILE - left).toFloat(), (key.second * TILE - top).toFloat(), null)
         }
 
         val px = (p.first - left).toFloat()
@@ -101,7 +115,7 @@ object OsmMap {
         paint.pathEffect = null
         dot(canvas, px, py, color)
         if (m != null) dot(canvas, (m.first - left).toFloat(), (m.second - top).toFloat(), 0xFF1A73E8.toInt())
-        return out
+        out
     }
 
     private fun dot(canvas: Canvas, x: Float, y: Float, color: Int) {
@@ -121,6 +135,7 @@ object OsmMap {
         return x to y
     }
 
+    /** Satu tile, dicoba dua kali. Isi diunduh utuh dulu supaya tile yang terpotong tidak tampil kosong. */
     private fun tile(zoom: Int, x: Int, y: Int): Bitmap? {
         val key = "$zoom/$x/$y"
         cache[key]?.let { return it }
@@ -128,10 +143,15 @@ object OsmMap {
             .url("https://tile.openstreetmap.org/$key.png")
             .header("User-Agent", "SIMPRES/1.0 (aplikasi presensi Puskesmas Simbang)")
             .build()
-        val bmp = client.newCall(request).execute().use { res ->
-            if (!res.isSuccessful) null else res.body?.byteStream()?.let(BitmapFactory::decodeStream)
-        } ?: return null
-        cache[key] = bmp
-        return bmp
+        repeat(2) {
+            val bmp = runCatching {
+                client.newCall(request).execute().use { res ->
+                    if (!res.isSuccessful) null
+                    else res.body?.bytes()?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+                }
+            }.getOrNull()
+            if (bmp != null) return bmp.also { cache[key] = it }
+        }
+        return null
     }
 }

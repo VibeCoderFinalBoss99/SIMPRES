@@ -322,6 +322,14 @@ class FieldDutyFragment : BaseFragment(R.layout.fragment_field_duty) {
             view?.findViewById<TextView>(R.id.tvPhotoLabel)?.setText(R.string.photo_taken)
         }
     }
+    // Izin kamera diminta dulu. Tanpa izin ini Android menolak membuka kamera dan aplikasi tertutup.
+    private val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) openCamera() else toast(R.string.msg_need_camera)
+    }
+
+    private fun openCamera() {
+        runCatching { camera.launch(null) }.onFailure { toast(R.string.msg_need_camera) }
+    }
 
     override fun onReady(view: View) {
         val place = view.findViewById<TextView>(R.id.tvDutyType)
@@ -335,7 +343,11 @@ class FieldDutyFragment : BaseFragment(R.layout.fragment_field_duty) {
                 .setPositiveButton(android.R.string.ok) { _, _ -> if (input.text.isNotBlank()) place.text = input.text }
                 .setNegativeButton(android.R.string.cancel, null).show()
         }
-        view.onClick(R.id.boxPhoto) { camera.launch(null) }
+        view.onClick(R.id.boxPhoto) {
+            val granted = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED
+            if (granted) openCamera() else cameraPermission.launch(Manifest.permission.CAMERA)
+        }
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
         ) launch {
