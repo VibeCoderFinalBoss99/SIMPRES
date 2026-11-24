@@ -26,7 +26,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             isAppearanceLightNavigationBars = !night
         }
         Notifier.createChannel(this)
-        if (Session.isLoggedIn) Background.schedule(this)
+        if (Session.isLoggedIn) {
+            Background.schedule(this)
+            com.simpres.app.data.Push.register(this)
+        }
         openNotificationsIfAsked(intent)
     }
 

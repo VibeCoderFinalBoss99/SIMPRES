@@ -5,6 +5,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+// Firebase (notifikasi seketika) aktif jika app/google-services.json ada. File itu tidak di-upload ke repo,
+// jadi tanpa file itu proyek tetap bisa di-build; notifikasi memakai pengecekan berkala (WorkManager).
+if (file("google-services.json").exists()) apply(plugin = "com.google.gms.google-services")
+
 // API address. Emulator default: 10.0.2.2 is the laptop running `php artisan serve`.
 // For a real phone or the hosting server, set simpres.apiUrl in local.properties,
 // for example: simpres.apiUrl=https://api.namadomain.com/api/
@@ -74,4 +78,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
     // Sinkronisasi antrean offline dan notifikasi keputusan admin di latar belakang.
     implementation("androidx.work:work-runtime-ktx:2.9.1")
+    // Notifikasi seketika dari server (Firebase Cloud Messaging).
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-messaging")
 }

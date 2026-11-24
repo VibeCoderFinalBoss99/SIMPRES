@@ -382,6 +382,7 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
                 call { logout() }
                 Session.clear()
                 com.simpres.app.data.Background.cancel(requireContext())
+                com.simpres.app.data.Push.unregister(requireContext())
                 reset(R.id.loginFragment, R.id.homeFragment)
             }
         }

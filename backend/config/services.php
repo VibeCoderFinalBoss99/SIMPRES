@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    // Firebase Cloud Messaging: file kunci akun layanan (JSON) dari Firebase Console, jangan di-upload ke repo.
+    'fcm' => [
+        'credentials' => env('FCM_CREDENTIALS', storage_path('app/private/firebase.json')),
+    ],
+
 ];

@@ -169,6 +169,7 @@ interface SimpresApi {
 
     @GET("notifications") suspend fun notifications(): ListResponse<AppNotification>
     @POST("notifications/read-all") suspend fun readAllNotifications(): JsonObject
+    @POST("device-token") suspend fun saveDeviceToken(@Body body: Map<String, String>): JsonObject
 }
 
 object ApiClient {

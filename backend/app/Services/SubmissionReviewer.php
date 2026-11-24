@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
  */
 class SubmissionReviewer
 {
-    public function __construct(private AttendanceValidator $validator) {}
+    public function __construct(private AttendanceValidator $validator, private PushNotifier $push) {}
 
     public function review(Model $submission, User $admin, string $status, ?string $note): void
     {
@@ -31,7 +31,7 @@ class SubmissionReviewer
             ]);
         }
 
-        DB::transaction(function () use ($submission, $admin, $status, $note) {
+        $notification = DB::transaction(function () use ($submission, $admin, $status, $note) {
             $submission->update([
                 'status' => $status,
                 'admin_note' => $note,
@@ -47,12 +47,15 @@ class SubmissionReviewer
                 $this->applyCorrection($submission);
             }
 
-            $this->notifyEmployee($submission, $status, $note);
+            return $this->notifyEmployee($submission, $status, $note);
         });
+
+        // Dikirim setelah data tersimpan; jika gagal, HP tetap mengambilnya lewat pengecekan berkala.
+        $this->push->send($notification);
     }
 
     /** Notifikasi di aplikasi untuk pegawai pemilik pengajuan. */
-    private function notifyEmployee(Model $submission, string $status, ?string $note): void
+    private function notifyEmployee(Model $submission, string $status, ?string $note): UserNotification
     {
         [$type, $label, $detail] = match (true) {
             $submission instanceof LeaveRequest => [
@@ -70,7 +73,7 @@ class SubmissionReviewer
             ],
         };
 
-        UserNotification::create([
+        return UserNotification::create([
             'user_id' => $submission->user_id,
             'type' => $type,
             'title' => "{$label} {$status}",

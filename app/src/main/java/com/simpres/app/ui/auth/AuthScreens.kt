@@ -184,6 +184,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
                     is ApiResult.Ok -> {
                         Session.save(r.value.token, r.value.user)
                         com.simpres.app.data.Background.schedule(requireContext())
+                        com.simpres.app.data.Push.register(requireContext())
                         if (r.value.user.role == "admin") toast(getString(R.string.login_admin_note))
                         reset(R.id.homeFragment, R.id.loginFragment)
                         return@launch

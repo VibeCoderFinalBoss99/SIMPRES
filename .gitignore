@@ -9,3 +9,6 @@
 .externalNativeBuild/
 .cxx/
 .kotlin/
+
+# Konfigurasi Firebase (jangan di-upload ke repo publik)
+/app/google-services.json

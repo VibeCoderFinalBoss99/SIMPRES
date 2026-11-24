@@ -90,12 +90,20 @@ object Notifier {
         val items = result.value.data
         val newest = items.maxOfOrNull { it.id } ?: 0L
         if (last >= 0) {
-            items.filter { it.id > last && !it.isRead }.sortedBy { it.id }.forEach { show(context, it) }
+            items.filter { it.id > last && !it.isRead }.sortedBy { it.id }.forEach { show(context, it.id, it.title, it.body) }
         }
         prefs.edit().putLong(key, maxOf(last, newest)).apply()
     }
 
-    private fun show(context: Context, n: AppNotification) {
+    /** Notifikasi yang datang lewat Firebase. Dicatat supaya pengecekan berkala tidak menampilkannya lagi. */
+    fun showPushed(context: Context, id: Long, title: String, body: String) {
+        show(context, id, title, body)
+        val prefs = context.getSharedPreferences("simpres_notifier", Context.MODE_PRIVATE)
+        val key = "terakhir_${Session.user?.id}"
+        prefs.edit().putLong(key, maxOf(prefs.getLong(key, -1L), id)).apply()
+    }
+
+    private fun show(context: Context, id: Long, title: String, body: String) {
         val allowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
         if (!allowed) return
@@ -103,18 +111,18 @@ object Notifier {
         val open = Intent(context, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             .putExtra(EXTRA_OPEN, true)
-        val tap = PendingIntent.getActivity(context, n.id.toInt(), open,
+        val tap = PendingIntent.getActivity(context, id.toInt(), open,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_bell)
             .setColor(ContextCompat.getColor(context, R.color.primary))
-            .setContentTitle(n.title)
-            .setContentText(n.body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(n.body))
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(tap)
             .setAutoCancel(true)
             .build()
-        NotificationManagerCompat.from(context).notify(n.id.toInt(), notification)
+        NotificationManagerCompat.from(context).notify(id.toInt(), notification)
     }
 }
