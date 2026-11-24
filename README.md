@@ -186,26 +186,198 @@ Syarat di HP: izin notifikasi (diminta saat pertama membuka Beranda di Android 1
 - `backend/storage/app/private/firebase.json`: kunci akun layanan dari Firebase Console > Project settings >
   Service accounts > Generate new private key. Lokasi lain bisa diatur lewat `FCM_CREDENTIALS` di `.env`.
 
-### Video pengujian per peran
+### Pengujian per peran
 
-Setiap peran diuji terpisah dan direkam video. Setiap langkah dicek otomatis dari layar.
-Total **72 dari 72 langkah lulus**. Fitur yang diuji dan gambar untuk setiap langkah per peran ada di
-[docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md). Klik GIF untuk membuka video lengkapnya.
+Setiap peran diuji terpisah dengan server dan data asli, direkam video, dan setiap langkah difoto dari layar aplikasi
+atau Admin Web. Semua langkah lulus. Rincian hasil per langkah ada di [docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md).
 
-| Pegawai non-shift | Pegawai shift | Petugas lapangan |
+#### Admin (Admin Web)
+
+Admin Puskesmas memakai Admin Web di browser untuk mengelola pegawai, lokasi, dan roster, serta memutuskan pengajuan yang dikirim pegawai dari aplikasi.
+
+**Fitur yang diuji:**
+
+- Login admin (sandi salah dan akun pegawai ditolak), keluar
+- Dashboard absensi hari ini
+- Tambah pegawai, email ganda ditolak, cari pegawai, nonaktifkan akun
+- Lokasi kerja dan radius 150 m
+- Roster jadwal shift
+- Terima dan tolak izin, koreksi, tugas lapangan (dengan foto dan GPS)
+- Rekap bulanan dan ekspor CSV
+- Audit log
+- Konfigurasi sistem
+
+▶️ Video pengujian: [4_admin_web.mp4](docs/videos/4_admin_web.mp4)  
+
+| **A1-1** Buka /admin tanpa login diarahkan ke halaman login | **A1-2** Sandi salah ditolak dengan pesan | **A1-3** Akun pegawai tidak bisa masuk Admin Web |
 |---|---|---|
-| <a href="docs/videos/1_pegawai_nonshift.mp4"><img src="docs/videos/1_pegawai_nonshift.gif" width="180" alt="Video pegawai non-shift"></a> | <a href="docs/videos/2_pegawai_shift.mp4"><img src="docs/videos/2_pegawai_shift.gif" width="180" alt="Video pegawai shift"></a> | <a href="docs/videos/3_petugas_lapangan.mp4"><img src="docs/videos/3_petugas_lapangan.gif" width="180" alt="Video petugas lapangan"></a> |
-| Login, jadwal, check-in dan terlambat, check-in ganda, riwayat, izin keluar, check-out, notifikasi, profil (17/17) | Shift Malam, jadwal bergantian, luar radius dengan peta, koreksi absensi, cuti, check-out offline (12/12) | Luar radius, mode tugas lapangan, izin kamera dan foto, riwayat lapangan, check-in (10/10) |
+| <img src="docs/pengujian/admin/A1-1.jpg" width="300" alt="A1-1"> | <img src="docs/pengujian/admin/A1-2.jpg" width="300" alt="A1-2"> | <img src="docs/pengujian/admin/A1-3.jpg" width="300" alt="A1-3"> |
 
-| Notifikasi seketika (Firebase) | Notifikasi cadangan dan sinkronisasi | Integrasi aplikasi ↔ web |
+| **A2-2** Dashboard: absensi hari ini dari aplikasi tampil | **A3-1** Pegawai baru tersimpan dan tampil di daftar | **A3-2** Email ganda ditolak dengan pesan error |
 |---|---|---|
-| <a href="docs/videos/7_notifikasi_firebase.mp4"><img src="docs/videos/7_notifikasi_firebase.gif" width="180" alt="Video notifikasi Firebase"></a> | <a href="docs/videos/6_notifikasi_dan_sinkronisasi.mp4"><img src="docs/videos/6_notifikasi_dan_sinkronisasi.gif" width="180" alt="Video notifikasi"></a> | <a href="docs/videos/5_integrasi_aplikasi_web.mp4"><img src="docs/videos/5_integrasi_aplikasi_web.gif" width="180" alt="Video integrasi"></a> |
-| Notifikasi muncul 1 detik setelah admin memutuskan, diketuk membuka halaman Notifikasi (2/2) | Notifikasi lewat pengecekan berkala, antrean offline terkirim di latar belakang (5/5) | Keputusan admin tampil di HP setiap pegawai (5/5) |
+| <img src="docs/pengujian/admin/A2-2.jpg" width="300" alt="A2-2"> | <img src="docs/pengujian/admin/A3-1.jpg" width="300" alt="A3-1"> | <img src="docs/pengujian/admin/A3-2.jpg" width="300" alt="A3-2"> |
 
-| Admin Web |
+| **A3-4** Pencarian hanya menampilkan pegawai yang dicari | **A3-6** Akun nonaktif ditolak saat login di aplikasi: Akun Anda nonaktif. Hubungi admin Puskesmas. | **A4-1** Titik Puskesmas dan radius 150 m tampil dengan peta |
+|---|---|---|
+| <img src="docs/pengujian/admin/A3-4.jpg" width="300" alt="A3-4"> | <img src="docs/pengujian/admin/A3-6.jpg" width="300" alt="A3-6"> | <img src="docs/pengujian/admin/A4-1.jpg" width="300" alt="A4-1"> |
+
+| **A5-3** Roster: pegawai non-shift Pagi, pegawai shift bergantian | **A6-1** Daftar pengajuan dari aplikasi dengan status Menunggu Konfirmasi | **A6-3** Izin berstatus Diterima, catatan tersimpan |
+|---|---|---|
+| <img src="docs/pengujian/admin/A5-3.jpg" width="300" alt="A5-3"> | <img src="docs/pengujian/admin/A6-1.jpg" width="300" alt="A6-1"> | <img src="docs/pengujian/admin/A6-3.jpg" width="300" alt="A6-3"> |
+
+| **A6-4** Koreksi berstatus Ditolak dengan catatan | **A6-5a** Detail tugas lapangan dengan foto dan koordinat GPS | **A6-5** Tugas lapangan berstatus Diterima |
+|---|---|---|
+| <img src="docs/pengujian/admin/A6-4.jpg" width="300" alt="A6-4"> | <img src="docs/pengujian/admin/A6-5a.jpg" width="300" alt="A6-5a"> | <img src="docs/pengujian/admin/A6-5.jpg" width="300" alt="A6-5"> |
+
+| **A6-6** Pengajuan yang sudah diputuskan tidak punya tombol Terima/Tolak | **A7-1** Rekap per pegawai tampil | **A8-1** Keputusan tadi tercatat di audit log |
+|---|---|---|
+| <img src="docs/pengujian/admin/A6-6.jpg" width="300" alt="A6-6"> | <img src="docs/pengujian/admin/A7-1.jpg" width="300" alt="A7-1"> | <img src="docs/pengujian/admin/A8-1.jpg" width="300" alt="A8-1"> |
+
+| **A9-1** Pengaturan sistem tampil per kelompok | **A1-5** Setelah keluar, Dashboard tidak bisa dibuka lagi |
+|---|---|
+| <img src="docs/pengujian/admin/A9-1.jpg" width="300" alt="A9-1"> | <img src="docs/pengujian/admin/A1-5.jpg" width="300" alt="A1-5"> |
+
+Dicek langsung ke server (tanpa layar): **A3-1b** Akun baru bisa login di aplikasi (API); **A7-3** File CSV rekap terunduh dan berisi data pegawai.
+
+#### Pegawai non-shift (aplikasi Android)
+
+Pegawai dengan jam kerja tetap, shift Pagi 07.30–14.00 setiap Senin–Sabtu. Pengujian dimulai dari aplikasi yang baru dipasang.
+
+**Fitur yang diuji:**
+
+- Intro, onboarding, izin notifikasi, dan panduan awal
+- Login (sandi salah ditolak)
+- Jadwal kerja non-shift
+- Check-in GPS di Puskesmas, check-in ganda ditolak
+- Riwayat absensi
+- Izin keluar jam kerja (tanpa alasan ditolak, lalu terkirim)
+- Check-out dengan slider
+- Notifikasi keputusan admin
+- Profil dan menu Koreksi Absensi
+- Keluar dari akun
+
+▶️ Video pengujian: [1_pegawai_nonshift.mp4](docs/videos/1_pegawai_nonshift.mp4)  
+
+| **B-1** Intro dan onboarding tampil | **B-4** Login sandi salah ditolak | **N-0** Izin notifikasi diminta setelah login | **B-7** Panduan awal muncul pertama kali |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_nonshift/B-1.jpg" width="170" alt="B-1"> | <img src="docs/pengujian/pegawai_nonshift/B-4.jpg" width="170" alt="B-4"> | <img src="docs/pengujian/pegawai_nonshift/N-0.jpg" width="170" alt="N-0"> | <img src="docs/pengujian/pegawai_nonshift/B-7.jpg" width="170" alt="B-7"> |
+
+| **C1-0** Beranda: shift Pagi, belum check-in | **C1-1** Jadwal non-shift: Pagi setiap hari kerja, Minggu libur | **C2-3** Check-in di dalam radius diterima, jam dan jarak tercatat | **C2-5a** Beranda: jam check-in terisi, slider check-out muncul |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_nonshift/C1-0.jpg" width="170" alt="C1-0"> | <img src="docs/pengujian/pegawai_nonshift/C1-1.jpg" width="170" alt="C1-1"> | <img src="docs/pengujian/pegawai_nonshift/C2-3.jpg" width="170" alt="C2-3"> | <img src="docs/pengujian/pegawai_nonshift/C2-5a.jpg" width="170" alt="C2-5a"> |
+
+| **C2-4** Check-in kedua ditolak | **C4-1** Riwayat menampilkan absensi hari ini | **C3-0** Daftar izin tampil (izin sakit diterima) | **C3-4b** Tanpa alasan tidak terkirim, tetap di formulir |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_nonshift/C2-4.jpg" width="170" alt="C2-4"> | <img src="docs/pengujian/pegawai_nonshift/C4-1.jpg" width="170" alt="C4-1"> | <img src="docs/pengujian/pegawai_nonshift/C3-0.jpg" width="170" alt="C3-0"> | <img src="docs/pengujian/pegawai_nonshift/C3-4b.jpg" width="170" alt="C3-4b"> |
+
+| **C3-4** Izin keluar terkirim, status Menunggu Konfirmasi | **C2-5** Check-out diterima | **B-13** Notifikasi keputusan admin tampil | **B-15** Profil sesuai data admin (nama, NIP, unit) |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_nonshift/C3-4.jpg" width="170" alt="C3-4"> | <img src="docs/pengujian/pegawai_nonshift/C2-5.jpg" width="170" alt="C2-5"> | <img src="docs/pengujian/pegawai_nonshift/B-13.jpg" width="170" alt="B-13"> | <img src="docs/pengujian/pegawai_nonshift/B-15.jpg" width="170" alt="B-15"> |
+
+| **B-15b** Menu Koreksi Absensi ada di Profil | **B-19** Kembali ke halaman login |
+|---|---|
+| <img src="docs/pengujian/pegawai_nonshift/B-15b.jpg" width="170" alt="B-15b"> | <img src="docs/pengujian/pegawai_nonshift/B-19.jpg" width="170" alt="B-19"> |
+
+#### Pegawai shift (aplikasi Android)
+
+Pegawai dengan jam kerja bergantian (Pagi, Siang, Malam). Hari pengujian: shift Malam 21.00–07.00.
+
+**Fitur yang diuji:**
+
+- Beranda dengan shift Malam
+- Jadwal shift bergantian
+- Check-in dari luar radius ditolak, peta bisa di-zoom dan digeser
+- Check-in tepat waktu
+- Koreksi absensi
+- Pengajuan cuti
+- Check-out saat tidak ada internet, lalu terkirim otomatis
+- Keluar dari akun
+
+▶️ Video pengujian: [2_pegawai_shift.mp4](docs/videos/2_pegawai_shift.mp4)  
+
+| **D2-1** Beranda: shift hari ini Malam 21.00-07.00, belum check-in | **D1-1** Jadwal shift: Pagi dan Siang bergantian, Minggu libur | **D2-4** Ditolak: di luar radius 150 m, jarak tampil di peta | **P8** Peta asli bisa di-zoom dan digeser |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_shift/D2-1.jpg" width="170" alt="D2-1"> | <img src="docs/pengujian/pegawai_shift/D1-1.jpg" width="170" alt="D1-1"> | <img src="docs/pengujian/pegawai_shift/D2-4.jpg" width="170" alt="D2-4"> | <img src="docs/pengujian/pegawai_shift/P8.jpg" width="170" alt="P8"> |
+
+| **D2-2** Check-in diterima, tepat waktu sebelum shift Malam 21.00 | **D3-0** Halaman Koreksi Absensi bisa dibuka | **D3-1** Koreksi terkirim, kembali ke Beranda | **D4-1** Cuti terkirim, status Menunggu Konfirmasi |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_shift/D2-2.jpg" width="170" alt="D2-2"> | <img src="docs/pengujian/pegawai_shift/D3-0.jpg" width="170" alt="D3-0"> | <img src="docs/pengujian/pegawai_shift/D3-1.jpg" width="170" alt="D3-1"> | <img src="docs/pengujian/pegawai_shift/D4-1.jpg" width="170" alt="D4-1"> |
+
+| **D4-1b** Cuti muncul di daftar izin | **F-1** Check-out disimpan di perangkat (offline) | **F-3** Antrean terkirim otomatis, check-out tercatat | **B-19** Kembali ke halaman login |
+|---|---|---|---|
+| <img src="docs/pengujian/pegawai_shift/D4-1b.jpg" width="170" alt="D4-1b"> | <img src="docs/pengujian/pegawai_shift/F-1.jpg" width="170" alt="F-1"> | <img src="docs/pengujian/pegawai_shift/F-3.jpg" width="170" alt="F-3"> | <img src="docs/pengujian/pegawai_shift/B-19.jpg" width="170" alt="B-19"> |
+
+#### Petugas lapangan (aplikasi Android)
+
+Pegawai yang sering bertugas di luar gedung (posyandu, kunjungan rumah). Bukti kerja di luar memakai Tugas Lapangan.
+
+**Fitur yang diuji:**
+
+- Check-in dari posyandu ditolak dan ditawari Mode Tugas Lapangan
+- Formulir tugas lapangan dengan GPS asli
+- Kirim tanpa nama lokasi ditolak
+- Izin kamera dan foto bukti kegiatan
+- Tugas lapangan tampil di Riwayat > Lapangan
+- Check-in setelah kembali ke Puskesmas
+- Keluar dari akun
+
+▶️ Video pengujian: [3_petugas_lapangan.mp4](docs/videos/3_petugas_lapangan.mp4)  
+
+| **E1-1** Login berhasil, profil dan shift Pagi sesuai data admin | **E3-1** Check-in ditolak di luar radius, ditawari Mode Tugas Lapangan | **E2-0** Formulir tugas lapangan memakai GPS asli (bukan lokasi contoh) | **E2-3** Tanpa nama lokasi tidak terkirim, tetap di formulir |
+|---|---|---|---|
+| <img src="docs/pengujian/petugas_lapangan/E1-1.jpg" width="170" alt="E1-1"> | <img src="docs/pengujian/petugas_lapangan/E3-1.jpg" width="170" alt="E3-1"> | <img src="docs/pengujian/petugas_lapangan/E2-0.jpg" width="170" alt="E2-0"> | <img src="docs/pengujian/petugas_lapangan/E2-3.jpg" width="170" alt="E2-3"> |
+
+| **E2-2** Izin kamera diminta dulu | **E2-2b** Foto kegiatan dari kamera terpasang | **E2-1** Tugas lapangan terkirim, kembali ke Beranda | **E2-1b** Tugas lapangan baru tampil dengan status Menunggu Konfirmasi |
+|---|---|---|---|
+| <img src="docs/pengujian/petugas_lapangan/E2-2.jpg" width="170" alt="E2-2"> | <img src="docs/pengujian/petugas_lapangan/E2-2b.jpg" width="170" alt="E2-2b"> | <img src="docs/pengujian/petugas_lapangan/E2-1.jpg" width="170" alt="E2-1"> | <img src="docs/pengujian/petugas_lapangan/E2-1b.jpg" width="170" alt="E2-1b"> |
+
+| **E1-2** Check-in di Puskesmas diterima | **B-19** Kembali ke halaman login |
+|---|---|
+| <img src="docs/pengujian/petugas_lapangan/E1-2.jpg" width="170" alt="E1-2"> | <img src="docs/pengujian/petugas_lapangan/B-19.jpg" width="170" alt="B-19"> |
+
+#### Notifikasi HP dan sinkronisasi otomatis
+
+Keputusan admin langsung muncul sebagai notifikasi di HP walaupun aplikasi ditutup (Firebase Cloud Messaging), dengan cadangan pengecekan berkala. Absensi yang tersimpan saat offline terkirim di latar belakang.
+
+**Fitur yang diuji:**
+
+- Notifikasi seketika setelah admin memutuskan (Firebase)
+- Notifikasi diketuk membuka halaman Notifikasi
+- Check-out saat tidak ada internet disimpan di antrean HP
+- Antrean terkirim di latar belakang tanpa membuka aplikasi
+
+▶️ Video notifikasi seketika (Firebase): [7_notifikasi_firebase.mp4](docs/videos/7_notifikasi_firebase.mp4)  
+▶️ Video notifikasi cadangan dan sinkronisasi: [6_notifikasi_dan_sinkronisasi.mp4](docs/videos/6_notifikasi_dan_sinkronisasi.mp4)  
+
+| **N-4** Notifikasi muncul 3 detik setelah admin memutuskan | **N-5** Halaman Notifikasi terbuka | **N-1** Notifikasi 'Izin ditolak' beserta catatan admin muncul di HP | **N-2** Notifikasi diketuk langsung membuka halaman Notifikasi |
+|---|---|---|---|
+| <img src="docs/pengujian/notifikasi/N-4.jpg" width="170" alt="N-4"> | <img src="docs/pengujian/notifikasi/N-5.jpg" width="170" alt="N-5"> | <img src="docs/pengujian/notifikasi/N-1.jpg" width="170" alt="N-1"> | <img src="docs/pengujian/notifikasi/N-2.jpg" width="170" alt="N-2"> |
+
+| **F-1** Check-out disimpan di antrean HP | **F-3** Beranda: jam check-out terisi, status Semua terkirim |
+|---|---|
+| <img src="docs/pengujian/notifikasi/F-1.jpg" width="170" alt="F-1"> | <img src="docs/pengujian/notifikasi/F-3.jpg" width="170" alt="F-3"> |
+
+Dicek langsung ke server (tanpa layar): **F-4** Antrean terkirim di latar belakang tanpa membuka aplikasi.
+
+#### Integrasi aplikasi dan Admin Web
+
+Keputusan admin di Admin Web dicek dari HP setiap pegawai.
+
+**Fitur yang diuji:**
+
+- Notifikasi dan status izin pegawai non-shift
+- Notifikasi koreksi ditolak dan cuti diterima pegawai shift
+- Status tugas lapangan petugas lapangan
+
+▶️ Video pengujian: [5_integrasi_aplikasi_web.mp4](docs/videos/5_integrasi_aplikasi_web.mp4)  
+
+| **G-7** Pegawai non-shift menerima notifikasi izin keluar diterima beserta catatan admin | **G-7b** Status izin keluar pegawai non-shift berubah menjadi Diterima | **D3-4** Pegawai shift menerima notifikasi koreksi ditolak dengan catatan admin | **D4-2** Pegawai shift menerima notifikasi cuti diterima |
+|---|---|---|---|
+| <img src="docs/pengujian/integrasi/G-7.jpg" width="170" alt="G-7"> | <img src="docs/pengujian/integrasi/G-7b.jpg" width="170" alt="G-7b"> | <img src="docs/pengujian/integrasi/D3-4.jpg" width="170" alt="D3-4"> | <img src="docs/pengujian/integrasi/D4-2.jpg" width="170" alt="D4-2"> |
+
+| **E2-4** Tugas lapangan petugas berstatus Diterima |
 |---|
-| <a href="docs/videos/4_admin_web.mp4"><img src="docs/videos/4_admin_web.gif" width="480" alt="Video Admin Web"></a> |
-| Login, dashboard, kelola pegawai, lokasi, roster, terima/tolak pengajuan, rekap CSV, audit log, konfigurasi (21/21) |
+| <img src="docs/pengujian/integrasi/E2-4.jpg" width="170" alt="E2-4"> |
 
 ### Bug yang ditemukan dan diperbaiki
 

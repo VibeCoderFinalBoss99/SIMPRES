@@ -82,8 +82,8 @@ Minggu pengujian fitur dan perbaikan bug.
 
 ### Pengujian
 - 141 test otomatis backend lulus.
-- Pengujian per peran direkam video (`docs/videos/`): admin 21/21, pegawai non-shift 17/17, pegawai shift 12/12,
-  petugas lapangan 10/10, notifikasi Firebase 2/2, notifikasi cadangan dan sinkronisasi 5/5, integrasi 5/5. Total 72/72 (`docs/HASIL_PENGUJIAN.md`).
+- Pengujian per peran (admin, pegawai non-shift, pegawai shift, petugas lapangan), notifikasi, dan integrasi direkam video
+  dan difoto per langkah (`docs/videos/`, `docs/pengujian/`, `docs/HASIL_PENGUJIAN.md`). Semua langkah lulus.
 - Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
 
 ### Belum dikerjakan (lanjut ke 1.0.0)
