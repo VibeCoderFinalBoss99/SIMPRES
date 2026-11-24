@@ -62,7 +62,8 @@ Minggu pengujian fitur dan perbaikan bug.
 - Peta OpenStreetMap di halaman check-in dan di luar radius: radius 150 m, titik Puskesmas, posisi pegawai, bisa digeser dan di-zoom.
 - Pilihan Cuti di formulir izin aplikasi (rentang tanggal, lampiran opsional).
 - APK rilis bertanda tangan di GitHub Releases, dengan QR unduhan (`docs/qr_download_simpres.png`).
-- Notifikasi HP untuk keputusan admin (izin, koreksi, tugas lapangan), tetap muncul walaupun aplikasi ditutup.
+- Notifikasi HP seketika lewat Firebase Cloud Messaging untuk keputusan admin (izin, koreksi, tugas lapangan),
+  dengan cadangan pengecekan berkala (WorkManager). Server: `PushNotifier` (FCM HTTP v1, tanpa package tambahan).
 - Sinkronisasi otomatis antrean offline di latar belakang dengan WorkManager (`data/Background.kt`).
 - Menu Koreksi Absensi di Profil.
 - Skema fitur dan pengujian lengkap per peran (`docs/SKEMA_PENGUJIAN.md`) dan screenshot baru (`docs/screenshots/v0.3/`).
@@ -80,13 +81,13 @@ Minggu pengujian fitur dan perbaikan bug.
 - Daftar lengkap 17 bug beserta penyebab dan perbaikannya: `docs/BUG_DAN_PERBAIKAN.md`.
 
 ### Pengujian
-- 138 test otomatis backend lulus.
+- 141 test otomatis backend lulus.
 - Pengujian per peran direkam video (`docs/videos/`): admin 21/21, pegawai non-shift 17/17, pegawai shift 12/12,
-  petugas lapangan 10/10, notifikasi dan sinkronisasi 5/5, integrasi 5/5. Total 70/70 (`docs/HASIL_PENGUJIAN.md`).
+  petugas lapangan 10/10, notifikasi Firebase 2/2, notifikasi cadangan dan sinkronisasi 5/5, integrasi 5/5. Total 72/72 (`docs/HASIL_PENGUJIAN.md`).
 - Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
 
 ### Belum dikerjakan (lanjut ke 1.0.0)
-- Firebase Cloud Messaging (notifikasi seketika), CameraX, token di Android Keystore, penguncian perangkat.
+- CameraX, token di Android Keystore, penguncian perangkat.
 - Jam absensi offline sesuai jam di HP. Hosting permanen dengan HTTPS.
 - Token login terenkripsi dengan Android Keystore.
 - Pengujian bersama pegawai Puskesmas dan evaluasi mitra.

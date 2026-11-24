@@ -134,7 +134,7 @@ peran, lalu **memperbaiki bug** yang ditemukan.
 ### Skema pengujian
 
 Semua fitur per peran (admin, pegawai non-shift, pegawai shift, petugas lapangan), cara pakai, dan langkah pengujiannya
-ada di [docs/SKEMA_PENGUJIAN.md](docs/SKEMA_PENGUJIAN.md): 129 langkah uji untuk Admin Web, aplikasi, mode offline, notifikasi,
+ada di [docs/SKEMA_PENGUJIAN.md](docs/SKEMA_PENGUJIAN.md): 130 langkah uji untuk Admin Web, aplikasi, mode offline, notifikasi,
 alur aplikasi ke website, keamanan, dan test otomatis. Hasil pengujian per pengguna ada di
 [docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md).
 
@@ -152,49 +152,44 @@ Scan QR atau buka [halaman rilis](https://github.com/VibeCoderFinalBoss99/SIMPRE
 | Peta asli di check-in | Peta OpenStreetMap dengan radius 150 m, titik Puskesmas, dan posisi pegawai. Bisa digeser dan di-zoom |
 | Cuti di aplikasi | Pilihan Cuti di formulir izin, dengan rentang tanggal dan lampiran opsional |
 | Menu Koreksi Absensi | Halaman koreksi absensi bisa dibuka dari Profil |
-| Notifikasi HP | Keputusan admin muncul di HP walaupun aplikasi ditutup |
+| Notifikasi HP (Firebase) | Keputusan admin muncul di HP 1–2 detik kemudian, walaupun aplikasi ditutup |
 | Sinkronisasi otomatis | Antrean absensi offline terkirim di latar belakang (WorkManager) |
 | Video pengujian | Satu video per peran di `docs/videos/` dengan keterangan langkah dan hasil |
 | APK rilis | APK bertanda tangan di GitHub Releases dan QR unduhan |
 
-### Status kegiatan Minggu 14
+### Notifikasi HP (Firebase Cloud Messaging)
 
-| No | Kegiatan | Status |
-|---|---|---|
-| 1 | Notifikasi push untuk keputusan izin, koreksi, dan tugas lapangan | **Selesai sebagian.** Notifikasi muncul di HP walaupun aplikasi ditutup (WorkManager mengecek server). Firebase Cloud Messaging menunggu proyek Firebase Puskesmas (`google-services.json`) |
-| 2 | Sinkronisasi otomatis antrean offline (WorkManager) dan kamera bukti tugas lapangan | **Selesai.** Antrean terkirim di latar belakang begitu internet kembali. Kamera memakai kamera bawaan HP dengan izin kamera. CameraX belum dipakai |
-| 3 | Pengamanan token login (Android Keystore) dan penguncian perangkat terdaftar | Belum |
-| 4 | Backend dan Admin Web di hosting dengan HTTPS | **Sementara.** Server laptop dibuka ke internet lewat Cloudflare Tunnel (HTTPS). Hosting permanen belum |
-| 5 | Integrasi end-to-end aplikasi dengan server dan uji absensi di lokasi Puskesmas | **Selesai di emulator** lewat server HTTPS. Uji di lokasi Puskesmas dengan HP asli belum |
-| 6 | Pengujian sistem (black box) semua fitur: dalam dan luar radius, mode offline | **Selesai.** 70/70 langkah lulus per peran, direkam video |
-| 7 | Demonstrasi prototype dan evaluasi bersama mitra | Dilakukan tim bersama mitra |
-| 8 | Short report logbook mingguan | Dilakukan tim |
-
-### Notifikasi HP
-
-Saat admin menerima atau menolak izin, koreksi, atau tugas lapangan, pegawai mendapat notifikasi di HP walaupun
-aplikasi sedang ditutup. Notifikasi yang diketuk langsung membuka halaman Notifikasi di aplikasi.
+Saat admin menerima atau menolak izin, koreksi, atau tugas lapangan, pegawai langsung mendapat notifikasi di HP walaupun
+aplikasi sedang ditutup. Dalam pengujian, notifikasi muncul **1–2 detik** setelah admin menekan Terima atau Tolak.
+Notifikasi yang diketuk langsung membuka halaman Notifikasi di aplikasi.
 
 | Notifikasi di HP | Diketuk, membuka halaman Notifikasi |
 |---|---|
-| <img src="docs/screenshots/v0.3/app_notifikasi_hp.jpg" width="200" alt="Notifikasi keputusan admin di HP"> | <img src="docs/screenshots/v0.3/app_notifikasi_dibuka.jpg" width="200" alt="Halaman notifikasi"> |
+| <img src="docs/pengujian/notifikasi/N-4.jpg" width="200" alt="Notifikasi keputusan admin di HP"> | <img src="docs/pengujian/notifikasi/N-5.jpg" width="200" alt="Halaman notifikasi"> |
 
 Cara kerjanya:
-1. Admin memutuskan pengajuan di Admin Web. Server menyimpan notifikasi untuk pegawai itu (tabel `user_notifications`).
-2. Di HP, `SyncWorker` (WorkManager, `app/.../data/Background.kt`) berjalan di latar belakang: satu menit setelah aplikasi
-   ditutup, lalu setiap 15 menit, selama ada internet.
-3. Worker mengambil `GET /api/notifications`. Notifikasi yang lebih baru dari yang terakhir ditampilkan muncul sebagai
-   notifikasi Android (kanal "Keputusan admin").
-4. Worker yang sama juga mengirim antrean absensi offline, jadi absensi terkirim walaupun aplikasi tidak dibuka.
+1. Saat pegawai login, aplikasi mengirim token Firebase HP-nya ke server (`POST /api/device-token`, tabel `device_tokens`).
+2. Admin memutuskan pengajuan. Server menyimpan notifikasi (tabel `user_notifications`), lalu `PushNotifier`
+   (`backend/app/Services/PushNotifier.php`) mengirimnya ke semua HP pegawai itu lewat FCM HTTP v1.
+3. Di HP, `PushService` (`app/.../data/Push.kt`) menerima pesan dan menampilkannya sebagai notifikasi Android
+   (kanal "Keputusan admin").
+4. **Cadangan:** `SyncWorker` (WorkManager, `app/.../data/Background.kt`) tetap mengecek `GET /api/notifications` satu
+   menit setelah aplikasi ditutup, lalu setiap 15 menit. Jika Firebase gagal, notifikasi tetap datang dalam beberapa menit.
+   Worker yang sama mengirim antrean absensi offline di latar belakang.
+5. Saat pegawai keluar akun, token HP dihapus sehingga HP itu tidak menerima notifikasi akun tadi lagi.
 
-Syarat di HP: izin notifikasi (diminta saat pertama membuka Beranda di Android 13 ke atas). Jika ditolak, keputusan admin
-tetap bisa dilihat di halaman Notifikasi. Langkah berikutnya: Firebase Cloud Messaging supaya notifikasi datang seketika.
-Server sudah menyimpan token perangkat (`POST /api/device-token`), tinggal proyek Firebase dan kunci servernya.
+Syarat di HP: izin notifikasi (diminta saat pertama membuka Beranda di Android 13 ke atas) dan Google Play Services.
+
+**File rahasia Firebase tidak ada di repo** (repo ini publik). Untuk menjalankan di komputer lain:
+- `app/google-services.json`: unduh dari Firebase Console > Project settings > General > aplikasi Android `com.simpres.app`.
+  Tanpa file ini aplikasi tetap bisa di-build, notifikasi memakai pengecekan berkala.
+- `backend/storage/app/private/firebase.json`: kunci akun layanan dari Firebase Console > Project settings >
+  Service accounts > Generate new private key. Lokasi lain bisa diatur lewat `FCM_CREDENTIALS` di `.env`.
 
 ### Video pengujian per peran
 
 Setiap peran diuji terpisah dan direkam video. Setiap langkah dicek otomatis dari layar.
-Total **70 dari 70 langkah lulus**. Fitur yang diuji dan gambar untuk setiap langkah per peran ada di
+Total **72 dari 72 langkah lulus**. Fitur yang diuji dan gambar untuk setiap langkah per peran ada di
 [docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md). Klik GIF untuk membuka video lengkapnya.
 
 | Pegawai non-shift | Pegawai shift | Petugas lapangan |
@@ -202,10 +197,10 @@ Total **70 dari 70 langkah lulus**. Fitur yang diuji dan gambar untuk setiap lan
 | <a href="docs/videos/1_pegawai_nonshift.mp4"><img src="docs/videos/1_pegawai_nonshift.gif" width="180" alt="Video pegawai non-shift"></a> | <a href="docs/videos/2_pegawai_shift.mp4"><img src="docs/videos/2_pegawai_shift.gif" width="180" alt="Video pegawai shift"></a> | <a href="docs/videos/3_petugas_lapangan.mp4"><img src="docs/videos/3_petugas_lapangan.gif" width="180" alt="Video petugas lapangan"></a> |
 | Login, jadwal, check-in dan terlambat, check-in ganda, riwayat, izin keluar, check-out, notifikasi, profil (17/17) | Shift Malam, jadwal bergantian, luar radius dengan peta, koreksi absensi, cuti, check-out offline (12/12) | Luar radius, mode tugas lapangan, izin kamera dan foto, riwayat lapangan, check-in (10/10) |
 
-| Notifikasi HP dan sinkronisasi | Integrasi aplikasi ↔ web |
-|---|---|
-| <a href="docs/videos/6_notifikasi_dan_sinkronisasi.mp4"><img src="docs/videos/6_notifikasi_dan_sinkronisasi.gif" width="180" alt="Video notifikasi"></a> | <a href="docs/videos/5_integrasi_aplikasi_web.mp4"><img src="docs/videos/5_integrasi_aplikasi_web.gif" width="180" alt="Video integrasi"></a> |
-| Notifikasi keputusan admin saat aplikasi ditutup, antrean offline terkirim di latar belakang (5/5) | Keputusan admin tampil di HP setiap pegawai (5/5) |
+| Notifikasi seketika (Firebase) | Notifikasi cadangan dan sinkronisasi | Integrasi aplikasi ↔ web |
+|---|---|---|
+| <a href="docs/videos/7_notifikasi_firebase.mp4"><img src="docs/videos/7_notifikasi_firebase.gif" width="180" alt="Video notifikasi Firebase"></a> | <a href="docs/videos/6_notifikasi_dan_sinkronisasi.mp4"><img src="docs/videos/6_notifikasi_dan_sinkronisasi.gif" width="180" alt="Video notifikasi"></a> | <a href="docs/videos/5_integrasi_aplikasi_web.mp4"><img src="docs/videos/5_integrasi_aplikasi_web.gif" width="180" alt="Video integrasi"></a> |
+| Notifikasi muncul 1 detik setelah admin memutuskan, diketuk membuka halaman Notifikasi (2/2) | Notifikasi lewat pengecekan berkala, antrean offline terkirim di latar belakang (5/5) | Keputusan admin tampil di HP setiap pegawai (5/5) |
 
 | Admin Web |
 |---|
@@ -235,7 +230,7 @@ perbaikan, dan screenshot sebelum/sesudah) ada di [docs/BUG_DAN_PERBAIKAN.md](do
 | B14 | Halaman Koreksi Absensi tidak bisa dibuka | Menu Koreksi Absensi di Profil |
 | B15 | Aplikasi crash saat ambil foto tugas lapangan | Izin kamera diminta sebelum kamera dibuka |
 | B16 | Server mati sendiri | Server dijalankan di terminal sendiri |
-| B17 | Keputusan admin tidak muncul sebagai notifikasi di HP | Notifikasi HP lewat WorkManager |
+| B17 | Keputusan admin tidak muncul sebagai notifikasi di HP | Notifikasi seketika lewat Firebase, cadangan WorkManager |
 
 | Contoh bug | Sebelum | Sesudah |
 |---|---|---|
@@ -286,7 +281,6 @@ perbaikan, dan screenshot sebelum/sesudah) ada di [docs/BUG_DAN_PERBAIKAN.md](do
 
 ### Belum dikerjakan (lanjut ke v1.0.0)
 
-- Firebase Cloud Messaging supaya notifikasi datang seketika (menunggu proyek Firebase).
 - Kamera CameraX, token login di Android Keystore, dan penguncian perangkat terdaftar.
 - Hosting permanen dengan domain dan HTTPS.
 - Jam absensi offline masih memakai jam saat data terkirim, belum jam saat disimpan di HP.

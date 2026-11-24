@@ -15,11 +15,12 @@ Video bisa diputar langsung di GitHub dengan membuka file `.mp4`.
 | Pegawai non-shift | [1_pegawai_nonshift.mp4](videos/1_pegawai_nonshift.mp4) | 17/17 |
 | Pegawai shift | [2_pegawai_shift.mp4](videos/2_pegawai_shift.mp4) | 12/12 |
 | Petugas lapangan | [3_petugas_lapangan.mp4](videos/3_petugas_lapangan.mp4) | 10/10 |
-| Notifikasi HP dan sinkronisasi otomatis | [6_notifikasi_dan_sinkronisasi.mp4](videos/6_notifikasi_dan_sinkronisasi.mp4) | 5/5 |
+| Notifikasi seketika (Firebase) | [7_notifikasi_firebase.mp4](videos/7_notifikasi_firebase.mp4) | 2/2 |
+| Notifikasi cadangan dan sinkronisasi otomatis | [6_notifikasi_dan_sinkronisasi.mp4](videos/6_notifikasi_dan_sinkronisasi.mp4) | 5/5 |
 | Integrasi aplikasi dan Admin Web | [5_integrasi_aplikasi_web.mp4](videos/5_integrasi_aplikasi_web.mp4) | 5/5 |
-| **Total** | | **70/70** |
+| **Total** | | **72/72** |
 
-Selain itu, `php artisan test` di folder `backend`: **138 test lulus**. Bug yang ditemukan selama pengujian
+Selain itu, `php artisan test` di folder `backend`: **141 test lulus**. Bug yang ditemukan selama pengujian
 dan perbaikannya ada di [BUG_DAN_PERBAIKAN.md](BUG_DAN_PERBAIKAN.md).
 
 ## Admin (Admin Web)
@@ -174,9 +175,28 @@ Video lengkap: [videos/3_petugas_lapangan.mp4](videos/3_petugas_lapangan.mp4) ·
 |---|---|
 | <img src="pengujian/petugas_lapangan/E1-2.jpg" width="170" alt="E1-2"> | <img src="pengujian/petugas_lapangan/B-19.jpg" width="170" alt="B-19"> |
 
-## Notifikasi HP dan sinkronisasi otomatis
+## Notifikasi seketika (Firebase Cloud Messaging)
 
-Keputusan admin muncul sebagai notifikasi di HP walaupun aplikasi ditutup. Absensi yang tersimpan saat offline
+Begitu admin memutuskan, server mengirim notifikasi lewat Firebase ke HP pegawai. Notifikasi muncul **1,3 detik** setelah
+admin menekan Terima, walaupun aplikasi sedang ditutup.
+
+**Fitur yang diuji:**
+
+- Notifikasi keputusan admin (koreksi absensi diterima beserta catatan) muncul seketika di HP saat aplikasi ditutup
+- Notifikasi diketuk membuka halaman Notifikasi
+
+<a href="videos/7_notifikasi_firebase.mp4"><img src="videos/7_notifikasi_firebase.gif" width="220" alt="Cuplikan video notifikasi Firebase"></a>
+
+Video lengkap: [videos/7_notifikasi_firebase.mp4](videos/7_notifikasi_firebase.mp4) · Hasil: **2/2 lulus**
+
+| **N-4** Notifikasi muncul 1 detik setelah admin memutuskan | **N-5** Halaman Notifikasi terbuka |
+|---|---|
+| <img src="pengujian/notifikasi/N-4.jpg" width="170" alt="N-4"> | <img src="pengujian/notifikasi/N-5.jpg" width="170" alt="N-5"> |
+
+## Notifikasi cadangan dan sinkronisasi otomatis
+
+Cadangan jika Firebase tidak tersedia: aplikasi mengecek keputusan admin di latar belakang (WorkManager), sehingga
+notifikasi tetap muncul walaupun aplikasi ditutup. Absensi yang tersimpan saat offline
 terkirim otomatis di latar belakang begitu internet kembali, tanpa perlu membuka aplikasi (WorkManager).
 
 **Fitur yang diuji:**

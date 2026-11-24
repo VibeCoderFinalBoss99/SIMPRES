@@ -483,7 +483,9 @@ Respons 201 (token baru) atau 200 (token sudah ada, dipindah ke akun yang sedang
 ```
 Gagal 422: `{"errors": {"fcm_token": ["Token FCM wajib diisi."]}}`
 
-Catatan: server baru menyimpan token. Pengiriman push notification lewat FCM belum dibuat.
+Setiap kali admin menerima atau menolak pengajuan, server mengirim notifikasi lewat Firebase Cloud Messaging ke semua
+token milik pegawai itu (`App\Services\PushNotifier`). Pesan berupa data: `id`, `type`, `title`, `body`.
+Token yang ditolak Firebase (aplikasi sudah dihapus) otomatis dihapus dari server.
 
 ---
 

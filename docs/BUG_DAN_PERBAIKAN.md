@@ -314,8 +314,16 @@ Notifikasi sendiri. Antrean absensi offline juga hanya terkirim saat aplikasi di
 - Absensi yang masuk antrean langsung menjadwalkan worker, jadi terkirim begitu internet kembali walaupun aplikasi ditutup.
 - Pekerjaan latar belakang dihentikan saat pegawai keluar dari akun.
 
-Sudah diuji di video `6_notifikasi_dan_sinkronisasi.mp4` (5/5 lulus). Firebase Cloud Messaging (notifikasi seketika)
-tetap direncanakan setelah proyek Firebase Puskesmas dibuat.
+- Notifikasi seketika lewat **Firebase Cloud Messaging**:
+  - Server: `backend/app/Services/PushNotifier.php` mengirim pesan FCM HTTP v1 ke semua token HP pegawai setelah
+    keputusan tersimpan (`SubmissionReviewer::review`). Token yang sudah tidak berlaku dihapus. Jika pengiriman gagal,
+    keputusan admin tetap tersimpan. Test: `tests/Feature/PushNotifierTest.php` (3 test).
+  - Aplikasi: `app/.../data/Push.kt` mengirim token HP saat login, menampilkan pesan yang datang, dan menghapus token
+    saat keluar akun.
+  - WorkManager tetap berjalan sebagai cadangan.
+
+Sudah diuji di video `7_notifikasi_firebase.mp4` (notifikasi muncul 1,3 detik setelah admin memutuskan) dan
+`6_notifikasi_dan_sinkronisasi.mp4` (cadangan WorkManager dan antrean offline).
 
 ---
 
@@ -326,6 +334,8 @@ tetap direncanakan setelah proyek Firebase Puskesmas dibuat.
 | `adb install` gagal di HP Xiaomi (`INSTALL_FAILED_VERIFICATION_FAILURE`) | Verifikasi pemasangan lewat USB di MIUI | APK disalin ke folder Download HP lalu dipasang manual |
 | Build APK rilis gagal di tahap `lintVitalAnalyzeRelease` | Alat lint Android error sendiri (`Already disposed: MessageBus`) | Build rilis melewati lint: `-x lintVitalRelease` |
 | Emulator kehilangan DNS setelah data dan Wi-Fi dimatikan lalu dinyalakan | DNS bawaan emulator macet | Emulator dijalankan ulang dengan `-dns-server 8.8.8.8,1.1.1.1` |
+| Server tidak bisa menghubungi Firebase (`cURL error 77`) | `php.ini` Laragon menunjuk file sertifikat SSL yang tidak ada | `curl.cainfo` diarahkan ke `D:/laragon/etc/ssl/cacert.pem` |
+| Notifikasi pertama setelah emulator dinyalakan terlambat | Layanan Google di emulator belum tersambung ke Firebase (`FcmRetry`) | Notifikasi berikutnya muncul 1–2 detik |
 
 ## Yang masih perlu diperhatikan
 

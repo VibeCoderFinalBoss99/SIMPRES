@@ -315,7 +315,8 @@ Ganti semua sandi `simpres123` setelah pengujian selesai.
 
 | ID | Langkah | Hasil yang diharapkan | Hasil |
 |---|---|---|---|
-| N-1 | Pegawai menutup aplikasi, admin menolak izinnya dengan catatan | Dalam beberapa menit muncul notifikasi "Izin ditolak" beserta catatan di HP | |
+| N-1 | Pegawai menutup aplikasi, admin menolak izinnya dengan catatan | Notifikasi "Izin ditolak" beserta catatan muncul di HP dalam beberapa detik | |
+| N-4 | Matikan Google Play Services/Firebase (atau HP tanpa internet sebentar), lalu admin memutuskan | Notifikasi tetap datang lewat pengecekan berkala setelah internet tersambung | |
 | N-2 | Ketuk notifikasi | Aplikasi terbuka langsung di halaman Notifikasi | |
 | N-3 | Tolak izin notifikasi saat diminta | Keputusan admin tetap bisa dilihat di halaman Notifikasi | |
 | F-6 | Check-out saat mode pesawat, tutup aplikasi, matikan mode pesawat | Check-out terkirim ke server tanpa membuka aplikasi | |
@@ -371,7 +372,7 @@ Satu skenario dari awal sampai akhir untuk membuktikan aplikasi dan website sali
 | D. Shift | 12 | | | |
 | E. Petugas lapangan | 8 | | | |
 | F. Offline | 5 | | | |
-| F2. Notifikasi dan sinkronisasi | 4 | | | |
+| F2. Notifikasi dan sinkronisasi | 5 | | | |
 | G. Integrasi | 9 | | | |
 | H. Keamanan | 7 | | | |
 | I. Otomatis | 2 | | | |
