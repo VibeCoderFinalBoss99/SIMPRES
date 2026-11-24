@@ -21,7 +21,7 @@ Keputusan sah atau tidaknya absensi dibuat di server, bukan di HP.
 |---|---|---|---|---|
 | [v0.1.0](#v010--prototipe-tampilan-android) | Minggu 12 | 11 November 2026 | Selesai | Prototipe tampilan Android (29 halaman) |
 | [v0.2.0](#v020--backend-admin-web-dan-integrasi-aplikasi) | Minggu 13 | 18 November 2026 | Selesai | Basis data, REST API, CRUD, validasi absensi, Admin Web, aplikasi tersambung ke server |
-| [v0.3.0](#v030--integrasi-penuh-dan-pengujian-rencana) | Minggu 14 | 25 November 2026 | Rencana | Integrasi end-to-end, pengujian sistem, evaluasi mitra, demo prototipe |
+| [v0.3.0](#v030--pengujian-fitur-dan-perbaikan-bug) | Minggu 14 | 25 November 2026 | **Sedang berjalan** | Pengujian fitur dan perbaikan bug |
 | [v1.0.0](#v100--rilis-rencana) | Minggu 15 | 2 Desember 2026 | Rencana | Rilis di hosting, APK rilis, video, laporan PjBL |
 
 Riwayat perubahan lengkap per versi ada di [docs/CHANGELOG.md](docs/CHANGELOG.md).
@@ -126,15 +126,91 @@ Daftar endpoint REST API (`backend/routes/api.php`), semua kecuali login memakai
 
 ---
 
-## v0.3.0 – Integrasi penuh dan pengujian (rencana)
+## v0.3.0 – Pengujian fitur dan perbaikan bug
 
-Minggu 14 (25 November 2026). Checkpoint: penyelesaian fitur, integrasi end-to-end, pengujian sistem, evaluasi mitra, demo prototipe.
+Minggu 14 (25 November 2026). Minggu ini berisi **pengujian semua fitur** aplikasi Android dan Admin Web untuk setiap
+peran, lalu **memperbaiki bug** yang ditemukan.
+
+### Skema pengujian
+
+Semua fitur per peran (admin, pegawai non-shift, pegawai shift, petugas lapangan), cara pakai, dan langkah pengujiannya
+ada di [docs/SKEMA_PENGUJIAN.md](docs/SKEMA_PENGUJIAN.md): 125 langkah uji untuk Admin Web, aplikasi, mode offline,
+alur aplikasi ke website, keamanan, dan test otomatis.
+
+### Unduh aplikasi
+
+<img src="docs/qr_download_simpres.png" width="200" alt="QR unduh APK SIMPRES">
+
+Scan QR atau buka [halaman rilis](https://github.com/VibeCoderFinalBoss99/SIMPRES/releases/latest) untuk mengunduh `SIMPRES.apk`.
+
+### Ditambah minggu ini
+
+| Fitur | Keterangan |
+|---|---|
+| Lupa kata sandi | Tautan atur ulang dikirim ke email akun yang dicari lewat NIP atau email, halaman web untuk membuat sandi baru |
+| Peta asli di check-in | Peta OpenStreetMap dengan radius 150 m, titik Puskesmas, dan posisi pegawai. Bisa digeser dan di-zoom |
+| Cuti di aplikasi | Pilihan Cuti di formulir izin, dengan rentang tanggal dan lampiran opsional |
+| APK rilis | APK bertanda tangan di GitHub Releases dan QR unduhan |
+
+### Bug yang diperbaiki
+
+| Bug | Perbaikan |
+|---|---|
+| Lupa kata sandi belum tersambung ke server dan menampilkan email contoh | Memakai API baru `POST /api/forgot-password`, layar menampilkan email akun yang benar (disamarkan) |
+| Tulisan contoh desain dan slider check-out muncul sebentar di Beranda | Beranda memakai data terakhir atau tanda kosong, slider check-out hanya muncul setelah check-in |
+| Peta check-in hanya gambar hiasan | Diganti peta asli yang bisa digeser dan di-zoom |
+| Formulir izin tidak punya pilihan Cuti | Pilihan Cuti ditambahkan |
+| Layar "Pengajuan terkirim" menampilkan data contoh | Menampilkan jenis, tanggal, jam, dan waktu pengajuan yang baru dikirim |
+| Formulir tugas lapangan menampilkan lokasi contoh "Desa Jenetaesa" | Menampilkan koordinat dan akurasi GPS asli, nama lokasi wajib diisi |
+| Absensi dari antrean offline tercatat sebagai online di server | Aplikasi mengirim `source=offline`, server mencatatnya |
+
+### Screenshot aplikasi Android
+
+| Onboarding | Panduan awal | Beranda | Peta check-in |
+|---|---|---|---|
+| <img src="docs/screenshots/v0.3/app_onboarding.jpg" width="180" alt="Onboarding"> | <img src="docs/screenshots/v0.3/app_panduan.jpg" width="180" alt="Panduan awal"> | <img src="docs/screenshots/v0.3/app_beranda.jpg" width="180" alt="Beranda sebelum check-in"> | <img src="docs/screenshots/v0.3/app_checkin_peta.jpg" width="180" alt="Peta check-in"> |
+
+| Check-in berhasil | Geser check-out | Di luar radius | Tersimpan offline |
+|---|---|---|---|
+| <img src="docs/screenshots/v0.3/app_checkin_berhasil.jpg" width="180" alt="Check-in berhasil"> | <img src="docs/screenshots/v0.3/app_checkout.jpg" width="180" alt="Beranda dengan slider check-out"> | <img src="docs/screenshots/v0.3/app_luar_radius.jpg" width="180" alt="Di luar radius"> | <img src="docs/screenshots/v0.3/app_offline.jpg" width="180" alt="Absensi tersimpan offline"> |
+
+| Riwayat | Jadwal non-shift | Jadwal shift | Notifikasi |
+|---|---|---|---|
+| <img src="docs/screenshots/v0.3/app_riwayat.jpg" width="180" alt="Riwayat absensi"> | <img src="docs/screenshots/v0.3/app_jadwal_nonshift.jpg" width="180" alt="Jadwal pegawai non-shift"> | <img src="docs/screenshots/v0.3/app_jadwal_shift.jpg" width="180" alt="Jadwal pegawai shift"> | <img src="docs/screenshots/v0.3/app_notifikasi.jpg" width="180" alt="Notifikasi izin diterima"> |
+
+| Daftar izin | Formulir cuti | Pengajuan terkirim | Tugas lapangan |
+|---|---|---|---|
+| <img src="docs/screenshots/v0.3/app_izin.jpg" width="180" alt="Daftar izin"> | <img src="docs/screenshots/v0.3/app_izin_cuti.jpg" width="180" alt="Formulir cuti"> | <img src="docs/screenshots/v0.3/app_izin_terkirim.jpg" width="180" alt="Pengajuan terkirim"> | <img src="docs/screenshots/v0.3/app_tugas_lapangan.jpg" width="180" alt="Formulir tugas lapangan"> |
+
+| Riwayat tugas lapangan | Lupa kata sandi | Cek email | Profil |
+|---|---|---|---|
+| <img src="docs/screenshots/v0.3/app_tugas_lapangan_riwayat.jpg" width="180" alt="Riwayat tugas lapangan"> | <img src="docs/screenshots/v0.3/app_lupa_sandi.jpg" width="180" alt="Lupa kata sandi"> | <img src="docs/screenshots/v0.3/app_cek_email.jpg" width="180" alt="Cek email"> | <img src="docs/screenshots/v0.3/app_profil.jpg" width="180" alt="Profil"> |
+
+### Screenshot Admin Web
+
+| Dashboard | Data Pegawai | Lokasi Kerja |
+|---|---|---|
+| <img src="docs/screenshots/v0.3/web_dashboard.jpg" width="300" alt="Dashboard"> | <img src="docs/screenshots/v0.3/web_pegawai.jpg" width="300" alt="Data pegawai"> | <img src="docs/screenshots/v0.3/web_lokasi.jpg" width="300" alt="Lokasi kerja"> |
+
+| Roster | Review izin | Review tugas lapangan |
+|---|---|---|
+| <img src="docs/screenshots/v0.3/web_roster.jpg" width="300" alt="Roster"> | <img src="docs/screenshots/v0.3/web_review.jpg" width="300" alt="Review izin"> | <img src="docs/screenshots/v0.3/web_review_tugas.jpg" width="300" alt="Review tugas lapangan"> |
+
+| Rekap & Ekspor | Audit Log | Konfigurasi |
+|---|---|---|
+| <img src="docs/screenshots/v0.3/web_rekap.jpg" width="300" alt="Rekap"> | <img src="docs/screenshots/v0.3/web_audit.jpg" width="300" alt="Audit log"> | <img src="docs/screenshots/v0.3/web_konfigurasi.jpg" width="300" alt="Konfigurasi"> |
+
+| Atur ulang kata sandi |
+|---|
+| <img src="docs/screenshots/v0.3/web_reset_sandi.jpg" width="300" alt="Halaman atur ulang kata sandi"> |
+
+### Belum dikerjakan (lanjut ke v1.0.0)
 
 - Notifikasi push lewat Firebase Cloud Messaging (token perangkat sudah disimpan di server).
-- Kirim ulang antrean offline otomatis di latar belakang (WorkManager).
-- Kamera bukti tugas lapangan dengan CameraX dan peta asli di halaman check-in.
+- Kirim ulang antrean offline otomatis di latar belakang (WorkManager). Saat ini antrean terkirim saat aplikasi dibuka.
+- Jam absensi offline masih memakai jam saat data terkirim, belum jam saat disimpan di HP.
 - Penyimpanan token login terenkripsi (Android Keystore).
-- Pengujian sistem bersama pegawai Puskesmas, perbaikan dari hasil evaluasi mitra, demo prototipe.
+- Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
 ## v1.0.0 – Rilis (rencana)
 

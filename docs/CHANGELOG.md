@@ -52,16 +52,36 @@ Format: setiap versi berisi bagian **Ditambah**, **Diubah**, dan **Diperbaiki**.
 - Alur aplikasi diuji di emulator: login, check-in, check-out, izin, riwayat, jadwal, notifikasi.
 - Admin Web diuji di browser: semua halaman terbuka, persetujuan izin mengirim notifikasi ke aplikasi.
 
-## [0.3.0] – 25 November 2026 (rencana, Minggu 14)
+## [0.3.0] – 25 November 2026 (sedang berjalan, Minggu 14)
+
+Minggu pengujian fitur dan perbaikan bug.
 
 ### Ditambah
-- Notifikasi push Firebase Cloud Messaging saat izin, koreksi, atau tugas lapangan diputuskan.
-- Pengiriman ulang antrean offline otomatis (WorkManager).
-- Kamera bukti tugas lapangan (CameraX) dan peta di halaman check-in.
-- Token login terenkripsi dengan Android Keystore.
+- Lupa kata sandi lewat email: endpoint `POST /api/forgot-password` (cari akun lewat NIP atau email), email berbahasa
+  Indonesia, halaman web `/reset-password` untuk membuat sandi baru. Semua login lama dikeluarkan setelah sandi diganti.
+- Peta OpenStreetMap di halaman check-in dan di luar radius: radius 150 m, titik Puskesmas, posisi pegawai, bisa digeser dan di-zoom.
+- Pilihan Cuti di formulir izin aplikasi (rentang tanggal, lampiran opsional).
+- APK rilis bertanda tangan di GitHub Releases, dengan QR unduhan (`docs/qr_download_simpres.png`).
+- Skema fitur dan pengujian lengkap per peran (`docs/SKEMA_PENGUJIAN.md`) dan screenshot baru (`docs/screenshots/v0.3/`).
+
+### Diperbaiki
+- Halaman lupa kata sandi sebelumnya tidak mengirim apa pun dan menampilkan email contoh.
+- Tulisan contoh desain dan slider check-out sempat muncul sebentar saat membuka Beranda.
+- Layar "Pengajuan terkirim" menampilkan data contoh, sekarang data pengajuan yang baru dikirim.
+- Formulir tugas lapangan menampilkan lokasi contoh, sekarang koordinat GPS asli dan nama lokasi wajib diisi.
+- Absensi dari antrean offline tercatat `online` di server, sekarang `offline`.
+- Server bisa diakses dari luar laptop (alamat dan tautan memakai HTTPS di belakang proxy).
 
 ### Pengujian
-- Pengujian sistem bersama pegawai Puskesmas, evaluasi mitra, dan demo prototipe.
+- 138 test otomatis backend lulus.
+- Alur aplikasi diuji di emulator untuk pegawai non-shift, shift, dan petugas lapangan, termasuk mode offline.
+- Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
+
+### Belum dikerjakan (lanjut ke 1.0.0)
+- Notifikasi push Firebase Cloud Messaging.
+- Pengiriman ulang antrean offline di latar belakang (WorkManager) dan jam absensi offline sesuai jam di HP.
+- Token login terenkripsi dengan Android Keystore.
+- Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
 ## [1.0.0] – 2 Desember 2026 (rencana, Minggu 15)
 

@@ -38,7 +38,7 @@ Contoh 422 validasi:
 Daftar yang memakai halaman (`/leaves`, `/corrections`, `/field-duties`, `/notifications`) berisi 20 data per halaman
 dan tambahan `links` serta `meta` (`current_page`, `last_page`, `total`). Halaman berikutnya: `?page=2`.
 
-## Daftar endpoint (32)
+## Daftar endpoint (33)
 
 | No | Metode | Alamat | Keterangan |
 |---|---|---|---|
@@ -74,6 +74,7 @@ dan tambahan `links` serta `meta` (`current_page`, `last_page`, `total`). Halama
 | 30 | PATCH | `/admin/leaves/{id}` | (Admin) terima/tolak izin |
 | 31 | PATCH | `/admin/corrections/{id}` | (Admin) terima/tolak koreksi |
 | 32 | PATCH | `/admin/field-duties/{id}` | (Admin) terima/tolak tugas lapangan |
+| 33 | POST | `/forgot-password` | Kirim tautan atur ulang kata sandi ke email (tanpa token) |
 
 ---
 
@@ -115,6 +116,21 @@ Gagal:
 - 403 akun nonaktif: `{"message": "Akun Anda nonaktif. Hubungi admin Puskesmas."}`
 
 Simpan `token` di HP, lalu kirim di setiap request: `Authorization: Bearer <token>`.
+
+### 1.1b `POST /forgot-password`
+
+Tanpa token, maksimal 5 permintaan per menit. `login` berisi NIP atau email.
+```json
+{"login": "198501012010012001"}
+```
+Respons 200 (email disamarkan):
+```json
+{"message": "Tautan atur ulang kata sandi sudah dikirim.", "email": "si**@simpres.test"}
+```
+Gagal 422: `NIP atau email tidak terdaftar atau akun nonaktif.`, `Tautan baru saja dikirim. Tunggu 1 menit sebelum meminta lagi.`
+
+Email berisi tombol **Buat Kata Sandi Baru** ke halaman web `/reset-password/{token}` (berlaku 30 menit).
+Setelah sandi diganti, semua token login pegawai itu dihapus.
 
 ### 1.2 `POST /logout`
 
@@ -173,6 +189,7 @@ Request:
 | accuracy | wajib, angka >= 0 (meter, dari GPS HP) |
 | is_mock | wajib, true/false |
 | client_uuid | opsional, UUID buatan HP. Jika dikirim ulang, server mengembalikan data yang sama (200) tanpa membuat data baru |
+| source | opsional, `online` (bawaan) atau `offline` jika dikirim dari antrean HP |
 | device_info | opsional, maksimal 255 karakter |
 
 Respons 201:
