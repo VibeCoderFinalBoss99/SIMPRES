@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         );
         // Admin yang sudah login lalu membuka /admin/login diarahkan ke dashboard.
         $middleware->redirectUsersTo('/admin');
+        // Di belakang tunnel atau hosting (HTTPS), alamat dan tautan dibuat dengan https.
+        $middleware->trustProxies(at: '*');
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,

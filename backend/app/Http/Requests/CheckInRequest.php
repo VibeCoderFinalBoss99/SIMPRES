@@ -20,6 +20,8 @@ class CheckInRequest extends FormRequest
             'is_mock' => ['required', 'boolean'],
             'client_uuid' => ['nullable', 'uuid'],
             'device_info' => ['nullable', 'string', 'max:255'],
+            // offline = dikirim dari antrean HP saat sinyal kembali.
+            'source' => ['nullable', 'in:online,offline'],
         ];
     }
 }

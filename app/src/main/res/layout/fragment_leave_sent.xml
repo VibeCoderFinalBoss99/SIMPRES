@@ -80,6 +80,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSentType"
                         android:text="@string/common_izin_keluar_jam_kerja"
                         android:gravity="end" />
                 </LinearLayout>
@@ -98,6 +99,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSentDate"
                         android:text="@string/leave_sent_rab_28_okt_2026"
                         android:gravity="end" />
                 </LinearLayout>
@@ -116,6 +118,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSentTime"
                         android:text="@string/leave_sent_10_0011_30_wita"
                         android:gravity="end" />
                 </LinearLayout>
@@ -134,6 +137,7 @@
                         style="@style/T.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSentAt"
                         android:text="@string/leave_sent_28_okt_2026_08"
                         android:gravity="end" />
                 </LinearLayout>

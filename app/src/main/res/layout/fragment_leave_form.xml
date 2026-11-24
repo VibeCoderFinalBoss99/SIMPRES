@@ -67,6 +67,13 @@
                     android:layout_marginStart="8dp" />
                 <TextView
                     style="@style/Option"
+                    android:id="@+id/chipLeave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:text="@string/leave_form_cuti"
+                    android:layout_marginStart="8dp" />
+                <TextView
+                    style="@style/Option"
                     android:id="@+id/chipOther"
                     android:layout_width="wrap_content"
                     android:layout_height="38dp"
@@ -310,6 +317,7 @@
                         style="@style/T.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvComplaintLabel"
                         android:text="@string/leave_form_keluhan_alasan" />
                 </LinearLayout>
                 <EditText
@@ -329,11 +337,13 @@
                         style="@style/T.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvFileLabel"
                         android:text="@string/leave_form_surat_keterangan_dokter" />
                     <TextView
                         style="@style/T.Key"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvFileNote"
                         android:text="@string/leave_form_wajib_jika_1_hari"
                         android:layout_marginStart="4dp" />
                 </LinearLayout>
@@ -401,6 +411,7 @@
                         style="@style/T.Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:id="@+id/tvSickInfo"
                         android:text="@string/leave_form_izin_sakit_lebih_dari"
                         android:textColor="@color/navy"
                         android:layout_weight="1"

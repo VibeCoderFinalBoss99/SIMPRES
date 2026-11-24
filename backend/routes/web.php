@@ -10,11 +10,16 @@ use App\Http\Controllers\Admin\RecapController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\Admin\SubmissionController;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Halaman dari tautan email lupa sandi (dipakai pegawai dan admin).
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'show'])->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 
 // Admin Web: login session, hanya role admin.
 Route::prefix('admin')->group(function () {

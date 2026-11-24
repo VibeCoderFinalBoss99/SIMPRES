@@ -69,6 +69,7 @@
                 style="@style/T.BodyMuted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/tvSentTo"
                 android:text="@string/reset_sent_tautan_atur_ulang_kata"
                 android:gravity="center"
                 android:layout_marginTop="12dp"

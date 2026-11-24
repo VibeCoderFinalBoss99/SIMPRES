@@ -13,6 +13,9 @@ val localProps = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 val apiUrl = localProps.getProperty("simpres.apiUrl") ?: "http://10.0.2.2:8000/api/"
+// The release APK talks to the public server (tunnel or hosting) and is signed with the release keystore.
+// Both are set only in local.properties, so the keystore password never goes to GitHub.
+val releaseApiUrl = localProps.getProperty("simpres.releaseApiUrl") ?: apiUrl
 
 android {
     namespace = "com.simpres.app"
@@ -22,8 +25,8 @@ android {
         applicationId = "com.simpres.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "0.2.0"
         buildConfigField("String", "API_URL", "\"$apiUrl\"")
     }
 
@@ -31,9 +34,20 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        create("release") {
+            localProps.getProperty("simpres.storeFile")?.let { storeFile = file(it) }
+            storePassword = localProps.getProperty("simpres.storePassword")
+            keyAlias = localProps.getProperty("simpres.keyAlias")
+            keyPassword = localProps.getProperty("simpres.storePassword")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "API_URL", "\"$releaseApiUrl\"")
+            if (localProps.getProperty("simpres.storeFile") != null) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -81,6 +81,12 @@ class AttendanceApiTest extends TestCase
         $this->getJson('/api/attendance/today')->assertJsonPath('data.has_checked_in', true);
     }
 
+    public function test_check_in_dari_antrean_offline_tercatat_offline(): void
+    {
+        $this->postJson('/api/attendance/check-in', $this->gps(extra: ['source' => 'offline']))->assertCreated();
+        $this->assertSame('offline', Attendance::where('user_id', $this->siti->id)->value('source'));
+    }
+
     public function test_check_in_terlambat(): void
     {
         $this->travelTo(now()->setTime(8, 0));

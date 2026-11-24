@@ -54,8 +54,57 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
+                android:id="@+id/mapBox"
                 android:background="@drawable/bg_map">
+                <ImageView
+                    android:id="@+id/mapImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:importantForAccessibility="no" />
+                <TextView
+                    android:id="@+id/tvMapCredit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:background="#B3FFFFFF"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="© OpenStreetMap"
+                    android:textColor="#555555"
+                    android:textSize="9sp"
+                    android:visibility="gone" />
+                <LinearLayout
+                    android:id="@+id/mapZoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_card"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/btnZoomIn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="+"
+                        android:textColor="@color/primary"
+                        android:textSize="22sp"
+                        android:contentDescription="@string/map_zoom_in" />
+                    <TextView
+                        android:id="@+id/btnZoomOut"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="−"
+                        android:textColor="@color/primary"
+                        android:textSize="22sp"
+                        android:contentDescription="@string/map_zoom_out" />
+                </LinearLayout>
                 <View
+                    android:tag="fence"
                     android:layout_width="170dp"
                     android:layout_height="170dp"
                     android:background="@drawable/bg_geofence_ok"

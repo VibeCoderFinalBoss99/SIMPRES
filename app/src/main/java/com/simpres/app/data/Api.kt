@@ -50,6 +50,8 @@ data class User(
 
 data class LoginResponse(val message: String, val token: String, val user: User)
 data class UserResponse(val user: User)
+/** Reply of forgot-password: [email] is masked, for example si***@gmail.com. */
+data class ForgotResponse(val message: String, val email: String)
 
 data class Attendance(
     val id: Long,
@@ -128,6 +130,8 @@ data class LocationBody(
     @SerializedName("is_mock") val isMock: Boolean,
     @SerializedName("client_uuid") val clientUuid: String?,
     @SerializedName("device_info") val deviceInfo: String?,
+    /** "offline" when sent later from the outbox; null means a normal online check-in. */
+    val source: String? = null,
 )
 
 // ---------------------------------------------------------------------------------------------
@@ -136,6 +140,7 @@ data class LocationBody(
 
 interface SimpresApi {
     @POST("login") suspend fun login(@Body body: Map<String, String>): LoginResponse
+    @POST("forgot-password") suspend fun forgotPassword(@Body body: Map<String, String>): ForgotResponse
     @POST("logout") suspend fun logout(): JsonObject
     @GET("me") suspend fun me(): UserResponse
 

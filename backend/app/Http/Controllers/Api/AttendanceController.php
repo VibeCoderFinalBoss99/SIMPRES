@@ -81,7 +81,7 @@ class AttendanceController extends Controller
                 'check_in_distance_m' => $result['distance_m'],
                 'status' => $result['status'],
                 'late_minutes' => $result['late_minutes'],
-                'source' => 'online',
+                'source' => $request->input('source', 'online'),
                 'client_uuid' => $request->client_uuid,
                 'device_info' => $request->device_info,
             ]);

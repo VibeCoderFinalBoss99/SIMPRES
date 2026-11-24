@@ -16,6 +16,7 @@ import com.simpres.app.data.Attendance
 import com.simpres.app.data.Format
 import com.simpres.app.data.Outbox
 import com.simpres.app.data.Session
+import com.simpres.app.data.Today
 import com.simpres.app.data.call
 import com.simpres.app.ui.BaseFragment
 import com.simpres.app.ui.CoachMarks
@@ -83,13 +84,28 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     private fun loadToday(view: View) = launch {
+        // Show the last known data at once (or empty placeholders), so the sample text of the layout never flashes.
+        val cached = lastToday?.takeIf { it.first == Session.user?.id }?.second
+        if (cached != null) showToday(view, cached) else showPlaceholders(view)
+
         if (Outbox.all().isNotEmpty() && Outbox.flush() > 0) showQueue(view)
         val result = call { today() }
         if (result !is ApiResult.Ok) {
             if (result is ApiResult.Failed && result.code == 401) reset(R.id.loginFragment, R.id.homeFragment)
             return@launch
         }
-        val t = result.value.data
+        lastToday = Session.user?.id to result.value.data
+        showToday(view, result.value.data)
+    }
+
+    private fun showPlaceholders(view: View) {
+        for (id in listOf(R.id.tvCheckInTime, R.id.tvCheckOutTime)) view.findViewById<TextView>(id).text = "--.--"
+        for (id in listOf(R.id.tvShift, R.id.tvCheckInStatus, R.id.tvCheckOutNote, R.id.tvDistance, R.id.tvDistanceNote,
+            R.id.tvActivityTitle, R.id.tvActivityDate)) view.findViewById<TextView>(id).text = "-"
+        view.findViewById<TextView>(R.id.tvShift).setText(R.string.msg_loading)
+    }
+
+    private fun showToday(view: View, t: Today) {
         view.findViewById<TextView>(R.id.tvShift).text = when {
             t.schedule == null -> getString(R.string.today_no_schedule)
             t.schedule.isDayOff -> getString(R.string.today_day_off)
@@ -118,6 +134,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             if (t.hasCheckedIn && !t.hasCheckedOut) View.VISIBLE else View.GONE
     }
 
+    companion object {
+        /** Last "today" data per user, kept while the app is open. */
+        private var lastToday: Pair<Long?, Today>? = null
+    }
+
     /** First-run guide; shown once, can be shown again from Profil. */
     private fun showGuide(view: View) = view.post {
         if (!isAdded) return@post
@@ -128,7 +149,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             GuideStep(view.findViewById(R.id.cardSync), R.string.guide_sync_title, R.string.guide_sync_body),
             GuideStep(view.findViewById(R.id.btnBell), R.string.guide_bell_title, R.string.guide_bell_body),
             GuideStep(view.findViewById(R.id.navProfile), R.string.guide_menu_title, R.string.guide_menu_body),
-        ))
+        ).filter { it.target.isShown }) // the check-out slider only appears after check-in
     }
 }
 

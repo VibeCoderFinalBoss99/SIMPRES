@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.LottieAnimationView
@@ -196,15 +197,65 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     }
 }
 
+/** Asks the server to email a reset link to the account found by NIP or email. */
 class ForgotPasswordFragment : BaseFragment(R.layout.fragment_forgot_password) {
     override fun onReady(view: View) {
-        view.onClick(R.id.btnSend) { replace(R.id.resetSentFragment) }
+        val input = view.findViewById<EditText>(R.id.etUsername)
+        input.setText("") // sample text from the design
+        val button = view.findViewById<Button>(R.id.btnSend)
+        button.setOnClickListener {
+            val login = input.text.toString().trim()
+            if (login.isEmpty()) {
+                toast(R.string.forgot_fill)
+                return@setOnClickListener
+            }
+            button.isEnabled = false
+            button.setText(R.string.login_loading)
+            launch {
+                when (val r = call { forgotPassword(mapOf("login" to login)) }) {
+                    is ApiResult.Ok -> {
+                        replace(R.id.resetSentFragment, bundleOf("email" to r.value.email, "login" to login))
+                        return@launch
+                    }
+                    is ApiResult.Failed -> alert(r.message)
+                    ApiResult.Offline -> alert(getString(R.string.msg_server_unreachable))
+                }
+                button.isEnabled = true
+                button.setText(R.string.forgot_password_kirim_tautan_reset)
+            }
+        }
         view.onClick(R.id.tvBackToLogin) { backTo(R.id.loginFragment) }
     }
 }
 
+/** "Cek email kamu": shows the (masked) address the link really went to, with a resend button after 60 s. */
 class ResetSentFragment : BaseFragment(R.layout.fragment_reset_sent) {
     override fun onReady(view: View) {
+        val email = arguments?.getString("email").orEmpty()
+        val login = arguments?.getString("login").orEmpty()
+        view.findViewById<TextView>(R.id.tvSentTo).text = getString(R.string.reset_sent_tautan_atur_ulang_kata, email)
         view.onClick(R.id.btnBackToLogin) { backTo(R.id.loginFragment) }
+        val resend = view.findViewById<TextView>(R.id.tvResend)
+        countdown(resend)
+        resend.setOnClickListener {
+            resend.isEnabled = false
+            launch {
+                when (val r = call { forgotPassword(mapOf("login" to login)) }) {
+                    is ApiResult.Ok -> { toast(r.value.message); countdown(resend) }
+                    is ApiResult.Failed -> { alert(r.message); resend.isEnabled = true }
+                    ApiResult.Offline -> { alert(getString(R.string.msg_server_unreachable)); resend.isEnabled = true }
+                }
+            }
+        }
+    }
+
+    private fun countdown(resend: TextView) = launch {
+        resend.isEnabled = false
+        for (s in 60 downTo 1) {
+            resend.text = getString(R.string.reset_sent_resend_wait, s)
+            kotlinx.coroutines.delay(1000)
+        }
+        resend.setText(R.string.reset_sent_resend)
+        resend.isEnabled = true
     }
 }

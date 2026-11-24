@@ -79,7 +79,8 @@
                 android:id="@+id/tvDutyType"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="@string/field_duty_posyandu_desa_jenetaesa"
+                android:text=""
+                android:hint="@string/duty_place_hint"
                 android:background="@drawable/bg_input"
                 android:drawableEnd="@drawable/ic_arrow_drop_down" />
             <LinearLayout
@@ -193,13 +194,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvGpsPlace"
-                        android:text="@string/field_duty_desa_jenetaesa_simbang" />
+                        android:text="@string/duty_gps_title" />
                     <TextView
                         style="@style/T.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvGpsCoords"
-                        android:text="@string/field_duty_5_0671_119_6935"
+                        android:text="@string/duty_gps_searching"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
             </LinearLayout>

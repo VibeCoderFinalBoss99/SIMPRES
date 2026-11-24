@@ -93,7 +93,7 @@ class LeaveListFragment : BaseFragment(R.layout.fragment_leave_list) {
 
 /**
  * Ajukan izin. "Keluar jam kerja" and "Lainnya" use one date (+ hours for izin keluar);
- * "Sakit" uses a date range and needs a photo of the doctor's letter.
+ * "Sakit" and "Cuti" use a date range. Sakit needs a photo of the doctor's letter, for cuti a file is optional.
  */
 class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
     private var type = "izin_keluar"
@@ -103,11 +103,23 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
     override fun onReady(view: View) {
         val groupOut = view.findViewById<View>(R.id.groupOut)
         val groupSick = view.findViewById<View>(R.id.groupSick)
-        singleChoice(view, R.id.chipOut, R.id.chipSick, R.id.chipOther) { selected ->
-            type = when (selected) { R.id.chipSick -> "sakit"; R.id.chipOther -> "lainnya"; else -> "izin_keluar" }
-            val sick = selected == R.id.chipSick
-            groupSick.visibility = if (sick) View.VISIBLE else View.GONE
-            groupOut.visibility = if (sick) View.GONE else View.VISIBLE
+        singleChoice(view, R.id.chipOut, R.id.chipSick, R.id.chipLeave, R.id.chipOther) { selected ->
+            type = when (selected) {
+                R.id.chipSick -> "sakit"; R.id.chipLeave -> "cuti"; R.id.chipOther -> "lainnya"; else -> "izin_keluar"
+            }
+            val range = type == "sakit" || type == "cuti"
+            groupSick.visibility = if (range) View.VISIBLE else View.GONE
+            groupOut.visibility = if (range) View.GONE else View.VISIBLE
+            // The date-range group is shared: cuti shows "Alasan" and an optional attachment.
+            val sick = type == "sakit"
+            view.findViewById<TextView>(R.id.tvComplaintLabel)
+                .setText(if (sick) R.string.leave_form_keluhan_alasan else R.string.common_alasan)
+            view.findViewById<TextView>(R.id.tvFileLabel)
+                .setText(if (sick) R.string.leave_form_surat_keterangan_dokter else R.string.leave_form_lampiran)
+            view.findViewById<TextView>(R.id.tvFileNote)
+                .setText(if (sick) R.string.leave_form_wajib_jika_1_hari else R.string.common_opsional)
+            view.findViewById<TextView>(R.id.tvSickInfo)
+                .setText(if (sick) R.string.leave_form_izin_sakit_lebih_dari else R.string.leave_form_cuti_info)
         }
 
         val today = LocalDate.now().toString()
@@ -174,7 +186,7 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
     private fun text(view: View, id: Int) = view.findViewById<EditText>(id).text.toString().trim()
 
     private fun submit(view: View) {
-        val fields = if (type == "sakit") {
+        val fields = if (type == "sakit" || type == "cuti") {
             mapOf("type" to type, "start_date" to text(view, R.id.etStart), "end_date" to text(view, R.id.etEnd),
                 "reason" to text(view, R.id.etComplaint))
         } else {
@@ -186,17 +198,21 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
         if (type == "sakit" && attachment == null) return toast(R.string.msg_pick_photo)
 
         launch {
-            val r = if (type == "sakit") {
+            val file = attachment
+            val r = if (file != null && (type == "sakit" || type == "cuti")) {
                 val plain = "text/plain".toMediaType()
                 val parts = fields.mapValues { it.value.toRequestBody(plain) }
                 val file = MultipartBody.Part.createFormData("lampiran", "surat.jpg",
-                    attachment!!.toRequestBody("image/jpeg".toMediaType()))
+                    file.toRequestBody("image/jpeg".toMediaType()))
                 call { createLeaveWithFile(parts, file) }
             } else {
                 call { createLeave(fields) }
             }
             when (r) {
-                is ApiResult.Ok -> replace(R.id.leaveSentFragment)
+                is ApiResult.Ok -> {
+                    LeaveSentFragment.last = r.value.data
+                    replace(R.id.leaveSentFragment)
+                }
                 is ApiResult.Failed -> alert(errorText(r))
                 ApiResult.Offline -> alert(getString(R.string.msg_server_unreachable))
             }
@@ -211,7 +227,20 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
 }
 
 class LeaveSentFragment : BaseFragment(R.layout.fragment_leave_sent) {
+    companion object {
+        /** The leave that was just sent, shown on this screen instead of the sample text. */
+        var last: Leave? = null
+    }
+
     override fun onReady(view: View) {
+        last?.let { l ->
+            view.findViewById<TextView>(R.id.tvSentType).text = Format.leaveType(l.type)
+            view.findViewById<TextView>(R.id.tvSentDate).text =
+                if (l.startDate == l.endDate) Format.day(l.startDate) else "${Format.day(l.startDate)} – ${Format.day(l.endDate)}"
+            view.findViewById<TextView>(R.id.tvSentTime).text =
+                if (l.startTime != null) "${Format.clock(l.startTime)}–${Format.clock(l.endTime)}" else getString(R.string.leave_all_day)
+            view.findViewById<TextView>(R.id.tvSentAt).text = "${Format.day(l.createdAt.take(10))} · ${Format.time(l.createdAt)}"
+        }
         view.onClick(R.id.btnPrimary) { backTo(R.id.leaveListFragment) }
         view.onClick(R.id.tvHome) { backTo(R.id.homeFragment) }
     }

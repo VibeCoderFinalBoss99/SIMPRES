@@ -1,16 +1,24 @@
 package com.simpres.app.ui.attendance
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.simpres.app.R
 import com.simpres.app.data.ApiResult
 import com.simpres.app.data.Attendance
@@ -28,6 +36,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.log2
+import kotlinx.coroutines.launch
 
 /** Result of the last check-in/check-out, shown by the result screens. */
 object AttendanceFlow {
@@ -40,6 +50,95 @@ object AttendanceFlow {
     var message: String? = null
     var distanceM: Double? = null
     var accuracyM: Double? = null
+    var location: Location? = null
+}
+
+/** Zoom dan geseran peta yang dipilih pegawai. Pan dalam piksel gambar peta pada zoom itu. */
+private class MapState(var zoom: Int = 0, var panX: Double = 0.0, var panY: Double = 0.0)
+
+/**
+ * Peta asli (OpenStreetMap) di kotak peta halaman, dengan radius Puskesmas dan posisi pegawai jika ada.
+ * Bisa digeser dengan satu jari, diperbesar/diperkecil dengan tombol + dan -, cubit dua jari, atau ketuk dua kali.
+ */
+@SuppressLint("ClickableViewAccessibility")
+private fun Fragment.showMap(view: View, me: Location?) {
+    val place = Session.user?.workLocation ?: return
+    val box = view.findViewById<View>(R.id.mapBox)
+    val image = view.findViewById<ImageView>(R.id.mapImage)
+    val color = ContextCompat.getColor(requireContext(), R.color.primary)
+    // Disimpan di tag kotak peta, supaya zoom dan geseran tidak kembali semula saat posisi GPS masuk.
+    val state = box.getTag(R.id.mapZoom) as? MapState ?: MapState().also { box.setTag(R.id.mapZoom, it) }
+
+    fun render() = box.post {
+        if (this.view == null) return@post
+        viewLifecycleOwner.lifecycleScope.launch {
+            OsmMap.show(box, image, place, me, color, state.zoom, state.panX, state.panY)
+            image.scaleX = 1f; image.scaleY = 1f
+            image.translationX = 0f; image.translationY = 0f
+        }
+    }
+    fun zoom(step: Int) {
+        val next = (state.zoom + step).coerceIn(-8, 5)
+        val factor = Math.pow(2.0, (next - state.zoom).toDouble())
+        // Titik di tengah layar tetap di tengah setelah zoom.
+        state.panX *= factor; state.panY *= factor
+        state.zoom = next
+        render()
+    }
+    view.findViewById<View>(R.id.btnZoomIn).setOnClickListener { zoom(1) }
+    view.findViewById<View>(R.id.btnZoomOut).setOnClickListener { zoom(-1) }
+
+    var pinch = 1f
+    val scale = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScaleBegin(d: ScaleGestureDetector): Boolean { pinch = 1f; return image.drawable != null }
+        override fun onScale(d: ScaleGestureDetector): Boolean {
+            pinch = (pinch * d.scaleFactor).coerceIn(0.25f, 4f)
+            image.scaleX = pinch // pratinjau langsung, lalu peta digambar ulang dengan zoom baru
+            image.scaleY = pinch
+            return true
+        }
+        override fun onScaleEnd(d: ScaleGestureDetector) {
+            val step = Math.round(log2(pinch.toDouble())).toInt()
+            if (step != 0) zoom(step) else { image.scaleX = 1f; image.scaleY = 1f }
+        }
+    })
+    val taps = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDoubleTap(e: MotionEvent): Boolean { if (image.drawable != null) zoom(1); return true }
+    })
+
+    val slop = ViewConfiguration.get(requireContext()).scaledTouchSlop
+    var downX = 0f; var downY = 0f
+    var dragging = false; var twoFingers = false
+    box.setOnTouchListener { v, e ->
+        scale.onTouchEvent(e)
+        taps.onTouchEvent(e)
+        when (e.actionMasked) {
+            MotionEvent.ACTION_DOWN -> { downX = e.x; downY = e.y; dragging = false; twoFingers = false }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                twoFingers = true
+                image.translationX = 0f; image.translationY = 0f
+                v.parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> if (!twoFingers && image.drawable != null) {
+                val dx = e.x - downX; val dy = e.y - downY
+                if (!dragging && Math.hypot(dx.toDouble(), dy.toDouble()) > slop) {
+                    dragging = true
+                    // Halaman tidak ikut tergulir selama peta digeser.
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                if (dragging) { image.translationX = dx; image.translationY = dy }
+            }
+            MotionEvent.ACTION_UP -> if (dragging && !twoFingers) {
+                val k = OsmMap.scale(box)
+                state.panX -= (e.x - downX) / k
+                state.panY -= (e.y - downY) / k
+                render()
+            }
+            MotionEvent.ACTION_CANCEL -> { image.translationX = 0f; image.translationY = 0f }
+        }
+        true
+    }
+    render()
 }
 
 /**
@@ -65,6 +164,7 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
         view.findViewById<TextView>(R.id.tvSchedule).text = "-"
         view.onClick(R.id.btnLocate) { start() }
         view.onClick(R.id.btnAuto) { start() }
+        showMap(view, null)
         start()
     }
 
@@ -117,7 +217,7 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
                 }
             }
             ApiResult.Offline -> {
-                Outbox.add(PendingAttendance(kind, body, LocalTime.now().toString()))
+                Outbox.add(PendingAttendance(kind, body.copy(source = "offline"), LocalTime.now().toString()))
                 replace(R.id.offlineSavedFragment)
             }
         }
@@ -126,6 +226,8 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
     /** Distance shown on screen right away; the server repeats the same calculation and decides. */
     private fun showLocalPreview(location: Location) {
         val v = view ?: return
+        AttendanceFlow.location = location
+        showMap(v, location)
         val loc = Session.user?.workLocation ?: return
         val out = FloatArray(1)
         Location.distanceBetween(location.latitude, location.longitude, loc.latitude, loc.longitude, out)
@@ -138,6 +240,7 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
 
 class OutsideRadiusFragment : BaseFragment(R.layout.fragment_outside_radius) {
     override fun onReady(view: View) {
+        showMap(view, AttendanceFlow.location)
         val distance = Format.meters(AttendanceFlow.distanceM)
         view.findViewById<TextView>(R.id.tvHeadline).text = getString(R.string.outside_headline, distance)
         view.findViewById<TextView>(R.id.tvDistance).text = distance
@@ -237,12 +340,14 @@ class FieldDutyFragment : BaseFragment(R.layout.fragment_field_duty) {
             == PackageManager.PERMISSION_GRANTED
         ) launch {
             gps = Locator.current(requireContext())
-            gps?.let {
-                view.findViewById<TextView>(R.id.tvGpsCoords).text = "%.5f, %.5f".format(it.latitude, it.longitude)
-            }
+            val coords = view.findViewById<TextView>(R.id.tvGpsCoords)
+            val fix = gps
+            if (fix == null) coords.setText(R.string.msg_gps_failed)
+            else coords.text = getString(R.string.duty_gps_value, fix.latitude, fix.longitude, fix.accuracy.toInt())
         }
 
         view.onClick(R.id.btnSubmit) {
+            if (place.text.isBlank()) return@onClick toast(R.string.msg_fill_place)
             val bmp = photo ?: return@onClick toast(R.string.msg_take_photo)
             if (reason.text.isBlank()) return@onClick toast(R.string.msg_fill_form)
             val text = "text/plain".toMediaType()
