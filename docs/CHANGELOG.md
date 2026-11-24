@@ -71,10 +71,15 @@ Minggu pengujian fitur dan perbaikan bug.
 - Formulir tugas lapangan menampilkan lokasi contoh, sekarang koordinat GPS asli dan nama lokasi wajib diisi.
 - Absensi dari antrean offline tercatat `online` di server, sekarang `offline`.
 - Server bisa diakses dari luar laptop (alamat dan tautan memakai HTTPS di belakang proxy).
+- Halaman Koreksi Absensi tidak punya pintu masuk, sekarang ada menu Koreksi Absensi di Profil.
+- Aplikasi crash saat menekan Ambil foto tugas lapangan (izin kamera belum diminta), sekarang izin diminta dulu.
+- Peta kosong sebagian atau tidak muncul di jaringan lambat, sekarang tile diunduh paralel, utuh, dan dicoba ulang.
+- Daftar lengkap 16 bug beserta penyebab dan perbaikannya: `docs/BUG_DAN_PERBAIKAN.md`.
 
 ### Pengujian
 - 138 test otomatis backend lulus.
-- Alur aplikasi diuji di emulator untuk pegawai non-shift, shift, dan petugas lapangan, termasuk mode offline.
+- Pengujian per pengguna direkam video (`docs/videos/`): pegawai non-shift 17/17, pegawai shift 12/12,
+  petugas lapangan 10/10, Admin Web 21/21, integrasi aplikasi dan web 5/5 (`docs/HASIL_PENGUJIAN.md`).
 - Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
 
 ### Belum dikerjakan (lanjut ke 1.0.0)

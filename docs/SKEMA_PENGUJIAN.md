@@ -9,6 +9,9 @@ Cara memakai dokumen:
 3. Jalankan pengujian bagian 4 sesuai urutan. Isi kolom **Hasil** dengan ✅ (lulus) atau ❌ (gagal + catatan).
 4. Ambil screenshot di langkah bertanda 📸 (daftar file di bagian 6).
 
+Hasil pengujian 24 November 2026 per pengguna, lengkap dengan video, ada di [HASIL_PENGUJIAN.md](HASIL_PENGUJIAN.md).
+Bug yang ditemukan dan perbaikannya ada di [BUG_DAN_PERBAIKAN.md](BUG_DAN_PERBAIKAN.md).
+
 ---
 
 ## 1. Peran dan platform
@@ -62,7 +65,7 @@ Aturan yang berlaku untuk semua pegawai (diputuskan server, bukan HP):
 | P12 | Riwayat | Melihat absensi per bulan | Menu Riwayat, pilih bulan |
 | P13 | Jadwal | Melihat shift bulan ini | Menu Jadwal |
 | P14 | Izin dan cuti | Mengajukan izin keluar jam kerja (dengan jam), sakit (dengan foto surat), cuti, lainnya | Profil > Izin & Cuti > Ajukan Izin > isi formulir > Kirim |
-| P15 | Koreksi absensi | Membetulkan jam masuk/pulang yang salah atau lupa | Riwayat/Beranda > Koreksi > pilih tanggal, isi jam dan alasan |
+| P15 | Koreksi absensi | Membetulkan jam masuk/pulang hari ini yang salah atau lupa | Profil > Koreksi Absensi > pilih jam dan alasan > Kirim |
 | P16 | Tugas lapangan | Bukti kerja di luar gedung dengan foto dan GPS | Check-in dari luar radius > Mode Tugas Lapangan > isi lokasi dan kegiatan > ambil foto > Kirim. Riwayatnya di Riwayat > Lapangan |
 | P17 | Notifikasi | Kabar keputusan admin | Ikon lonceng di Beranda. Ketuk untuk menandai dibaca |
 | P18 | Profil | Data diri dan lokasi kerja | Menu Profil |

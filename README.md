@@ -135,7 +135,8 @@ peran, lalu **memperbaiki bug** yang ditemukan.
 
 Semua fitur per peran (admin, pegawai non-shift, pegawai shift, petugas lapangan), cara pakai, dan langkah pengujiannya
 ada di [docs/SKEMA_PENGUJIAN.md](docs/SKEMA_PENGUJIAN.md): 125 langkah uji untuk Admin Web, aplikasi, mode offline,
-alur aplikasi ke website, keamanan, dan test otomatis.
+alur aplikasi ke website, keamanan, dan test otomatis. Hasil pengujian per pengguna ada di
+[docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md).
 
 ### Unduh aplikasi
 
@@ -150,19 +151,56 @@ Scan QR atau buka [halaman rilis](https://github.com/VibeCoderFinalBoss99/SIMPRE
 | Lupa kata sandi | Tautan atur ulang dikirim ke email akun yang dicari lewat NIP atau email, halaman web untuk membuat sandi baru |
 | Peta asli di check-in | Peta OpenStreetMap dengan radius 150 m, titik Puskesmas, dan posisi pegawai. Bisa digeser dan di-zoom |
 | Cuti di aplikasi | Pilihan Cuti di formulir izin, dengan rentang tanggal dan lampiran opsional |
+| Menu Koreksi Absensi | Halaman koreksi absensi bisa dibuka dari Profil |
+| Video pengujian | Satu video per pengguna di `docs/videos/` dengan keterangan langkah dan hasil |
 | APK rilis | APK bertanda tangan di GitHub Releases dan QR unduhan |
 
-### Bug yang diperbaiki
+### Video pengujian per pengguna
 
-| Bug | Perbaikan |
-|---|---|
-| Lupa kata sandi belum tersambung ke server dan menampilkan email contoh | Memakai API baru `POST /api/forgot-password`, layar menampilkan email akun yang benar (disamarkan) |
-| Tulisan contoh desain dan slider check-out muncul sebentar di Beranda | Beranda memakai data terakhir atau tanda kosong, slider check-out hanya muncul setelah check-in |
-| Peta check-in hanya gambar hiasan | Diganti peta asli yang bisa digeser dan di-zoom |
-| Formulir izin tidak punya pilihan Cuti | Pilihan Cuti ditambahkan |
-| Layar "Pengajuan terkirim" menampilkan data contoh | Menampilkan jenis, tanggal, jam, dan waktu pengajuan yang baru dikirim |
-| Formulir tugas lapangan menampilkan lokasi contoh "Desa Jenetaesa" | Menampilkan koordinat dan akurasi GPS asli, nama lokasi wajib diisi |
-| Absensi dari antrean offline tercatat sebagai online di server | Aplikasi mengirim `source=offline`, server mencatatnya |
+Setiap pengguna diuji terpisah sesuai perannya dan direkam video. Setiap langkah dicek otomatis dari layar.
+Total **65 dari 65 langkah lulus** (rincian per langkah di [docs/HASIL_PENGUJIAN.md](docs/HASIL_PENGUJIAN.md)).
+Klik GIF untuk membuka video lengkapnya.
+
+| Pegawai non-shift (Budi) | Pegawai shift (Siti) | Petugas lapangan (Rina) | Integrasi aplikasi ↔ web |
+|---|---|---|---|
+| <a href="docs/videos/1_pegawai_nonshift_budi.mp4"><img src="docs/videos/1_pegawai_nonshift_budi.gif" width="180" alt="Video pegawai non-shift"></a> | <a href="docs/videos/2_pegawai_shift_siti.mp4"><img src="docs/videos/2_pegawai_shift_siti.gif" width="180" alt="Video pegawai shift"></a> | <a href="docs/videos/3_petugas_lapangan_rina.mp4"><img src="docs/videos/3_petugas_lapangan_rina.gif" width="180" alt="Video petugas lapangan"></a> | <a href="docs/videos/5_integrasi_aplikasi_web.mp4"><img src="docs/videos/5_integrasi_aplikasi_web.gif" width="180" alt="Video integrasi"></a> |
+| 17/17 lulus | 12/12 lulus | 10/10 lulus | 5/5 lulus |
+
+| Admin Web |
+|---|
+| <a href="docs/videos/4_admin_web.mp4"><img src="docs/videos/4_admin_web.gif" width="480" alt="Video Admin Web"></a> |
+| 21/21 lulus |
+
+### Bug yang ditemukan dan diperbaiki
+
+16 bug ditemukan selama pengujian. Penjelasan lengkap tiap bug (gejala, bagian kode yang salah, penyebab, cara
+perbaikan, dan screenshot sebelum/sesudah) ada di [docs/BUG_DAN_PERBAIKAN.md](docs/BUG_DAN_PERBAIKAN.md).
+
+| No | Bug | Perbaikan |
+|---|---|---|
+| B01 | Server tidak bisa dihubungi dari HP asli | Alamat API untuk HP asli dan APK rilis dipisah dari alamat emulator |
+| B02 | Slider check-out muncul sebentar di Beranda | Slider hanya tampil setelah check-in |
+| B03 | Tulisan contoh desain muncul sebelum data asli | Beranda memakai data terakhir atau tanda kosong |
+| B04 | Lupa kata sandi tidak mengirim apa pun, email yang tampil email contoh | API `POST /api/forgot-password`, email, dan halaman sandi baru |
+| B05 | Email lupa sandi sebagian berbahasa Inggris | Terjemahan di `lang/id.json` |
+| B06 | Tautan dan CSS Admin Web rusak saat dibuka dari luar laptop | Laravel memakai HTTPS di belakang proxy |
+| B07 | Peta check-in hanya gambar hiasan | Peta asli OpenStreetMap |
+| B08 | Peta tidak bisa digeser, zoom selalu ke tengah | Geser satu jari, zoom tetap di posisi geseran |
+| B09 | Peta kosong sebagian di jaringan lambat | Unduh paralel, unduh utuh, coba ulang |
+| B10 | Formulir izin tidak punya pilihan Cuti | Pilihan Cuti ditambahkan |
+| B11 | Layar "Pengajuan terkirim" menampilkan data contoh | Menampilkan data pengajuan yang baru dikirim |
+| B12 | Formulir tugas lapangan menampilkan lokasi contoh | GPS asli, nama lokasi wajib diisi |
+| B13 | Absensi dari antrean offline tercatat `online` | Aplikasi mengirim `source=offline` |
+| B14 | Halaman Koreksi Absensi tidak bisa dibuka | Menu Koreksi Absensi di Profil |
+| B15 | Aplikasi crash saat ambil foto tugas lapangan | Izin kamera diminta sebelum kamera dibuka |
+| B16 | Server mati sendiri | Server dijalankan di terminal sendiri |
+
+| Contoh bug | Sebelum | Sesudah |
+|---|---|---|
+| B04 Lupa sandi | <img src="docs/bug/lupa_sandi_sebelum.jpg" width="150"> | <img src="docs/screenshots/v0.3/app_cek_email.jpg" width="150"> |
+| B07 Peta | <img src="docs/bug/peta_sebelum.jpg" width="150"> | <img src="docs/screenshots/v0.3/app_luar_radius.jpg" width="150"> |
+| B11 Pengajuan terkirim | <img src="docs/bug/terkirim_sebelum.jpg" width="150"> | <img src="docs/screenshots/v0.3/app_izin_terkirim.jpg" width="150"> |
+| B14 Menu koreksi | <img src="docs/bug/koreksi_sebelum.jpg" width="150"> | <img src="docs/bug/koreksi_sesudah.jpg" width="150"> |
 
 ### Screenshot aplikasi Android
 
