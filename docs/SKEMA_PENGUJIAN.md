@@ -311,6 +311,15 @@ Ganti semua sandi `simpres123` setelah pengujian selesai.
 
 ---
 
+### F2. Notifikasi HP dan sinkronisasi otomatis
+
+| ID | Langkah | Hasil yang diharapkan | Hasil |
+|---|---|---|---|
+| N-1 | Pegawai menutup aplikasi, admin menolak izinnya dengan catatan | Dalam beberapa menit muncul notifikasi "Izin ditolak" beserta catatan di HP | |
+| N-2 | Ketuk notifikasi | Aplikasi terbuka langsung di halaman Notifikasi | |
+| N-3 | Tolak izin notifikasi saat diminta | Keputusan admin tetap bisa dilihat di halaman Notifikasi | |
+| F-6 | Check-out saat mode pesawat, tutup aplikasi, matikan mode pesawat | Check-out terkirim ke server tanpa membuka aplikasi | |
+
 ### G. Alur lengkap aplikasi ↔ website (integrasi)
 
 Satu skenario dari awal sampai akhir untuk membuktikan aplikasi dan website saling terhubung.
@@ -362,6 +371,7 @@ Satu skenario dari awal sampai akhir untuk membuktikan aplikasi dan website sali
 | D. Shift | 12 | | | |
 | E. Petugas lapangan | 8 | | | |
 | F. Offline | 5 | | | |
+| F2. Notifikasi dan sinkronisasi | 4 | | | |
 | G. Integrasi | 9 | | | |
 | H. Keamanan | 7 | | | |
 | I. Otomatis | 2 | | | |

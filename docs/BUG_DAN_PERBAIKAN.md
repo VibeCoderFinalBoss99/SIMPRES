@@ -30,6 +30,7 @@ Screenshot **sebelum** diambil dari versi aplikasi sebelum perbaikan (commit `c4
 | [B14](#b14-halaman-koreksi-absensi-tidak-bisa-dibuka) | Halaman Koreksi Absensi tidak bisa dibuka dari mana pun | Aplikasi | Fitur tidak jalan | Diperbaiki |
 | [B15](#b15-aplikasi-tertutup-crash-saat-ambil-foto-tugas-lapangan) | Aplikasi tertutup (crash) saat Ambil foto tugas lapangan | Aplikasi | Crash | Diperbaiki |
 | [B16](#b16-server-mati-sendiri) | Server mati sendiri | Server (cara menjalankan) | Operasional | Diperbaiki |
+| [B17](#b17-keputusan-admin-tidak-muncul-sebagai-notifikasi-di-hp) | Keputusan admin tidak muncul sebagai notifikasi di HP | Aplikasi | Fitur tidak jalan | Diperbaiki |
 
 ---
 
@@ -286,6 +287,35 @@ jadi aplikasi tidak bisa crash di titik ini. Sudah diuji di video petugas lapang
 
 **Perbaikan:** server dijalankan di jendela terminal sendiri dengan `php artisan serve` (4 worker, supaya bisa melayani
 beberapa pengguna sekaligus). Server tetap hidup selama jendela itu terbuka.
+
+---
+
+## B17. Keputusan admin tidak muncul sebagai notifikasi di HP
+
+| Sesudah: notifikasi di HP | Diketuk, membuka halaman Notifikasi |
+|---|---|
+| <img src="screenshots/v0.3/app_notifikasi_hp.jpg" width="220"> | <img src="screenshots/v0.3/app_notifikasi_dibuka.jpg" width="220"> |
+
+**Gejala:** ditemukan saat mencocokkan fitur dengan rencana kegiatan Minggu 14. Saat admin menerima atau menolak
+pengajuan, pegawai tidak mendapat pemberitahuan apa pun di HP. Keputusan baru terlihat jika pegawai membuka halaman
+Notifikasi sendiri. Antrean absensi offline juga hanya terkirim saat aplikasi dibuka.
+
+**Bagian yang salah:** aplikasi belum punya pekerjaan latar belakang dan belum pernah membuat notifikasi Android.
+`NotificationFragment` hanya mengambil data saat halaman dibuka.
+
+**Perbaikan:**
+- File baru `app/.../data/Background.kt`:
+  - `SyncWorker` (WorkManager) berjalan satu menit setelah aplikasi ditutup, lalu setiap 15 menit selama ada internet.
+    Worker mengirim antrean offline, lalu mengambil `GET /api/notifications`.
+  - `Notifier` menampilkan notifikasi Android untuk keputusan yang baru. Saat pertama kali jalan, notifikasi lama hanya
+    dicatat supaya HP tidak dibanjiri notifikasi lama.
+- Izin notifikasi diminta di Beranda (`POST_NOTIFICATIONS`, Android 13 ke atas).
+- Notifikasi yang diketuk membuka halaman Notifikasi (`MainActivity.openNotificationsIfAsked`).
+- Absensi yang masuk antrean langsung menjadwalkan worker, jadi terkirim begitu internet kembali walaupun aplikasi ditutup.
+- Pekerjaan latar belakang dihentikan saat pegawai keluar dari akun.
+
+Sudah diuji di video `6_notifikasi_dan_sinkronisasi.mp4` (5/5 lulus). Firebase Cloud Messaging (notifikasi seketika)
+tetap direncanakan setelah proyek Firebase Puskesmas dibuat.
 
 ---
 

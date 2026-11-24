@@ -62,6 +62,9 @@ Minggu pengujian fitur dan perbaikan bug.
 - Peta OpenStreetMap di halaman check-in dan di luar radius: radius 150 m, titik Puskesmas, posisi pegawai, bisa digeser dan di-zoom.
 - Pilihan Cuti di formulir izin aplikasi (rentang tanggal, lampiran opsional).
 - APK rilis bertanda tangan di GitHub Releases, dengan QR unduhan (`docs/qr_download_simpres.png`).
+- Notifikasi HP untuk keputusan admin (izin, koreksi, tugas lapangan), tetap muncul walaupun aplikasi ditutup.
+- Sinkronisasi otomatis antrean offline di latar belakang dengan WorkManager (`data/Background.kt`).
+- Menu Koreksi Absensi di Profil.
 - Skema fitur dan pengujian lengkap per peran (`docs/SKEMA_PENGUJIAN.md`) dan screenshot baru (`docs/screenshots/v0.3/`).
 
 ### Diperbaiki
@@ -74,17 +77,17 @@ Minggu pengujian fitur dan perbaikan bug.
 - Halaman Koreksi Absensi tidak punya pintu masuk, sekarang ada menu Koreksi Absensi di Profil.
 - Aplikasi crash saat menekan Ambil foto tugas lapangan (izin kamera belum diminta), sekarang izin diminta dulu.
 - Peta kosong sebagian atau tidak muncul di jaringan lambat, sekarang tile diunduh paralel, utuh, dan dicoba ulang.
-- Daftar lengkap 16 bug beserta penyebab dan perbaikannya: `docs/BUG_DAN_PERBAIKAN.md`.
+- Daftar lengkap 17 bug beserta penyebab dan perbaikannya: `docs/BUG_DAN_PERBAIKAN.md`.
 
 ### Pengujian
 - 138 test otomatis backend lulus.
-- Pengujian per pengguna direkam video (`docs/videos/`): pegawai non-shift 17/17, pegawai shift 12/12,
-  petugas lapangan 10/10, Admin Web 21/21, integrasi aplikasi dan web 5/5 (`docs/HASIL_PENGUJIAN.md`).
+- Pengujian per peran direkam video (`docs/videos/`): admin 21/21, pegawai non-shift 17/17, pegawai shift 12/12,
+  petugas lapangan 10/10, notifikasi dan sinkronisasi 5/5, integrasi 5/5. Total 70/70 (`docs/HASIL_PENGUJIAN.md`).
 - Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
 
 ### Belum dikerjakan (lanjut ke 1.0.0)
-- Notifikasi push Firebase Cloud Messaging.
-- Pengiriman ulang antrean offline di latar belakang (WorkManager) dan jam absensi offline sesuai jam di HP.
+- Firebase Cloud Messaging (notifikasi seketika), CameraX, token di Android Keystore, penguncian perangkat.
+- Jam absensi offline sesuai jam di HP. Hosting permanen dengan HTTPS.
 - Token login terenkripsi dengan Android Keystore.
 - Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
