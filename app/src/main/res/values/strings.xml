@@ -218,6 +218,9 @@
     <string name="profile_koreksi">Koreksi Absensi</string>
     <string name="profile_koreksi_sub">Betulkan jam masuk atau pulang hari ini</string>
     <string name="msg_need_camera">Izin kamera diperlukan untuk memotret bukti kegiatan. Aktifkan di Pengaturan aplikasi.</string>
+    <string name="notif_channel">Keputusan admin</string>
+    <string name="notif_channel_desc">Pemberitahuan saat izin, koreksi, atau tugas lapangan diterima atau ditolak.</string>
+    <string name="notif_permission_denied">Notifikasi dimatikan. Keputusan admin tetap bisa dilihat di halaman Notifikasi.</string>
     <string name="leave_all_day">Sepanjang hari</string>
     <string name="leave_form_cuti_info">Cuti dikonfirmasi admin. Setelah diterima, absensi pada tanggal cuti dicatat otomatis sebagai Izin.</string>
     <string name="leave_form_lampiran">Lampiran</string>

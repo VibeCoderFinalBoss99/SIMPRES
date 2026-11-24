@@ -72,4 +72,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    // Sinkronisasi antrean offline dan notifikasi keputusan admin di latar belakang.
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 }

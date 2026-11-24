@@ -218,6 +218,8 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
             }
             ApiResult.Offline -> {
                 Outbox.add(PendingAttendance(kind, body.copy(source = "offline"), LocalTime.now().toString()))
+                // Terkirim otomatis di latar belakang begitu internet tersambung, walaupun aplikasi ditutup.
+                com.simpres.app.data.Background.runSoon(requireContext())
                 replace(R.id.offlineSavedFragment)
             }
         }

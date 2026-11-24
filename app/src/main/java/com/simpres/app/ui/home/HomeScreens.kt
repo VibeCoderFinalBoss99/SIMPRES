@@ -1,6 +1,9 @@
 package com.simpres.app.ui.home
 
+import android.Manifest
 import android.app.TimePickerDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
@@ -8,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import com.simpres.app.R
 import com.simpres.app.data.ApiResult
@@ -38,7 +43,16 @@ private val ID = Locale("id", "ID")
 
 /** Beranda: employee, this week, today's attendance (from the server) and the offline queue. */
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
+    // Android 13 ke atas: izin notifikasi diminta supaya keputusan admin bisa muncul di HP.
+    private val notifPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (!granted) toast(getString(R.string.notif_permission_denied))
+    }
+
     override fun onReady(view: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         bindBottomNav(view, R.id.homeFragment)
         view.onClick(R.id.btnBell) { go(R.id.notificationFragment) }
         view.onClick(R.id.tvSeeAll) { go(R.id.historyFragment) }
@@ -367,6 +381,7 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
             launch {
                 call { logout() }
                 Session.clear()
+                com.simpres.app.data.Background.cancel(requireContext())
                 reset(R.id.loginFragment, R.id.homeFragment)
             }
         }
