@@ -163,7 +163,7 @@ Saat admin menerima atau menolak izin, koreksi, atau tugas lapangan, pegawai lan
 aplikasi sedang ditutup. Dalam pengujian, notifikasi muncul **1–2 detik** setelah admin menekan Terima atau Tolak.
 Notifikasi yang diketuk langsung membuka halaman Notifikasi di aplikasi.
 
-| Notifikasi di HP | Diketuk, membuka halaman Notifikasi |
+| Notifikasi di HP | Percobaan Beberapa Notifikasi|
 |---|---|
 | <img src="docs/pengujian/notifikasi/N-4.jpg" width="200" alt="Notifikasi keputusan admin di HP"> | <img src="docs/pengujian/notifikasi/N-5.jpg" width="200" alt="Halaman notifikasi"> |
 
