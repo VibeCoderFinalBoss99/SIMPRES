@@ -453,18 +453,19 @@ perbaikan, dan screenshot sebelum/sesudah) ada di [docs/BUG_DAN_PERBAIKAN.md](do
 
 ### Belum dikerjakan (lanjut ke v1.0.0)
 
-- Kamera CameraX, token login di Android Keystore, dan penguncian perangkat terdaftar.
-- Hosting permanen dengan domain dan HTTPS.
-- Jam absensi offline masih memakai jam saat data terkirim, belum jam saat disimpan di HP.
-- Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
+- [ ] Kamera CameraX, token login di Android Keystore, dan penguncian perangkat terdaftar.
+- [x] Hosting permanen dengan domain dan HTTPS (selesai: https://kelompok4.tkj3a.my.id).
+- [ ] Jam absensi offline masih memakai jam saat data terkirim, belum jam saat disimpan di HP.
+- [ ] Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
 ## v1.0.0 – Rilis (rencana)
 
 Minggu 15 (2 Desember 2026). Checkpoint: fitur utama final, CRUD, basis data, REST API, pengujian sistem, video, laporan PjBL.
 
-- Backend dan Admin Web dipasang di hosting dengan HTTPS (panduan di `backend/DEPLOY.md`).
-- APK rilis untuk pegawai, akun contoh diganti akun asli.
-- Video demonstrasi dan laporan akhir PjBL.
+- [x] Backend dan Admin Web dipasang di hosting dengan HTTPS (panduan di `backend/DEPLOY.md`).
+- [x] APK rilis untuk pegawai (GitHub Releases, terhubung ke server hosting).
+- [ ] Akun contoh diganti akun asli.
+- [ ] Video demonstrasi dan laporan akhir PjBL.
 
 ---
 

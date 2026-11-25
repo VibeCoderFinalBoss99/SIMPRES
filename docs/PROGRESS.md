@@ -1,7 +1,7 @@
 # Progres Backend SIMPRES
 
 Mengikuti urutan `docs/PANDUAN.md`. Diperbarui setiap kali satu langkah selesai.
-Branch kerja: `backend-setup` (belum di-push).
+Branch kerja: `backend-setup` (sudah di-merge ke `main` dan di-push).
 
 ## Catatan umum
 
@@ -39,8 +39,10 @@ Branch kerja: `backend-setup` (belum di-push).
    (-5.02, 119.66) berada di Sulawesi Selatan yang memakai WITA (`Asia/Makassar`, UTC+8). Jam Windows komputer ini juga UTC+8.
    Dengan WIB, jam absen tercatat 1 jam lebih awal dan status terlambat ikut meleset 1 jam.
    Jika memang WITA: ubah `APP_TIMEZONE=Asia/Makassar` di `backend/.env` (dan `.env.example`), lalu `php artisan config:clear`.
-2. **Push notification FCM** belum dibuat (token sudah disimpan). Butuh kredensial Firebase dan kemungkinan package baru.
-3. **Tugas lapangan diterima** belum dihitung sebagai hadir di rekap. Perlu aturan: apakah tugas lapangan = hadir?
+2. ~~**Push notification FCM** belum dibuat (token sudah disimpan). Butuh kredensial Firebase dan kemungkinan package baru.~~
+   **Selesai:** notifikasi dikirim lewat FCM HTTP v1 (`app/Services/PushNotifier.php`) tanpa package baru.
+3. ~~**Tugas lapangan diterima** belum dihitung sebagai hadir di rekap. Perlu aturan: apakah tugas lapangan = hadir?~~
+   **Selesai:** tugas lapangan yang diterima dihitung hadir di rekap (`Admin/RecapController`).
 4. **Desain Figma A1-A8** tidak bisa dibuka dari sesi ini; tampilan Admin Web dibuat sederhana sendiri.
 5. **Akun contoh** (password `simpres123`) harus diganti sebelum online (lihat DEPLOY.md langkah 5).
-6. Branch `backend-setup` belum di-merge ke `main` dan belum di-push.
+6. ~~Branch `backend-setup` belum di-merge ke `main` dan belum di-push.~~ **Selesai:** sudah di-merge ke `main` dan di-push.

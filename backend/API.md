@@ -438,7 +438,9 @@ Respons 200 berupa file `image/jpeg`, untuk pemilik dan admin. Pegawai lain: 403
 
 ### 6.1 `GET /schedules?month=2026-11`
 
-Respons 200 (urut tanggal):
+Respons 200 (urut tanggal). Jadwal dari roster ditambah jadwal tetap pegawai (non-shift dan petugas lapangan:
+shift tetap Senin-Sabtu, Minggu libur) untuk tanggal yang tidak diatur di roster. Jadwal tetap punya `id` null
+dan `is_default` true:
 ```json
 {
   "data": [
@@ -446,9 +448,10 @@ Respons 200 (urut tanggal):
       "id": 1,
       "date": "2026-11-17",
       "is_day_off": false,
+      "is_default": false,
       "shift": {"id": 1, "name": "Pagi", "start_time": "07:30:00", "end_time": "14:00:00", "late_tolerance_min": 10}
     },
-    {"id": 2, "date": "2026-11-18", "is_day_off": true, "shift": null}
+    {"id": null, "date": "2026-11-22", "is_day_off": true, "is_default": true, "shift": null}
   ],
   "month": "2026-11"
 }

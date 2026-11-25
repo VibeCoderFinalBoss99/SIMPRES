@@ -87,17 +87,18 @@ Minggu pengujian fitur dan perbaikan bug.
 - Admin Web diuji di browser: dashboard, pegawai, lokasi, roster, review, rekap, audit log, konfigurasi.
 
 ### Belum dikerjakan (lanjut ke 1.0.0)
-- CameraX, token di Android Keystore, penguncian perangkat.
-- Jam absensi offline sesuai jam di HP. Hosting permanen dengan HTTPS.
-- Token login terenkripsi dengan Android Keystore.
-- Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
+- [ ] CameraX, token di Android Keystore, penguncian perangkat.
+- [ ] Jam absensi offline sesuai jam di HP.
+- [x] Hosting permanen dengan HTTPS (selesai: https://kelompok4.tkj3a.my.id).
+- [ ] Token login terenkripsi dengan Android Keystore.
+- [ ] Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
 ## [1.0.0] – 2 Desember 2026 (rencana, Minggu 15)
 
 ### Ditambah
-- Backend dan Admin Web dipasang di hosting dengan HTTPS.
-- APK rilis untuk pegawai.
-- Video demonstrasi dan laporan akhir PjBL.
+- [x] Backend dan Admin Web dipasang di hosting dengan HTTPS.
+- [x] APK rilis untuk pegawai.
+- [ ] Video demonstrasi dan laporan akhir PjBL.
 
 ### Diubah
 - Akun contoh diganti akun asli pegawai, kata sandi awal dibuat oleh admin.
