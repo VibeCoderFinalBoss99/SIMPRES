@@ -31,7 +31,30 @@ class EmployeeTest extends TestCase
             'unit' => 'Farmasi',
             'role' => 'pegawai',
             'work_location_id' => $this->makeLocation()->id,
+            'work_type' => 'non_shift',
+            'default_shift_id' => $this->makeShift()->id,
         ], $data);
+    }
+
+    public function test_pegawai_non_shift_wajib_punya_shift_tetap(): void
+    {
+        $this->post('/admin/pegawai', $this->data(['default_shift_id' => '']))
+            ->assertSessionHasErrors(['default_shift_id' => 'Pilih shift tetap untuk pegawai non-shift atau petugas lapangan.']);
+        $this->post('/admin/pegawai', $this->data(['work_type' => 'petugas_lapangan', 'default_shift_id' => '']))
+            ->assertSessionHasErrors('default_shift_id');
+        $this->post('/admin/pegawai', $this->data(['work_type' => 'karyawan']))->assertSessionHasErrors('work_type');
+        $this->assertDatabaseMissing('users', ['email' => 'rina@simpres.test']);
+    }
+
+    public function test_pegawai_shift_tidak_menyimpan_shift_tetap(): void
+    {
+        // Walaupun shift tetap terkirim, pegawai shift selalu disimpan tanpa shift tetap (jadwal dari roster).
+        $this->post('/admin/pegawai', $this->data(['work_type' => 'shift']))->assertRedirect('/admin/pegawai');
+
+        $user = User::where('email', 'rina@simpres.test')->first();
+        $this->assertSame('shift', $user->work_type);
+        $this->assertNull($user->default_shift_id);
+        $this->get('/admin/pegawai')->assertSee('Shift')->assertSee('Diatur di Roster');
     }
 
     public function test_daftar_pegawai_dengan_pencarian_nama_atau_nip(): void

@@ -95,6 +95,51 @@ class RecapTest extends TestCase
         $this->assertSame('2;"=""198501012010012001""";"Siti Aminah";Perawat;1;2;1;0;30', $lines[2]);
     }
 
+    public function test_unduh_xlsx_berisi_rekap_dan_total(): void
+    {
+        $response = $this->get('/admin/rekap/xlsx?month=2026-11')->assertOk();
+        $response->assertHeader('Content-Disposition', 'attachment; filename=rekap-absensi-2026-11.xlsx');
+
+        $zip = new \ZipArchive;
+        $this->assertTrue($zip->open($response->getFile()->getPathname()));
+        $sheet = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $this->assertNotFalse($zip->getFromName('xl/workbook.xml'));
+        $zip->close();
+
+        // NIP disimpan sebagai teks (tidak berubah jadi 1,98501E+17), angka sebagai angka.
+        $this->assertStringContainsString('<t xml:space="preserve">198501012010012001</t>', $sheet);
+        $this->assertStringContainsString('<t xml:space="preserve">Siti Aminah</t>', $sheet);
+        $this->assertStringContainsString('Rekap Absensi Pegawai - November 2026', $sheet);
+        // Baris total: hadir 2, terlambat 2, izin 1, alpa 2, menit 30.
+        $this->assertMatchesRegularExpression('#Total</t></is></c>.*<v>2</v></c>.*<v>2</v></c>.*<v>1</v></c>.*<v>2</v></c>.*<v>30</v></c></row>#', $sheet);
+    }
+
+    public function test_unduh_pdf_berisi_rekap(): void
+    {
+        $response = $this->get('/admin/rekap/pdf?month=2026-11')->assertOk();
+        $response->assertHeader('Content-Type', 'application/pdf');
+        $response->assertHeader('Content-Disposition', 'attachment; filename=rekap-absensi-2026-11.pdf');
+
+        $pdf = $response->getContent();
+        $this->assertStringStartsWith('%PDF-1.4', $pdf);
+        $this->assertStringEndsWith("%%EOF\n", $pdf);
+        $this->assertStringContainsString('(Siti Aminah) Tj', $pdf);
+        $this->assertStringContainsString('(Rekap Absensi Pegawai - November 2026) Tj', $pdf);
+
+        // Posisi tabel xref harus menunjuk tepat ke kata "xref", kalau tidak PDF dianggap rusak.
+        preg_match('/startxref\n(\d+)/', $pdf, $m);
+        $this->assertSame('xref', substr($pdf, (int) $m[1], 4));
+    }
+
+    public function test_unduhan_rekap_hanya_untuk_admin(): void
+    {
+        $this->actingAs($this->siti);
+
+        foreach (['csv', 'xlsx', 'pdf'] as $format) {
+            $this->get("/admin/rekap/$format?month=2026-11")->assertRedirect('/admin/login');
+        }
+    }
+
     public function test_bulan_tidak_valid_ditolak(): void
     {
         $this->get('/admin/rekap?month=November')->assertSessionHasErrors('month');

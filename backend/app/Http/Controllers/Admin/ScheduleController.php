@@ -18,11 +18,20 @@ class ScheduleController extends Controller
 {
     public function index(Request $request): View
     {
-        $request->validate(['month' => ['nullable', 'date_format:Y-m'], 'user_id' => ['nullable', 'integer']]);
+        $request->validate([
+            'month' => ['nullable', 'date_format:Y-m'],
+            'user_id' => ['nullable', 'integer'],
+            'minggu' => ['nullable', 'date_format:Y-m-d'],
+        ]);
 
         $month = Carbon::createFromFormat('Y-m-d', ($request->month ?? now()->format('Y-m')).'-01');
-        $employees = User::where('role', 'pegawai')->where('is_active', true)->orderBy('name')->get();
+        $employees = User::with('defaultShift')->where('role', 'pegawai')->where('is_active', true)->orderBy('name')->get();
         $selected = $request->user_id ? $employees->firstWhere('id', (int) $request->user_id) : null;
+
+        // Roster mingguan (Senin s.d. Minggu): jadwal roster ditambah jadwal tetap pegawai.
+        $weekStart = Carbon::parse($request->minggu ?? now()->toDateString())->startOfWeek();
+        $weekEnd = $weekStart->copy()->addDays(6);
+        $week = $employees->mapWithKeys(fn ($employee) => [$employee->id => $employee->schedulesBetween($weekStart, $weekEnd)]);
 
         $schedules = $selected
             ? Schedule::where('user_id', $selected->id)
@@ -33,6 +42,9 @@ class ScheduleController extends Controller
 
         return view('admin.schedules.index', [
             'month' => $month,
+            'weekStart' => $weekStart,
+            'weekDays' => CarbonPeriod::create($weekStart, $weekEnd),
+            'week' => $week,
             'days' => CarbonPeriod::create($month, $month->copy()->endOfMonth()),
             'employees' => $employees,
             'selected' => $selected,
@@ -110,7 +122,74 @@ class ScheduleController extends Controller
         }
 
         return redirect()
-            ->route('admin.jadwal.index', ['user_id' => $data['user_id'], 'month' => $data['month']])
+            ->to(route('admin.jadwal.index', ['user_id' => $data['user_id'], 'month' => $data['month']]).'#bulanan')
             ->with('success', 'Jadwal bulan '.$month->translatedFormat('F Y').' berhasil disimpan.');
+    }
+
+    /**
+     * Isi jadwal sekaligus untuk beberapa pegawai dan beberapa bulan (maksimal 12 bulan).
+     * Hari yang dicentang diisi shift terpilih; hari lain diisi Libur jika diminta.
+     * Jadwal yang sudah ada hanya ditimpa jika "timpa" dicentang.
+     */
+    public function fill(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'user_ids' => ['required', 'array', 'min:1'],
+            'user_ids.*' => ['integer', 'exists:users,id'],
+            'from' => ['required', 'date_format:Y-m'],
+            'to' => ['required', 'date_format:Y-m', 'after_or_equal:from'],
+            'shift_id' => ['required', 'exists:shifts,id'],
+            'weekdays' => ['required', 'array', 'min:1'],
+            'weekdays.*' => ['integer', 'between:1,7'],
+            'other_days_off' => ['nullable', 'boolean'],
+            'overwrite' => ['nullable', 'boolean'],
+        ], [
+            'user_ids.required' => 'Pilih minimal satu pegawai.',
+            'weekdays.required' => 'Centang minimal satu hari kerja.',
+            'to.after_or_equal' => 'Bulan akhir tidak boleh sebelum bulan awal.',
+        ]);
+
+        $start = Carbon::createFromFormat('Y-m-d', $data['from'].'-01')->startOfDay();
+        $end = Carbon::createFromFormat('Y-m-d', $data['to'].'-01')->endOfMonth()->startOfDay();
+        if ($start->copy()->addMonths(12)->lte($end)) {
+            return back()->withInput()->withErrors(['to' => 'Rentang paling lama 12 bulan.']);
+        }
+
+        $workdays = array_map('intval', $data['weekdays']);
+        $daysOff = $request->boolean('other_days_off');
+        $overwrite = $request->boolean('overwrite');
+        $saved = 0;
+
+        foreach ($data['user_ids'] as $userId) {
+            $existing = Schedule::where('user_id', $userId)
+                ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+                ->get()
+                ->keyBy(fn ($schedule) => $schedule->date->toDateString());
+
+            foreach (CarbonPeriod::create($start, $end) as $day) {
+                $isWorkday = in_array($day->dayOfWeekIso, $workdays, true);
+                if (! $isWorkday && ! $daysOff) {
+                    continue;
+                }
+
+                $values = $isWorkday
+                    ? ['shift_id' => (int) $data['shift_id'], 'is_day_off' => false]
+                    : ['shift_id' => null, 'is_day_off' => true];
+                $schedule = $existing[$day->toDateString()] ?? null;
+
+                if ($schedule && ! $overwrite) {
+                    continue;
+                }
+                $schedule
+                    ? $schedule->update($values)
+                    : Schedule::create($values + ['user_id' => $userId, 'date' => $day->toDateString()]);
+                $saved++;
+            }
+        }
+
+        return redirect()
+            ->route('admin.jadwal.index')
+            ->with('success', "{$saved} jadwal tersimpan untuk ".count($data['user_ids']).' pegawai ('
+                .$start->translatedFormat('F Y').' s.d. '.$end->translatedFormat('F Y').').');
     }
 }

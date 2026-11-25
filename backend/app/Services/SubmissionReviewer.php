@@ -6,7 +6,6 @@ use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\FieldDuty;
 use App\Models\LeaveRequest;
-use App\Models\Schedule;
 use App\Models\User;
 use App\Models\UserNotification;
 use Carbon\CarbonPeriod;
@@ -131,7 +130,7 @@ class SubmissionReviewer
             $date = $day->toDateString();
 
             $hasAttendance = Attendance::where('user_id', $leave->user_id)->whereDate('date', $date)->exists();
-            $schedule = Schedule::where('user_id', $leave->user_id)->whereDate('date', $date)->first();
+            $schedule = $this->validator->scheduleFor($leave->user, $date);
 
             if ($hasAttendance || $schedule?->is_day_off) {
                 continue;

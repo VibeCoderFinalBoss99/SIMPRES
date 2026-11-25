@@ -46,6 +46,10 @@ CREATE TABLE users (
   position           VARCHAR(100)    NOT NULL,
   unit               VARCHAR(100)    NULL,
   role               ENUM('pegawai','admin') NOT NULL DEFAULT 'pegawai',
+  -- Jenis kerja: non_shift dan petugas_lapangan memakai shift tetap (default_shift_id), shift diatur lewat roster.
+  work_type          ENUM('non_shift','shift','petugas_lapangan') NOT NULL DEFAULT 'non_shift',
+  -- Shift tetap: dipakai otomatis Senin-Sabtu (Minggu libur) pada tanggal yang tidak punya baris di schedules.
+  default_shift_id   BIGINT UNSIGNED NULL,
   photo_path         VARCHAR(255)    NULL,
   is_active          TINYINT(1)      NOT NULL DEFAULT 1,
   email_verified_at  TIMESTAMP NULL,
@@ -56,7 +60,9 @@ CREATE TABLE users (
   UNIQUE KEY users_nip_unique (nip),
   UNIQUE KEY users_email_unique (email),
   CONSTRAINT users_work_location_id_foreign FOREIGN KEY (work_location_id)
-    REFERENCES work_locations (id) ON DELETE SET NULL
+    REFERENCES work_locations (id) ON DELETE SET NULL,
+  CONSTRAINT users_default_shift_id_foreign FOREIGN KEY (default_shift_id)
+    REFERENCES shifts (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 4. Jadwal kerja per pegawai per tanggal
@@ -225,13 +231,13 @@ INSERT INTO shifts (name, start_time, end_time, late_tolerance_min, created_at, 
 ('Pagi', '07:30:00', '14:00:00', 10, NOW(), NOW()),
 ('Siang', '14:00:00', '21:00:00', 10, NOW(), NOW());
 
-INSERT INTO users (work_location_id, nip, name, email, password, position, unit, role, created_at, updated_at) VALUES
+INSERT INTO users (work_location_id, nip, name, email, password, position, unit, role, work_type, default_shift_id, created_at, updated_at) VALUES
 (1, '000000000000000001', 'Admin Puskesmas', 'admin@simpres.test',
- '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Admin Kepegawaian', 'Tata Usaha', 'admin', NOW(), NOW()),
+ '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Admin Kepegawaian', 'Tata Usaha', 'admin', 'non_shift', NULL, NOW(), NOW()),
 (1, '198501012010012001', 'Siti Aminah', 'siti@simpres.test',
- '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Perawat', 'Rawat Jalan', 'pegawai', NOW(), NOW()),
+ '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Perawat', 'Rawat Jalan', 'pegawai', 'shift', NULL, NOW(), NOW()),
 (1, '199002022015021002', 'Budi Santoso', 'budi@simpres.test',
- '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Bidan', 'KIA', 'pegawai', NOW(), NOW());
+ '$2y$10$OBV2hA/spmu1cLrcznUVY.ZviIQPdkBW63UoJziTYCbmLc3VeH8pW', 'Bidan', 'KIA', 'pegawai', 'non_shift', 1, NOW(), NOW());
 
 INSERT INTO schedules (user_id, shift_id, date, created_at, updated_at) VALUES
 (2, 1, CURDATE(), NOW(), NOW()),

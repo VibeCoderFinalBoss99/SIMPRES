@@ -47,6 +47,31 @@
             </div>
 
             <div class="field">
+                <label for="work_type">Jenis kerja *</label>
+                <select id="work_type" name="work_type">
+                    @foreach (\App\Models\User::WORK_TYPES as $value => $label)
+                        <option value="{{ $value }}" @selected(old('work_type', $user->work_type ?? 'non_shift') === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <div class="hint">Non-shift dan petugas lapangan memakai shift tetap. Pegawai shift diatur bergantian di Roster.</div>
+                @error('work_type')<div class="error">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="field" id="default-shift-field">
+                <label for="default_shift_id">Shift tetap</label>
+                <select id="default_shift_id" name="default_shift_id" class="{{ $errors->has('default_shift_id') ? 'is-invalid' : '' }}">
+                    <option value="">- tidak ada (atur di Roster) -</option>
+                    @foreach ($shifts as $shift)
+                        <option value="{{ $shift->id }}" @selected((string) old('default_shift_id', $user->default_shift_id) === (string) $shift->id)>
+                            {{ $shift->name }} ({{ substr($shift->start_time, 0, 5) }}-{{ substr($shift->end_time, 0, 5) }})
+                        </option>
+                    @endforeach
+                </select>
+                <div class="hint">Berlaku otomatis setiap Senin-Sabtu, Minggu libur, sampai diubah. Tanggal yang diatur di Roster tetap diutamakan.</div>
+                @error('default_shift_id')<div class="error">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="field">
                 <label for="work_location_id">Lokasi kerja</label>
                 <select id="work_location_id" name="work_location_id">
                     <option value="">- belum diatur -</option>
@@ -70,4 +95,20 @@
 
         <button type="submit" class="btn">Simpan</button>
     </form>
+
+    <script>
+        // Pegawai shift tidak memakai shift tetap; jadwalnya diatur di Roster.
+        (function () {
+            const type = document.getElementById('work_type');
+            const field = document.getElementById('default-shift-field');
+            const select = document.getElementById('default_shift_id');
+            const sync = () => {
+                const isShift = type.value === 'shift';
+                field.style.display = isShift ? 'none' : '';
+                if (isShift) select.value = '';
+            };
+            type.addEventListener('change', sync);
+            sync();
+        })();
+    </script>
 @endsection

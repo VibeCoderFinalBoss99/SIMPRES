@@ -26,9 +26,11 @@ class DashboardController extends Controller
         $notYet = User::where('role', 'pegawai')
             ->where('is_active', true)
             ->whereDoesntHave('attendances', fn ($query) => $query->whereDate('date', $today))
-            ->whereDoesntHave('schedules', fn ($query) => $query->whereDate('date', $today)->where('is_day_off', true))
             ->orderBy('name')
-            ->get();
+            ->get()
+            // Libur menurut roster atau menurut jadwal tetap (Minggu) tidak dihitung belum absen.
+            ->reject(fn ($user) => $user->scheduleOn($today)?->is_day_off)
+            ->values();
 
         // Grafik: jumlah pegawai yang hadir (hadir + terlambat) per hari, 7 hari terakhir.
         $week = collect(range(6, 0))->map(function ($daysAgo) {

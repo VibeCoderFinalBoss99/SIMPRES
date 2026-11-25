@@ -28,7 +28,7 @@
                     <th>Pegawai</th>
                     <th>NIP</th>
                     <th>Unit</th>
-                    <th>Jadwal</th>
+                    <th>Jenis kerja</th>
                     <th>Peran</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -36,7 +36,6 @@
                 </thead>
                 <tbody>
                 @forelse ($users as $user)
-                    @php $shift = $user->schedules()->with('shift')->latest('date')->first()?->shift; @endphp
                     <tr>
                         <td>
                             <div class="person">
@@ -47,10 +46,13 @@
                         <td>{{ $user->nip }}</td>
                         <td>{{ $user->unit ?? '-' }}</td>
                         <td>
-                            @if ($shift)
-                                <span class="badge {{ $shift->name === 'Pagi' ? 'blue' : 'amber' }}">{{ $shift->name }}</span>
+                            @if ($user->role === 'admin')
+                                <span class="muted">-</span>
                             @else
-                                <span class="badge">Belum diatur</span>
+                                <span class="badge {{ $user->work_type === 'shift' ? 'amber' : 'blue' }}">{{ \App\Models\User::WORK_TYPES[$user->work_type] ?? '-' }}</span>
+                                <small class="muted" style="display:block;margin-top:4px">
+                                    {{ $user->defaultShift ? 'Tetap: '.$user->defaultShift->name.', Sen-Sab' : 'Diatur di Roster' }}
+                                </small>
                             @endif
                         </td>
                         <td><span class="badge {{ $user->role === 'admin' ? 'blue' : '' }}">{{ ucfirst($user->role) }}</span></td>

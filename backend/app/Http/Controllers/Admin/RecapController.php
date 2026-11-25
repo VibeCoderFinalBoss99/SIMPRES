@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Support\PdfTable;
+use App\Support\XlsxWriter;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/** Rekap absensi per bulan per pegawai, tampil di halaman dan bisa diunduh CSV. */
+/** Rekap absensi per bulan per pegawai, tampil di halaman dan bisa diunduh CSV, Excel (XLSX), atau PDF. */
 class RecapController extends Controller
 {
     public function index(Request $request): View
@@ -40,6 +45,66 @@ class RecapController extends Controller
         }, 'rekap-absensi-'.$month->format('Y-m').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
+    /** Rekap sebagai file Excel (.xlsx) dengan judul, kepala tabel berwarna, dan baris total. */
+    public function xlsx(Request $request): BinaryFileResponse
+    {
+        $month = $this->month($request);
+        $rows = $this->rows($month)->values();
+
+        $data = $rows->map(fn ($row, $i) => [$i + 1, (string) $row->nip, $row->name, (string) $row->position,
+            $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes])->all();
+        $total = [['', '', 'Total', '', $rows->sum('hadir'), $rows->sum('terlambat'), $rows->sum('izin'),
+            $rows->sum('alpa'), $rows->sum('late_minutes')]];
+
+        $path = XlsxWriter::make(
+            'Rekap '.$month->format('Y-m'),
+            $this->titles($month),
+            self::HEADERS,
+            $data,
+            $total,
+            [5, 22, 26, 20, 8, 11, 8, 8, 22],
+        );
+
+        return response()->download($path, 'rekap-absensi-'.$month->format('Y-m').'.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend();
+    }
+
+    /** Rekap sebagai PDF A4 mendatar, siap dicetak atau dikirim. */
+    public function pdf(Request $request): Response
+    {
+        $month = $this->month($request);
+        $rows = $this->rows($month)->values();
+
+        $columns = [['No', 32, 'R'], ['NIP', 140, 'L'], ['Nama', 170, 'L'], ['Jabatan', 120, 'L'],
+            ['Hadir', 52, 'R'], ['Terlambat', 64, 'R'], ['Izin', 46, 'R'], ['Alpa', 46, 'R'], ['Menit terlambat', 100, 'R']];
+        $data = $rows->map(fn ($row, $i) => [$i + 1, (string) $row->nip, $row->name, (string) $row->position,
+            $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes])->all();
+        $total = ['', '', 'Total', '', $rows->sum('hadir'), $rows->sum('terlambat'), $rows->sum('izin'),
+            $rows->sum('alpa'), $rows->sum('late_minutes')];
+
+        $pdf = PdfTable::make($this->titles($month), $columns, $data, $total, self::NOTE);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename=rekap-absensi-'.$month->format('Y-m').'.pdf',
+        ]);
+    }
+
+    private const HEADERS = ['No', 'NIP', 'Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin', 'Alpa', 'Total menit terlambat'];
+
+    private const NOTE = 'Alpa = absensi berstatus alpa ditambah hari kerja terjadwal (bukan libur) yang sudah lewat tanpa absensi. '
+        .'Tugas lapangan yang diterima dihitung hadir.';
+
+    private function titles(Carbon $month): array
+    {
+        return [
+            'Rekap Absensi Pegawai - '.$month->translatedFormat('F Y'),
+            'UPTD Puskesmas Simbang',
+            'Dibuat '.now()->translatedFormat('d F Y H:i').' dari Admin Web SIMPRES',
+        ];
+    }
+
     private function month(Request $request): Carbon
     {
         $request->validate(['month' => ['nullable', 'date_format:Y-m']]);
@@ -50,7 +115,7 @@ class RecapController extends Controller
     /**
      * Hadir, terlambat, izin, dan menit terlambat dihitung dari tabel attendances
      * (sama dengan query rekap di docs/PANDUAN.md bagian 6).
-     * Alpa = absensi berstatus alpa + hari kerja terjadwal (bukan libur) yang sudah lewat tanpa absensi sama sekali.
+     * Alpa = absensi berstatus alpa + hari kerja (roster atau jadwal tetap, bukan libur) yang sudah lewat tanpa absensi sama sekali.
      */
     private function rows(Carbon $month): Collection
     {
@@ -70,20 +135,7 @@ class RecapController extends Controller
                 COALESCE(SUM(a.late_minutes), 0) AS late_minutes")
             ->get();
 
-        // Hari kerja terjadwal yang sudah lewat (sampai kemarin) tetapi tidak ada absensinya.
-        $lastPastDay = min($end, now()->subDay()->toDateString());
-        // Tugas lapangan yang diterima admin dihitung hadir, karena pegawai bertugas resmi di luar gedung.
-        $acceptedDuty = fn ($query) => $query->from('field_duties as f')
-            ->whereColumn('f.user_id', 's.user_id')->whereColumn('f.date', 's.date')->where('f.status', 'diterima');
-
-        $missing = DB::table('schedules as s')
-            ->leftJoin('attendances as a', fn ($join) => $join->on('a.user_id', '=', 's.user_id')->on('a.date', '=', 's.date'))
-            ->where('s.is_day_off', false)
-            ->whereBetween('s.date', [$start, $lastPastDay])
-            ->whereNull('a.id')
-            ->whereNotExists($acceptedDuty)
-            ->groupBy('s.user_id')
-            ->pluck(DB::raw('COUNT(*)'), 's.user_id');
+        $missing = $this->missingWorkdays($rows->pluck('id'), $start, min($end, now()->subDay()->toDateString()));
 
         // Hari tugas lapangan diterima yang tidak punya data absensi (supaya tidak dihitung dua kali).
         $fieldDays = DB::table('field_duties as f')
@@ -105,5 +157,36 @@ class RecapController extends Controller
 
             return $row;
         });
+    }
+
+    /**
+     * Hari kerja (dari roster atau jadwal tetap, bukan libur) yang sudah lewat sampai kemarin
+     * tetapi tidak ada absensinya. Tugas lapangan yang diterima admin tidak dihitung alpa,
+     * karena pegawai bertugas resmi di luar gedung.
+     *
+     * @return array<int, int> jumlah hari per user_id
+     */
+    private function missingWorkdays(Collection $userIds, string $start, string $lastPastDay): array
+    {
+        if ($start > $lastPastDay) {
+            return [];
+        }
+
+        $datesPerUser = fn ($query) => $query->whereIn('user_id', $userIds)->whereBetween('date', [$start, $lastPastDay])
+            ->get(['user_id', 'date'])
+            ->groupBy('user_id')
+            ->map(fn ($items) => $items->mapWithKeys(fn ($item) => [substr($item->date, 0, 10) => true]));
+        $attended = $datesPerUser(DB::table('attendances'));
+        $duties = $datesPerUser(DB::table('field_duties')->where('status', 'diterima'));
+
+        $missing = [];
+        foreach (User::with('defaultShift')->whereIn('id', $userIds)->get() as $user) {
+            $missing[$user->id] = $user->schedulesBetween(Carbon::parse($start), Carbon::parse($lastPastDay))
+                ->reject(fn ($schedule, $date) => $schedule->is_day_off
+                    || isset($attended[$user->id][$date]) || isset($duties[$user->id][$date]))
+                ->count();
+        }
+
+        return $missing;
     }
 }

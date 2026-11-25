@@ -15,11 +15,8 @@ class ScheduleController extends Controller
 
         $month = Carbon::createFromFormat('Y-m-d', ($request->month ?? now()->format('Y-m')).'-01');
 
-        $schedules = $request->user()->schedules()
-            ->with('shift')
-            ->whereBetween('date', [$month->toDateString(), $month->copy()->endOfMonth()->toDateString()])
-            ->orderBy('date')
-            ->get();
+        // Jadwal roster ditambah jadwal tetap pegawai untuk tanggal yang tidak diatur di roster.
+        $schedules = $request->user()->schedulesBetween($month, $month->copy()->endOfMonth())->values();
 
         return ScheduleResource::collection($schedules)->additional([
             'month' => $month->format('Y-m'),

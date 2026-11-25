@@ -48,6 +48,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/jadwal', [ScheduleController::class, 'index'])->name('admin.jadwal.index');
         Route::post('/jadwal', [ScheduleController::class, 'store'])->name('admin.jadwal.store');
         Route::put('/jadwal/bulan', [ScheduleController::class, 'updateMonth'])->name('admin.jadwal.month');
+        Route::post('/jadwal/isi', [ScheduleController::class, 'fill'])->name('admin.jadwal.fill');
 
         Route::get('/pengajuan', [SubmissionController::class, 'index'])->name('admin.pengajuan.index');
         // {type}: izin, koreksi, atau tugas (dicek di SubmissionController).
@@ -57,6 +58,8 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/rekap', [RecapController::class, 'index'])->name('admin.rekap.index');
         Route::get('/rekap/csv', [RecapController::class, 'csv'])->name('admin.rekap.csv');
+        Route::get('/rekap/xlsx', [RecapController::class, 'xlsx'])->name('admin.rekap.xlsx');
+        Route::get('/rekap/pdf', [RecapController::class, 'pdf'])->name('admin.rekap.pdf');
         Route::get('/audit', [AuditController::class, 'index'])->name('admin.audit.index');
         Route::get('/audit/csv', [AuditController::class, 'csv'])->name('admin.audit.csv');
         Route::get('/konfigurasi', [ConfigController::class, 'edit'])->name('admin.konfigurasi.edit');

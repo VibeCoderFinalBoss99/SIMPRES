@@ -126,7 +126,7 @@ class LocationShiftScheduleTest extends TestCase
                 '2026-11-18' => (string) $shift->id,
                 '2026-11-19' => 'libur',
             ],
-        ])->assertRedirect("/admin/jadwal?user_id={$siti->id}&month=2026-11");
+        ])->assertRedirect("/admin/jadwal?user_id={$siti->id}&month=2026-11#bulanan");
 
         $schedules = Schedule::where('user_id', $siti->id)->orderBy('date')->get();
         $this->assertSame(['2026-11-18', '2026-11-19'], $schedules->map(fn ($s) => $s->date->toDateString())->all());

@@ -122,9 +122,10 @@ class AttendanceValidator
         return ['terlambat', (int) floor($start->diffInMinutes($checkInAt))];
     }
 
+    /** Jadwal dari roster, atau jadwal tetap pegawai jika tanggal itu tidak diatur di roster. */
     public function scheduleFor(User $user, string $date): ?Schedule
     {
-        return Schedule::with('shift')->where('user_id', $user->id)->whereDate('date', $date)->first();
+        return $user->scheduleOn($date);
     }
 
     /** Jarak dua titik GPS dalam meter dengan rumus Haversine. */

@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
 @section('title', 'Rekap & Ekspor')
-@section('subtitle', 'Rekap absensi per pegawai bulan '.$month->translatedFormat('F Y').'. Unduh CSV untuk laporan.')
+@section('subtitle', 'Rekap absensi per pegawai bulan '.$month->translatedFormat('F Y').'. Unduh CSV, Excel, atau PDF untuk laporan.')
 
 @php
     $initials = fn ($name) => collect(explode(' ', $name))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->join('');
@@ -14,7 +14,10 @@
             <button type="submit" class="btn secondary">@include('admin.icon', ['name' => 'filter']) Tampilkan</button>
         </form>
         <span class="grow"></span>
-        <a href="{{ route('admin.rekap.csv', ['month' => $month->format('Y-m')]) }}" class="btn">@include('admin.icon', ['name' => 'download']) Ekspor CSV</a>
+        <span class="muted">Unduh:</span>
+        <a href="{{ route('admin.rekap.csv', ['month' => $month->format('Y-m')]) }}" class="btn secondary">@include('admin.icon', ['name' => 'download']) CSV</a>
+        <a href="{{ route('admin.rekap.xlsx', ['month' => $month->format('Y-m')]) }}" class="btn secondary">@include('admin.icon', ['name' => 'download']) Excel (XLSX)</a>
+        <a href="{{ route('admin.rekap.pdf', ['month' => $month->format('Y-m')]) }}" class="btn">@include('admin.icon', ['name' => 'download']) PDF</a>
     </div>
 
     <div class="stats">

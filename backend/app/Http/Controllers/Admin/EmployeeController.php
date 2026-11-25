@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\EmployeeRequest;
+use App\Models\Shift;
 use App\Models\User;
 use App\Models\WorkLocation;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ class EmployeeController extends Controller
     {
         $search = trim((string) $request->query('q'));
 
-        $users = User::with('workLocation')
+        $users = User::with('workLocation', 'defaultShift')
             ->when($search !== '', fn ($query) => $query->where(fn ($q) => $q
                 ->where('name', 'like', "%{$search}%")
                 ->orWhere('nip', 'like', "%{$search}%")))
@@ -30,15 +31,22 @@ class EmployeeController extends Controller
     public function create(): View
     {
         return view('admin.employees.form', [
-            'user' => new User(['role' => 'pegawai', 'work_location_id' => WorkLocation::value('id')]),
+            'user' => new User([
+                'role' => 'pegawai',
+                'work_type' => 'non_shift',
+                'work_location_id' => WorkLocation::value('id'),
+                // Shift paling pagi (biasanya Pagi) jadi pilihan awal shift tetap.
+                'default_shift_id' => Shift::orderBy('start_time')->value('id'),
+            ]),
             'locations' => WorkLocation::orderBy('name')->get(),
+            'shifts' => Shift::orderBy('start_time')->get(),
         ]);
     }
 
     public function store(EmployeeRequest $request): RedirectResponse
     {
         // Password otomatis disimpan sebagai hash oleh cast 'hashed' di model User.
-        $user = User::create($request->validated());
+        $user = User::create($this->scheduleFields($request->validated()));
 
         return redirect()->route('admin.pegawai.index')->with('success', "Pegawai {$user->name} berhasil ditambahkan.");
     }
@@ -48,12 +56,13 @@ class EmployeeController extends Controller
         return view('admin.employees.form', [
             'user' => $user,
             'locations' => WorkLocation::orderBy('name')->get(),
+            'shifts' => Shift::orderBy('start_time')->get(),
         ]);
     }
 
     public function update(EmployeeRequest $request, User $user): RedirectResponse
     {
-        $data = $request->validated();
+        $data = $this->scheduleFields($request->validated());
 
         if (empty($data['password'])) {
             unset($data['password']); // password kosong = tidak diganti
@@ -66,6 +75,16 @@ class EmployeeController extends Controller
         $user->update($data);
 
         return redirect()->route('admin.pegawai.index')->with('success', "Data {$user->name} berhasil disimpan.");
+    }
+
+    /** Pegawai shift tidak memakai shift tetap; jadwalnya selalu dari roster. */
+    private function scheduleFields(array $data): array
+    {
+        if ($data['work_type'] === 'shift') {
+            $data['default_shift_id'] = null;
+        }
+
+        return $data;
     }
 
     /** Aktifkan atau nonaktifkan akun. Akun nonaktif tidak bisa login dan tokennya dihapus. */
