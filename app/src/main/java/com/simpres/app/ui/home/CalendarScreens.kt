@@ -22,7 +22,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 /** Data satu bulan untuk Riwayat dan Jadwal, diambil sekaligus. */
-private class MonthData(
+internal class MonthData(
     val attendances: Map<LocalDate, Attendance>,
     val schedules: Map<LocalDate, Schedule>,
     val leaves: List<Leave>,
@@ -39,7 +39,7 @@ private class MonthData(
         .minByOrNull { if (it.status == "diterima") 0 else 1 }
 }
 
-private suspend fun loadMonth(month: LocalDate, withAttendance: Boolean): MonthData = coroutineScope {
+internal suspend fun loadMonth(month: LocalDate, withAttendance: Boolean): MonthData = coroutineScope {
     val key = Format.month(month)
     val att = async { if (withAttendance) call { history(key) } else null }
     val sch = async { call { schedules(key) } }
@@ -55,6 +55,25 @@ private suspend fun loadMonth(month: LocalDate, withAttendance: Boolean): MonthD
         duties = list(results[3]),
         offline = results.any { it == ApiResult.Offline },
     )
+}
+
+/** Warna tanggal Riwayat (dipakai juga rekap Beranda): absensi lebih dulu, lalu tugas lapangan, cuti, libur, alpa. */
+internal fun historyMark(d: LocalDate, data: MonthData, today: LocalDate): Mark? {
+    val a = data.attendances[d]
+    val s = data.schedules[d]
+    val leave = data.leaveOn(d)
+    return when {
+        a?.status == "terlambat" -> Marks.TERLAMBAT
+        a?.status == "hadir" -> Marks.HADIR
+        a?.status == "izin" -> Marks.CUTI
+        a?.status == "alpa" -> Marks.ALPA
+        data.dutyOn(d)?.status == "diterima" -> Marks.LAPANGAN
+        leave?.status == "diterima" && leave.type != "izin_keluar" -> Marks.CUTI
+        s?.holiday != null || s?.isDayOff == true || (s == null && d.dayOfWeek == DayOfWeek.SUNDAY) -> Marks.LIBUR
+        s != null && d.isBefore(today) -> Marks.ALPA
+        leave?.status == "menunggu" -> Marks.MENUNGGU
+        else -> null
+    }
 }
 
 private fun leaveName(l: Leave) = Format.leaveType(l.type)
@@ -106,7 +125,7 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history) {
         val today = LocalDate.now()
         val marks = mutableMapOf<LocalDate, Mark>()
         val days = generateSequence(month) { it.plusDays(1) }.takeWhile { it.month == month.month }.toList()
-        days.forEach { d -> markFor(d, data, today)?.let { marks[d] = it } }
+        days.forEach { d -> historyMark(d, data, today)?.let { marks[d] = it } }
 
         val counted = marks.values
         calendar.render(month, marks,
@@ -123,25 +142,6 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history) {
         }
         days.sortedDescending().forEach { d -> addCard(list, d, marks[d], data, today) }
         if (list.childCount == 0) list.addMessage(getString(R.string.msg_empty))
-    }
-
-    /** Warna tanggal: absensi lebih dulu, lalu tugas lapangan, cuti, libur, alpa (hari kerja lewat tanpa absen). */
-    private fun markFor(d: LocalDate, data: MonthData, today: LocalDate): Mark? {
-        val a = data.attendances[d]
-        val s = data.schedules[d]
-        val leave = data.leaveOn(d)
-        return when {
-            a?.status == "terlambat" -> Marks.TERLAMBAT
-            a?.status == "hadir" -> Marks.HADIR
-            a?.status == "izin" -> Marks.CUTI
-            a?.status == "alpa" -> Marks.ALPA
-            data.dutyOn(d)?.status == "diterima" -> Marks.LAPANGAN
-            leave?.status == "diterima" && leave.type != "izin_keluar" -> Marks.CUTI
-            s?.holiday != null || s?.isDayOff == true || (s == null && d.dayOfWeek == DayOfWeek.SUNDAY) -> Marks.LIBUR
-            s != null && d.isBefore(today) -> Marks.ALPA
-            leave?.status == "menunggu" -> Marks.MENUNGGU
-            else -> null
-        }
     }
 
     private fun addCard(list: LinearLayout, d: LocalDate, mark: Mark?, data: MonthData, today: LocalDate) {

@@ -11,6 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.graphics.drawable.GradientDrawable
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -48,7 +53,10 @@ import java.util.Locale
 
 private val ID = Locale("id", "ID")
 
-/** Beranda: employee, this week, today's attendance (from the server) and the offline queue. */
+/**
+ * Beranda: salam, Presensi Hari Ini (jam masuk/pulang dan tombol geser), menu cepat Izin & Cuti dan Koreksi,
+ * Rekapitulasi bulan ini, dan Informasi Pegawai.
+ */
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
     // Android 13 ke atas: izin notifikasi diminta supaya keputusan admin bisa muncul di HP.
     private val notifPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -69,6 +77,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         view.onClick(R.id.btnBell) { go(R.id.notificationFragment) }
         view.onClick(R.id.tvSeeAll) { go(R.id.historyFragment) }
         view.onClick(R.id.cardSync) { go(R.id.syncFragment) }
+        view.onClick(R.id.btnLeave) { go(R.id.leaveListFragment) }
+        view.onClick(R.id.btnCorrection) { go(R.id.correctionFragment) }
         resetSwipe = setupSwipeToConfirm(
             track = view.findViewById(R.id.swipeCheckOut),
             knob = view.findViewById(R.id.swipeKnob),
@@ -76,37 +86,42 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         ) { if (isAdded) confirmSwipe() }
 
         showUser(view)
-        showWeek(view)
         showQueue(view)
         loadToday(view)
+        loadRecap(view)
+        loadUnread(view)
         showGuide(view)
     }
 
     private fun showUser(view: View) {
         val user = Session.user ?: return
+        view.findViewById<TextView>(R.id.tvGreeting).text = when (LocalTime.now().hour) {
+            in 4..10 -> "Selamat pagi,"
+            in 11..14 -> "Selamat siang,"
+            in 15..17 -> "Selamat sore,"
+            else -> "Selamat malam,"
+        }
         view.findViewById<TextView>(R.id.tvName).text = user.name
         view.findViewById<TextView>(R.id.tvAvatar).text = Format.initials(user.name)
-        view.findViewById<TextView>(R.id.tvPosition).text = listOfNotNull(user.position, user.unit).joinToString(" · ")
+        view.findViewById<TextView>(R.id.tvTodayDate).text = Format.longDay(LocalDate.now())
+
+        val info = view.findViewById<LinearLayout>(R.id.infoList)
+        info.removeAllViews()
+        listOf(
+            Triple(R.drawable.ic_person, "JABATAN", user.position ?: "-"),
+            Triple(R.drawable.ic_home, "UNIT KERJA", user.unit ?: "-"),
+            Triple(R.drawable.ic_file, "NIP", user.nip),
+            Triple(R.drawable.ic_clock, "JENIS KERJA", user.workTypeLabel()),
+            Triple(R.drawable.ic_location, "LOKASI KERJA", user.workLocation?.name ?: "Belum diatur"),
+        ).forEach { (icon, label, value) -> info.addInfoRow(icon, label, value) }
     }
 
-    /** Five day chips around today; the middle one (today) keeps the highlighted style from the design. */
-    private fun showWeek(view: View) {
-        val strip = view.findViewById<ViewGroup>(R.id.weekStrip)
-        val today = LocalDate.now()
-        for (i in 0 until strip.childCount) {
-            val day = today.plusDays((i - 2).toLong())
-            val chip = strip.getChildAt(i) as? ViewGroup ?: continue
-            (chip.getChildAt(0) as? TextView)?.text = day.dayOfMonth.toString()
-            (chip.getChildAt(1) as? TextView)?.text = day.dayOfWeek.getDisplayName(TextStyle.SHORT, ID)
-        }
-    }
-
+    /** Kartu antrean hanya muncul jika ada absensi yang belum terkirim. */
     private fun showQueue(view: View) {
         val pending = Outbox.all().size
-        view.findViewById<TextView>(R.id.tvSyncTitle).text =
-            if (pending == 0) getString(R.string.sync_safe) else getString(R.string.sync_pending, pending)
-        view.findViewById<TextView>(R.id.tvSyncNote)
-            .setText(if (pending == 0) R.string.sync_all_sent else R.string.sync_waiting)
+        view.findViewById<View>(R.id.cardSync).visibility = if (pending == 0) View.GONE else View.VISIBLE
+        view.findViewById<TextView>(R.id.tvSyncTitle).text = getString(R.string.sync_pending, pending)
+        view.findViewById<TextView>(R.id.tvSyncNote).setText(R.string.sync_waiting)
     }
 
     private fun loadToday(view: View) = launch {
@@ -124,54 +139,65 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         showToday(view, result.value.data)
     }
 
+    /** Titik merah lonceng hanya tampil jika ada notifikasi yang belum dibaca. */
+    private fun loadUnread(view: View) = launch {
+        val r = call { notifications() }
+        val unread = (r as? ApiResult.Ok)?.value?.let { it.unreadCount ?: it.data.count { n -> !n.isRead } } ?: 0
+        view.findViewById<View>(R.id.bellDot).visibility = if (unread > 0) View.VISIBLE else View.GONE
+    }
+
+    /** Rekapitulasi bulan ini: dihitung dengan aturan yang sama seperti kalender Riwayat. */
+    private fun loadRecap(view: View) = launch {
+        val month = LocalDate.now().withDayOfMonth(1)
+        view.findViewById<TextView>(R.id.tvRecapMonth).text = Format.monthTitle(month)
+        val data = loadMonth(month, withAttendance = true)
+        val today = LocalDate.now()
+        val marks = generateSequence(month) { it.plusDays(1) }.takeWhile { !it.isAfter(today) }
+            .mapNotNull { historyMark(it, data, today) }.toList()
+        val row = view.findViewById<LinearLayout>(R.id.recapRow)
+        row.removeAllViews()
+        listOf(
+            Triple("Hadir", marks.count { it == Marks.HADIR || it == Marks.TERLAMBAT || it == Marks.LAPANGAN }, Marks.HADIR),
+            Triple("Terlambat", marks.count { it == Marks.TERLAMBAT }, Marks.TERLAMBAT),
+            Triple("Izin/Cuti", marks.count { it == Marks.CUTI }, Marks.CUTI),
+            Triple("Alpa", marks.count { it == Marks.ALPA }, Marks.ALPA),
+        ).forEachIndexed { i, (label, count, mark) -> row.addRecapBox(label, count, mark, i > 0) }
+    }
+
     private fun showPlaceholders(view: View) {
         for (id in listOf(R.id.tvCheckInTime, R.id.tvCheckOutTime)) view.findViewById<TextView>(id).text = "--.--"
-        for (id in listOf(R.id.tvShift, R.id.tvCheckInStatus, R.id.tvCheckOutNote, R.id.tvDistance, R.id.tvDistanceNote,
-            R.id.tvActivityTitle, R.id.tvActivityDate)) view.findViewById<TextView>(id).text = "-"
+        for (id in listOf(R.id.tvCheckInStatus, R.id.tvCheckOutNote)) view.findViewById<TextView>(id).text = "-"
         view.findViewById<TextView>(R.id.tvShift).setText(R.string.msg_loading)
     }
 
     private fun showToday(view: View, t: Today) {
+        current = t
         view.findViewById<TextView>(R.id.tvShift).text = when {
             t.schedule == null -> getString(R.string.today_no_schedule)
             t.schedule.isDayOff -> getString(R.string.today_day_off)
             else -> "${t.schedule.shift ?: "Jadwal"} · ${Format.clock(t.schedule.startTime)}–${Format.clock(t.schedule.endTime)}"
         }
-        current = t
         val a = t.attendance
         val start = t.schedule?.startTime?.takeIf { !t.schedule.isDayOff }
         view.findViewById<TextView>(R.id.tvCheckInTime).text = Format.time(a?.checkInAt)
-        // Keterangan kartu Check-in: tepat waktu (hijau) atau terlambat (kuning); sebelum absen: jam masuk shift.
+        // Keterangan Jam Masuk: tepat waktu (hijau) atau terlambat (kuning); sebelum absen: jam masuk shift.
         showNote(view.findViewById(R.id.tvCheckInStatus), when {
-            a == null && start != null -> "Belum check-in · masuk ${Format.clock(start)}" to R.color.ink_muted
+            a == null && start != null -> "Masuk ${Format.clock(start)}" to R.color.ink_muted
             a == null -> getString(R.string.today_none) to R.color.ink_muted
             a.status == "terlambat" -> getString(R.string.result_late, a.lateMinutes) to R.color.warn
             a.status == "hadir" -> "Tepat waktu" to R.color.success
             else -> Format.attendanceStatus(a.status) to R.color.ink_muted
         })
         view.findViewById<TextView>(R.id.tvCheckOutTime).text = Format.time(a?.checkOutAt)
-        // Keterangan kartu Check-out: pulang lebih cepat (kuning) atau sesuai jadwal (hijau); sebelumnya: batas pulang.
+        // Keterangan Jam Pulang: pulang lebih cepat (kuning) atau sesuai jadwal (hijau); sebelumnya: batas pulang.
         showNote(view.findViewById(R.id.tvCheckOutNote), when {
             a?.checkOutAt != null && a.earlyLeaveMinutes > 0 -> "Pulang cepat ${a.earlyLeaveMinutes} menit" to R.color.warn
             a?.checkOutAt != null -> "Sesuai jadwal" to R.color.success
             else -> (t.schedule?.endTime?.takeIf { start != null }?.let { "Batas ${Format.clock(it)}" } ?: "-") to R.color.ink_muted
         })
-        view.findViewById<TextView>(R.id.tvDistance).text = Format.meters(a?.checkOutDistanceM ?: a?.checkInDistanceM)
-        view.findViewById<TextView>(R.id.tvDistanceNote).text = if (a?.checkInAt != null) "Di dalam area" else "Belum ada data"
-        view.findViewById<TextView>(R.id.tvActivityTitle).text = when {
-            a?.checkOutAt != null -> "Check-out ${Format.time(a.checkOutAt)}"
-            a?.checkInAt != null -> "Check-in ${Format.time(a.checkInAt)}"
-            else -> getString(R.string.today_none)
-        }
-        view.findViewById<TextView>(R.id.tvActivityDate).text = Format.day(t.date)
         showSwipe(view, t)
     }
 
-    /**
-     * Satu tombol geser untuk dua hal: "Geser untuk Check-in" sebelum check-in, lalu "Geser untuk Check-out".
-     * Absensi yang masih di antrean offline dianggap sudah dilakukan, supaya tidak terkirim dua kali.
-     * Setelah check-out, tombol disembunyikan.
-     */
     private fun showNote(tv: TextView, note: Pair<String, Int>) {
         tv.text = note.first
         tv.setTextColor(ContextCompat.getColor(requireContext(), note.second))
@@ -201,6 +227,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             .show()
     }
 
+    /**
+     * Satu tombol geser di dalam kartu Presensi Hari Ini: "Geser untuk Check-in", lalu "Geser untuk Check-out".
+     * Absensi di antrean offline dianggap sudah dilakukan supaya tidak terkirim dua kali. Setelah check-out,
+     * tombol diganti tulisan "Presensi hari ini sudah lengkap".
+     */
     private fun showSwipe(view: View, t: Today) {
         val queued = Outbox.all().map { it.kind }
         val checkedIn = t.hasCheckedIn || AttendanceFlow.CHECK_IN in queued
@@ -212,6 +243,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             contentDescription = label
             visibility = if (checkedOut) View.GONE else View.VISIBLE
         }
+        view.findViewById<View>(R.id.tvDoneToday).visibility = if (checkedOut) View.VISIBLE else View.GONE
     }
 
     companion object {
@@ -223,14 +255,55 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private fun showGuide(view: View) = view.post {
         if (!isAdded) return@post
         CoachMarks.showOnce(requireActivity(), "home", listOf(
-            GuideStep(view.findViewById<View>(R.id.gridToday).parent as View, R.string.guide_today_title, R.string.guide_today_body),
-            GuideStep(view.findViewById(R.id.navFab), R.string.guide_checkin_title, R.string.guide_checkin_body),
+            GuideStep(view.findViewById(R.id.gridToday), R.string.guide_today_title, R.string.guide_today_body),
             GuideStep(view.findViewById(R.id.swipeCheckOut), R.string.guide_checkout_title, R.string.guide_checkout_body),
-            GuideStep(view.findViewById(R.id.cardSync), R.string.guide_sync_title, R.string.guide_sync_body),
+            GuideStep(view.findViewById(R.id.quickActions), R.string.guide_quick_title, R.string.guide_quick_body),
             GuideStep(view.findViewById(R.id.btnBell), R.string.guide_bell_title, R.string.guide_bell_body),
             GuideStep(view.findViewById(R.id.navProfile), R.string.guide_menu_title, R.string.guide_menu_body),
         ).filter { it.target.isShown }) // tombol geser disembunyikan setelah check-out
     }
+}
+
+/** Satu baris Informasi Pegawai: ikon dalam kotak, label kecil, nilai tebal. */
+private fun LinearLayout.addInfoRow(icon: Int, label: String, value: String) {
+    val ctx = context
+    addView(LinearLayout(ctx).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        setPadding(0, ctx.dp(10), 0, ctx.dp(4))
+        addView(FrameLayout(ctx).apply {
+            setBackgroundResource(R.drawable.bg_tile_primary)
+            layoutParams = LinearLayout.LayoutParams(ctx.dp(40), ctx.dp(40))
+            addView(ImageView(ctx).apply {
+                setImageResource(icon)
+                setColorFilter(ContextCompat.getColor(ctx, R.color.primary_on_tint))
+                layoutParams = FrameLayout.LayoutParams(ctx.dp(20), ctx.dp(20), Gravity.CENTER)
+            })
+        })
+        addView(LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = ctx.dp(12) }
+            addView(ctx.text(R.style.T_Small, label, R.color.ink_muted).apply { letterSpacing = 0.08f })
+            addView(ctx.text(R.style.T_Label, value))
+        })
+    })
+}
+
+/** Kotak angka rekapitulasi (warna sama dengan kalender Riwayat). */
+private fun LinearLayout.addRecapBox(label: String, count: Int, mark: Mark, gap: Boolean) {
+    val ctx = context
+    addView(LinearLayout(ctx).apply {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER
+        background = GradientDrawable().apply {
+            setColor(ContextCompat.getColor(ctx, mark.fill))
+            cornerRadius = ctx.dp(14).toFloat()
+        }
+        setPadding(0, ctx.dp(12), 0, ctx.dp(12))
+        layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { if (gap) marginStart = ctx.dp(8) }
+        addView(ctx.text(R.style.T_Headline, count.toString(), mark.text).apply { gravity = Gravity.CENTER })
+        addView(ctx.text(R.style.T_Small, label, mark.text).apply { gravity = Gravity.CENTER })
+    })
 }
 
 class AttendanceDetailFragment : BaseFragment(R.layout.fragment_attendance_detail) {
@@ -327,6 +400,8 @@ class NotificationFragment : BaseFragment(R.layout.fragment_notification) {
                     list.addRow(R.drawable.ic_bell, n.title, "${n.body}\n${n.createdAt.take(16)}",
                         if (n.isRead) null else "Baru", tone)
                 }
+                // Halaman sudah dibuka = semua dianggap dibaca, supaya titik merah lonceng di Beranda hilang.
+                if (r.value.data.any { !it.isRead }) call { readAllNotifications() }
             }
             is ApiResult.Failed -> list.addMessage(r.message)
             ApiResult.Offline -> list.addMessage(getString(R.string.msg_offline_list))
@@ -346,11 +421,9 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
             view.findViewById<TextView>(R.id.tvUnit).text = u.unit ?: "-"
             view.findViewById<TextView>(R.id.tvDevice).text = android.os.Build.MODEL
         }
-        view.onClick(R.id.rowLeave) { go(R.id.leaveListFragment) }
         view.onClick(R.id.rowPermission) { go(R.id.privacyFragment) }
         view.onClick(R.id.rowPrivacy) { go(R.id.privacyFragment) }
         view.onClick(R.id.rowSettings) { go(R.id.configFragment) }
-        view.onClick(R.id.rowCorrection) { go(R.id.correctionFragment) }
         view.onClick(R.id.rowAbout) { go(R.id.aboutFragment) }
         view.onClick(R.id.btnLogout) { showLogoutDialog() }
         view.onClick(R.id.tvShowGuide) {

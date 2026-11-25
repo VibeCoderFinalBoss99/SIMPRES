@@ -418,4 +418,27 @@
     <string name="checkout_early_ok">Tetap check-out</string>
     <string name="checkin_failed_title">Absen gagal</string>
     <string name="attach_selected">Lampiran terpilih (%1$d KB) · ketuk untuk ganti, tahan untuk hapus</string>
+    <string name="place_mine">Lokasi Anda</string>
+    <string name="place_office">Titik Kantor</string>
+    <string name="place_searching">Mencari lokasi…</string>
+    <string name="place_coords">%1$.6f, %2$.6f · akurasi ± %3$d m</string>
+    <string name="place_gps_only">Koordinat GPS</string>
+    <string name="login_sembunyikan_kata_sandi">Sembunyikan kata sandi</string>
+    <string name="home_app_caption">SIMPRES · UPTD PUSKESMAS SIMBANG</string>
+    <string name="home_today_title">Presensi Hari Ini</string>
+    <string name="home_jam_masuk">JAM MASUK</string>
+    <string name="home_jam_pulang">JAM PULANG</string>
+    <string name="home_done_today">Presensi hari ini sudah lengkap. Terima kasih!</string>
+    <string name="home_menu_leave">Ajukan Izin &amp; Cuti</string>
+    <string name="home_menu_correction">Koreksi Absensi</string>
+    <string name="home_recap_title">REKAPITULASI</string>
+    <string name="home_info_title">Informasi Pegawai</string>
+    <string name="guide_quick_title">Izin, cuti, dan koreksi</string>
+    <string name="guide_quick_body">Ajukan izin atau cuti, dan koreksi jam absen langsung dari Beranda. Statusnya muncul di notifikasi.</string>
+    <string name="config_field_on">Mode tugas lapangan aktif (diatur admin)</string>
+    <string name="config_field_off">Bukan petugas lapangan (diatur admin)</string>
+    <string name="change_info_body">Nama, NIP, jabatan, unit, dan nomor HP hanya bisa diubah admin. Tulis data yang perlu diubah, admin akan menerimanya di Admin Web.</string>
+    <string name="change_info_hint">Contoh: Nomor HP baru 0812xxxx, jabatan sekarang Bidan Koordinator</string>
+    <string name="change_info_send">Kirim ke admin</string>
+    <string name="change_info_short">Tulis data yang perlu diubah.</string>
 </resources>

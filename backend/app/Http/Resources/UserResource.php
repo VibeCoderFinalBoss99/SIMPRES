@@ -19,6 +19,8 @@ class UserResource extends JsonResource
             'position' => $this->position,
             'unit' => $this->unit,
             'role' => $this->role,
+            'work_type' => $this->work_type,
+            'default_shift' => $this->defaultShift?->name,
             'work_location' => $this->whenLoaded('workLocation', fn () => $this->workLocation ? [
                 'id' => $this->workLocation->id,
                 'name' => $this->workLocation->name,

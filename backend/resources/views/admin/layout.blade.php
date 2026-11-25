@@ -12,6 +12,13 @@
     $waiting = \App\Models\LeaveRequest::where('status', 'menunggu')->count()
         + \App\Models\AttendanceCorrection::where('status', 'menunggu')->count()
         + \App\Models\FieldDuty::where('status', 'menunggu')->count();
+    // Titik merah lonceng: pengajuan baru sejak admin terakhir membuka Review & Persetujuan,
+    // atau permintaan perubahan data pegawai yang belum ditandai selesai.
+    $seenAt = session('pengajuan_dilihat_at');
+    $newSubmissions = collect([\App\Models\LeaveRequest::class, \App\Models\AttendanceCorrection::class, \App\Models\FieldDuty::class])
+        ->sum(fn ($model) => $model::where('status', 'menunggu')->when($seenAt, fn ($q) => $q->where('created_at', '>', $seenAt))->count());
+    $changeRequests = \App\Models\UserNotification::where('user_id', auth()->id())
+        ->where('type', 'perubahan_data')->whereNull('read_at')->count();
     $menu = [
         ['Dashboard', 'admin', 'admin', 'dashboard'],
         ['Review & Persetujuan', 'admin/pengajuan', 'admin/pengajuan*', 'review'],
@@ -65,9 +72,10 @@
                     @include('admin.icon', ['name' => 'search'])
                     <input type="search" name="q" placeholder="Cari pegawai atau data..." value="{{ request()->is('admin/pegawai') ? request('q') : '' }}">
                 </form>
-                <a class="bell" href="{{ route('admin.pengajuan.index') }}" title="Pengajuan menunggu">
+                <a class="bell" href="{{ $changeRequests > 0 ? route('admin.dashboard').'#permintaan' : route('admin.pengajuan.index') }}"
+                   title="{{ $newSubmissions }} pengajuan baru · {{ $changeRequests }} permintaan perubahan data">
                     @include('admin.icon', ['name' => 'bell'])
-                    @if ($waiting > 0)<span class="dot"></span>@endif
+                    @if ($newSubmissions + $changeRequests > 0)<span class="dot"></span>@endif
                 </a>
             </div>
         </header>
@@ -96,5 +104,6 @@
         if (message && !window.confirm(message)) e.preventDefault();
     });
 </script>
+@include('admin.password-toggle')
 </body>
 </html>

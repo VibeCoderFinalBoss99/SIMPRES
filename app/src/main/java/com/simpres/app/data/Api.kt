@@ -46,7 +46,18 @@ data class User(
     val unit: String?,
     val role: String,
     @SerializedName("work_location") val workLocation: WorkLocation?,
-)
+    /** non_shift, shift, atau petugas_lapangan (diatur admin). */
+    @SerializedName("work_type") val workType: String? = null,
+    /** Nama shift tetap, misalnya Pagi (null untuk pegawai shift). */
+    @SerializedName("default_shift") val defaultShift: String? = null,
+) {
+    fun workTypeLabel(): String = when (workType) {
+        "shift" -> "Shift (jadwal dari roster)"
+        "petugas_lapangan" -> "Petugas lapangan" + (defaultShift?.let { " · $it" } ?: "")
+        "non_shift" -> "Non-shift" + (defaultShift?.let { " · $it" } ?: "")
+        else -> "-"
+    }
+}
 
 data class LoginResponse(val message: String, val token: String, val user: User)
 data class UserResponse(val user: User)
@@ -189,6 +200,7 @@ interface SimpresApi {
     @GET("notifications") suspend fun notifications(): ListResponse<AppNotification>
     @POST("notifications/read-all") suspend fun readAllNotifications(): JsonObject
     @POST("device-token") suspend fun saveDeviceToken(@Body body: Map<String, String>): JsonObject
+    @POST("profile-change-request") suspend fun requestProfileChange(@Body body: Map<String, String>): JsonObject
 }
 
 object ApiClient {

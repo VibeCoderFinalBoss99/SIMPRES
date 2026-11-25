@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\DeviceTokenController;
 use App\Http\Controllers\Api\FieldDutyController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ProfileChangeController;
 use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\WorkLocationController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/schedules', [ScheduleController::class, 'index']);
     Route::get('/work-location', [WorkLocationController::class, 'show']);
     Route::post('/device-token', [DeviceTokenController::class, 'store']);
+    Route::post('/profile-change-request', [ProfileChangeController::class, 'store'])->middleware('throttle:5,1');
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);

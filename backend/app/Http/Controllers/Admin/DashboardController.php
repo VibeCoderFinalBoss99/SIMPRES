@@ -8,6 +8,7 @@ use App\Models\AttendanceCorrection;
 use App\Models\FieldDuty;
 use App\Models\LeaveRequest;
 use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -53,6 +54,9 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', [
             'week' => $week,
+            // Permintaan perubahan data dari pegawai untuk admin ini yang belum ditandai selesai.
+            'changeRequests' => UserNotification::where('user_id', auth()->id())
+                ->where('type', 'perubahan_data')->whereNull('read_at')->latest()->get(),
             'pending' => $pending,
             'totalEmployees' => User::where('role', 'pegawai')->where('is_active', true)->count(),
             'today' => now(),

@@ -38,6 +38,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.math.log2
 import kotlinx.coroutines.launch
+import java.util.Locale
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import android.location.Geocoder
 
 /** Result of the last check-in/check-out, shown by the result screens. */
 object AttendanceFlow {
@@ -157,6 +161,9 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
             .setText(if (kind == AttendanceFlow.CHECK_OUT) R.string.checkout_title else R.string.checkin_title)
         Session.user?.workLocation?.let { loc ->
             view.findViewById<TextView>(R.id.tvAreaSub).text = getString(R.string.checkin_area_sub, loc.name, loc.radiusM)
+            view.findViewById<TextView>(R.id.tvOfficeName).text = loc.name
+            view.findViewById<TextView>(R.id.tvOfficeAddress).text =
+                listOfNotNull(loc.address?.takeIf { it.isNotBlank() }, "Radius ${loc.radiusM} m").joinToString(" · ")
         }
         view.findViewById<TextView>(R.id.tvServerTime).text = Format.nowTime()
         view.findViewById<TextView>(R.id.tvDistance).text = "-"
@@ -235,8 +242,37 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
         Location.distanceBetween(location.latitude, location.longitude, loc.latitude, loc.longitude, out)
         val inside = out[0] <= loc.radiusM
         v.findViewById<TextView>(R.id.tvDistance).text = Format.meters(out[0].toDouble())
+        // Baris Lokasi Anda dan jarak ke Titik Kantor (hijau di dalam radius, merah di luar).
+        v.findViewById<TextView>(R.id.tvMyCoords).text =
+            getString(R.string.place_coords, location.latitude, location.longitude, location.accuracy.toInt())
+        v.findViewById<TextView>(R.id.tvOfficeDistance).apply {
+            text = if (out[0] >= 1000) "%.1f km".format(out[0] / 1000) else Format.meters(out[0].toDouble())
+            setBackgroundResource(if (inside) R.drawable.bg_chip_success else R.drawable.bg_chip_danger)
+            setTextColor(ContextCompat.getColor(context, if (inside) R.color.success else R.color.danger))
+        }
+        showAddress(v, location)
         v.findViewById<TextView>(R.id.tvAccuracy).text = getString(R.string.checkin_accuracy, location.accuracy.toInt())
         v.findViewById<TextView>(R.id.tvAreaTitle).setText(if (inside) R.string.checkin_inside else R.string.checkin_outside)
+    }
+}
+
+/** Alamat dari titik GPS (Geocoder Android). Jika tidak tersedia, cukup tulis "Koordinat GPS". */
+private fun Fragment.showAddress(view: View, location: Location) {
+    val label = view.findViewById<TextView>(R.id.tvMyPlace)
+    viewLifecycleOwner.lifecycleScope.launch {
+        val address = withContext(Dispatchers.IO) {
+            runCatching {
+                @Suppress("DEPRECATION")
+                Geocoder(requireContext(), Locale("id", "ID")).getFromLocation(location.latitude, location.longitude, 1)
+                    ?.firstOrNull()?.let { a ->
+                        // featureName kadang berisi kode Plus (misalnya XMH8+26J) yang tidak berarti bagi pegawai.
+                        val place = a.thoroughfare ?: a.featureName?.takeUnless { it.contains('+') }
+                        listOfNotNull(place, a.subLocality, a.locality ?: a.subAdminArea)
+                            .distinct().joinToString(", ").ifBlank { a.getAddressLine(0) }
+                    }
+            }.getOrNull()
+        }
+        if (isAdded) label.text = address ?: getString(R.string.place_gps_only)
     }
 }
 

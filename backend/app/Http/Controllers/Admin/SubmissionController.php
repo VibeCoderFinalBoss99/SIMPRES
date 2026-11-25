@@ -27,6 +27,7 @@ class SubmissionController extends Controller
 
     public function index(Request $request): View
     {
+        $request->session()->put('pengajuan_dilihat_at', now()->toDateTimeString()); // titik merah lonceng hilang setelah dilihat
         $type = array_key_exists($request->query('jenis'), self::TYPES) ? $request->query('jenis') : 'izin';
         $status = in_array($request->query('status'), ['menunggu', 'diterima', 'ditolak', 'semua'], true)
             ? $request->query('status')
@@ -47,6 +48,7 @@ class SubmissionController extends Controller
 
     public function show(Request $request, string $type, int $id): View
     {
+        $request->session()->put('pengajuan_dilihat_at', now()->toDateTimeString());
         $item = $this->find($type, $id);
         $item->load('user', 'reviewer');
 

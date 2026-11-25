@@ -70,6 +70,28 @@
         </div>
     </div>
 
+    @if ($changeRequests->isNotEmpty())
+        {{-- Permintaan perubahan data dari menu Pengaturan aplikasi pegawai. --}}
+        <div class="card" id="permintaan">
+            <div class="card-head"><h2>Permintaan perubahan data ({{ $changeRequests->count() }})</h2></div>
+            @foreach ($changeRequests as $req)
+                <div class="list-row">
+                    <span class="grow person">
+                        <span><strong>{{ \Illuminate\Support\Str::after($req->title, ': ') }}</strong>
+                        <small>{{ $req->created_at->translatedFormat('d M Y, H:i') }} · {{ $req->body }}</small></span>
+                    </span>
+                    @if ($req->data['employee_id'] ?? null)
+                        <a class="btn secondary small" href="{{ route('admin.pegawai.edit', $req->data['employee_id']) }}">Ubah data</a>
+                    @endif
+                    <form method="POST" action="{{ route('admin.permintaan.done', $req) }}">
+                        @csrf
+                        <button type="submit" class="btn small">Tandai selesai</button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     <div class="card flush">
         <div class="card-head"><h2>Aktivitas terbaru</h2></div>
         <div class="table-wrap">

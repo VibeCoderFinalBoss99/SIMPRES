@@ -212,7 +212,7 @@
                         android:id="@+id/swFieldMode"
                         android:layout_width="40dp"
                         android:layout_height="22dp"
-                        android:checked="true"
+                        android:checked="false"
                         android:thumb="@drawable/switch_thumb"
                         android:track="@drawable/switch_track" />
                 </LinearLayout>

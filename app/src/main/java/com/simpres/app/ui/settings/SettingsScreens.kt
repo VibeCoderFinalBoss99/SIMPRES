@@ -21,9 +21,17 @@ import androidx.appcompat.app.AlertDialog
 class ConfigFragment : BaseFragment(R.layout.fragment_config) {
     override fun onReady(view: View) {
         view.onClick(R.id.rowResetPassword) { go(R.id.forgotFragment) }
+        view.onClick(R.id.rowChangeInfo) { askChangeInfo() }
         com.simpres.app.data.Session.user?.let { u ->
             view.findViewById<TextView>(R.id.tvUserName).text = u.name
             view.findViewById<TextView>(R.id.tvUserRole).text = listOfNotNull(u.position, u.unit).joinToString(" · ")
+            // Mode Tugas Lapangan mengikuti jenis kerja yang diatur admin, bukan saklar yang bisa diubah pegawai.
+            view.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.swFieldMode).apply {
+                isChecked = u.workType == "petugas_lapangan"
+                isEnabled = false
+                isClickable = false
+                contentDescription = getString(if (isChecked) R.string.config_field_on else R.string.config_field_off)
+            }
         }
 
         // Mode tampilan: Ikuti sistem / Terang / Gelap. Layar langsung berganti setelah dipilih.
@@ -45,6 +53,37 @@ class ConfigFragment : BaseFragment(R.layout.fragment_config) {
             toast(R.string.msg_saved)
             findNavController().popBackStack()
         }
+    }
+
+    /** Data profil hanya bisa diubah admin, jadi pegawai mengirim permintaan berisi data yang perlu diubah. */
+    private fun askChangeInfo() {
+        val input = android.widget.EditText(requireContext()).apply {
+            hint = getString(R.string.change_info_hint)
+            minLines = 3
+            gravity = android.view.Gravity.TOP
+        }
+        val box = android.widget.FrameLayout(requireContext()).apply {
+            val pad = (20 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.config_ajukan_perubahan_informasi)
+            .setMessage(R.string.change_info_body)
+            .setView(box)
+            .setNegativeButton(R.string.checkout_early_cancel, null)
+            .setPositiveButton(R.string.change_info_send) { _, _ ->
+                val text = input.text.toString().trim()
+                if (text.length < 5) return@setPositiveButton toast(R.string.change_info_short)
+                launch {
+                    when (val r = com.simpres.app.data.call { requestProfileChange(mapOf("message" to text)) }) {
+                        is com.simpres.app.data.ApiResult.Ok -> alert(r.value.get("message").asString)
+                        is com.simpres.app.data.ApiResult.Failed -> alert(r.message)
+                        com.simpres.app.data.ApiResult.Offline -> alert(getString(R.string.msg_server_unreachable))
+                    }
+                }
+            }
+            .show()
     }
 }
 

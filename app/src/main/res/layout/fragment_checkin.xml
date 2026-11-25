@@ -127,6 +127,118 @@
                     android:padding="10dp"
                     android:background="@drawable/bg_card" />
             </FrameLayout>
+            <!-- Lokasi Anda (alamat dari GPS HP) dan Titik Kantor (dari Lokasi Kerja admin), dengan jarak keduanya. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:layout_marginTop="16dp"
+                android:padding="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_round_primary">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_my_location"
+                            android:tint="@color/primary_on_tint"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+                        <TextView
+                            style="@style/T.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/place_mine"
+                            android:textColor="@color/ink_muted" />
+                        <TextView
+                            style="@style/T.Label"
+                            android:id="@+id/tvMyPlace"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/place_searching" />
+                        <TextView
+                            style="@style/T.Small"
+                            android:id="@+id/tvMyCoords"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/ink_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/border" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_round_success">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_location"
+                            android:tint="@color/success"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                style="@style/T.Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/place_office"
+                                android:textColor="@color/ink_muted" />
+                            <TextView
+                                style="@style/T.Chip"
+                                android:id="@+id/tvOfficeDistance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_chip_neutral"
+                                android:textColor="@color/ink_muted"
+                                android:text="-" />
+                        </LinearLayout>
+                        <TextView
+                            style="@style/T.Label"
+                            android:id="@+id/tvOfficeName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            style="@style/T.Small"
+                            android:id="@+id/tvOfficeAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/ink_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

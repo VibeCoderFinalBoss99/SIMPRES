@@ -212,15 +212,20 @@ fun ViewGroup.addDayCard(
         orientation = LinearLayout.VERTICAL
         gravity = Gravity.CENTER
         background = ctx.rounded(if (mark == null || mark == Marks.LIBUR) (if (red) R.color.danger_tint else R.color.bg) else mark.fill, 14)
-        layoutParams = LinearLayout.LayoutParams(ctx.dp(64), ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-            marginEnd = ctx.dp(12)
+        // Lencana tanggal besar: hari, tanggal (angka besar), bulan.
+        layoutParams = LinearLayout.LayoutParams(ctx.dp(84), ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            marginEnd = ctx.dp(14)
             gravity = Gravity.CENTER_VERTICAL
         }
-        setPadding(0, ctx.dp(8), 0, ctx.dp(8))
-        minimumHeight = ctx.dp(78)
-        addView(ctx.text(R.style.T_Small, date.dayOfWeek.getDisplayName(TextStyle.SHORT, ID).uppercase(), badgeText).apply { gravity = Gravity.CENTER })
-        addView(ctx.text(R.style.T_Headline, date.dayOfMonth.toString(), badgeText).apply { gravity = Gravity.CENTER })
-        addView(ctx.text(R.style.T_Small, date.month.getDisplayName(TextStyle.SHORT, ID), badgeText).apply { gravity = Gravity.CENTER })
+        setPadding(0, ctx.dp(10), 0, ctx.dp(10))
+        minimumHeight = ctx.dp(96)
+        addView(ctx.text(R.style.T_Label, date.dayOfWeek.getDisplayName(TextStyle.SHORT, ID).uppercase(), badgeText).apply {
+            gravity = Gravity.CENTER; letterSpacing = 0.1f
+        })
+        addView(ctx.text(R.style.T_Display, date.dayOfMonth.toString(), badgeText).apply {
+            gravity = Gravity.CENTER; textSize = 34f; includeFontPadding = false
+        })
+        addView(ctx.text(R.style.T_Label, date.month.getDisplayName(TextStyle.SHORT, ID), badgeText).apply { gravity = Gravity.CENTER })
     })
     val right = LinearLayout(ctx).apply {
         orientation = LinearLayout.VERTICAL

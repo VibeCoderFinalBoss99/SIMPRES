@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ChangeRequestController;
 use App\Http\Controllers\Admin\ConfigController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -33,6 +34,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
         Route::get('/', DashboardController::class)->name('admin.dashboard');
+        Route::post('/permintaan/{notification}/selesai', [ChangeRequestController::class, 'done'])->name('admin.permintaan.done');
 
         Route::resource('pegawai', EmployeeController::class)
             ->except(['show', 'destroy'])

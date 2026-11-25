@@ -42,5 +42,6 @@
         @endif
     </div>
 </div>
+@include('admin.password-toggle')
 </body>
 </html>

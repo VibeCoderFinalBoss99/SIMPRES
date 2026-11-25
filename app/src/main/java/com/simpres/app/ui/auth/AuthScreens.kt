@@ -22,6 +22,7 @@ import com.simpres.app.data.call
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import com.simpres.app.R
 import com.simpres.app.ui.BaseFragment
 import com.simpres.app.ui.onClick
@@ -157,11 +158,15 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
         val username = view.findViewById<EditText>(R.id.etUsername)
         val password = view.findViewById<EditText>(R.id.etPassword)
 
+        // Ikon mata: sandi tersembunyi = mata biasa (ketuk untuk melihat), sandi terlihat = mata dicoret (ketuk untuk sembunyikan).
+        val toggle = view.findViewById<ImageView>(R.id.btnTogglePassword)
         view.onClick(R.id.btnTogglePassword) {
             val hidden = password.transformationMethod is PasswordTransformationMethod
             password.transformationMethod =
                 if (hidden) HideReturnsTransformationMethod.getInstance() else PasswordTransformationMethod.getInstance()
             password.setSelection(password.text.length)
+            toggle.setImageResource(if (hidden) R.drawable.ic_eye_off else R.drawable.ic_eye)
+            toggle.contentDescription = getString(if (hidden) R.string.login_sembunyikan_kata_sandi else R.string.login_tampilkan_kata_sandi)
         }
         // Sample text from the design is cleared so the real account can be typed.
         username.setText("")
