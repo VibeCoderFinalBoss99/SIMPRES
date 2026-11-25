@@ -48,6 +48,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         if (!granted) toast(getString(R.string.notif_permission_denied))
     }
 
+    /** Geser di Beranda: check-in sebelum masuk, check-out setelah check-in. */
+    private var swipeKind = AttendanceFlow.CHECK_IN
+
     override fun onReady(view: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) !=
@@ -61,7 +64,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             track = view.findViewById(R.id.swipeCheckOut),
             knob = view.findViewById(R.id.swipeKnob),
             label = view.findViewById(R.id.tvSwipeLabel),
-        ) { if (isAdded) go(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to AttendanceFlow.CHECK_OUT)) }
+        ) { if (isAdded) go(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to swipeKind)) }
 
         showUser(view)
         showWeek(view)
@@ -143,9 +146,25 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             else -> getString(R.string.today_none)
         }
         view.findViewById<TextView>(R.id.tvActivityDate).text = Format.day(t.date)
-        // Swipe only makes sense after check-in and before check-out.
-        view.findViewById<View>(R.id.swipeCheckOut).visibility =
-            if (t.hasCheckedIn && !t.hasCheckedOut) View.VISIBLE else View.GONE
+        showSwipe(view, t)
+    }
+
+    /**
+     * Satu tombol geser untuk dua hal: "Geser untuk Check-in" sebelum check-in, lalu "Geser untuk Check-out".
+     * Absensi yang masih di antrean offline dianggap sudah dilakukan, supaya tidak terkirim dua kali.
+     * Setelah check-out, tombol disembunyikan.
+     */
+    private fun showSwipe(view: View, t: Today) {
+        val queued = Outbox.all().map { it.kind }
+        val checkedIn = t.hasCheckedIn || AttendanceFlow.CHECK_IN in queued
+        val checkedOut = t.hasCheckedOut || AttendanceFlow.CHECK_OUT in queued
+        swipeKind = if (checkedIn) AttendanceFlow.CHECK_OUT else AttendanceFlow.CHECK_IN
+        val label = getString(if (checkedIn) R.string.home_geser_untuk_check_out else R.string.home_geser_untuk_check_in)
+        view.findViewById<TextView>(R.id.tvSwipeLabel).text = label
+        view.findViewById<View>(R.id.swipeCheckOut).apply {
+            contentDescription = label
+            visibility = if (checkedOut) View.GONE else View.VISIBLE
+        }
     }
 
     companion object {
@@ -163,7 +182,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             GuideStep(view.findViewById(R.id.cardSync), R.string.guide_sync_title, R.string.guide_sync_body),
             GuideStep(view.findViewById(R.id.btnBell), R.string.guide_bell_title, R.string.guide_bell_body),
             GuideStep(view.findViewById(R.id.navProfile), R.string.guide_menu_title, R.string.guide_menu_body),
-        ).filter { it.target.isShown }) // the check-out slider only appears after check-in
+        ).filter { it.target.isShown }) // tombol geser disembunyikan setelah check-out
     }
 }
 

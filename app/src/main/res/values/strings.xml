@@ -191,6 +191,7 @@
     <string name="home_aman">Aman</string>
     <string name="home_batas_15_00">Batas 15.00</string>
     <string name="home_geser_untuk_check_out">Geser untuk Check-out</string>
+    <string name="home_geser_untuk_check_in">Geser untuk Check-in</string>
     <string name="home_lihat_semua">Lihat semua</string>
     <string name="home_non_shift_07_0014">Non-shift · 07.00–14.30</string>
     <string name="home_nur_aisyah">Nur Aisyah</string>
@@ -314,8 +315,8 @@
     <string name="guide_today_body">Jam check-in, check-out, jarakmu ke Puskesmas, dan status kirim data tampil di sini.</string>
     <string name="guide_checkin_title">Tombol absen</string>
     <string name="guide_checkin_body">Tekan tombol ini untuk check-in. Absensi sah otomatis jika kamu berada dalam radius 150 m dari Puskesmas.</string>
-    <string name="guide_checkout_title">Geser untuk check-out</string>
-    <string name="guide_checkout_body">Saat jam kerja selesai, geser tombol ini sampai ujung kanan untuk mencatat jam pulang.</string>
+    <string name="guide_checkout_title">Geser untuk absen</string>
+    <string name="guide_checkout_body">Geser tombol ini sampai ujung kanan untuk check-in saat datang. Setelah check-in, tombol yang sama dipakai untuk check-out saat pulang.</string>
     <string name="guide_sync_title">Status sinkronisasi</string>
     <string name="guide_sync_body">Jika sinyal hilang, absensi disimpan dulu di HP dan dikirim otomatis. Ketuk kartu ini untuk melihat antreannya.</string>
     <string name="guide_bell_title">Notifikasi</string>
