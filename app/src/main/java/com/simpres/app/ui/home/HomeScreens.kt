@@ -91,6 +91,50 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         loadRecap(view)
         loadUnread(view)
         showGuide(view)
+        checkUpdate()
+    }
+
+    /** Sekali setiap aplikasi dibuka: jika ada rilis lebih baru di GitHub, tawarkan unduh dan pasang. */
+    private fun checkUpdate() {
+        if (updateChecked) return
+        updateChecked = true
+        launch {
+            val release = com.simpres.app.data.Updater.latest() ?: return@launch
+            if (!com.simpres.app.data.Updater.isNewer(release.version) || !isAdded) return@launch
+            // Catatan rilis GitHub ditulis dengan Markdown; tanda #, ** dan - dibuang supaya mudah dibaca.
+            val notes = release.notes.lines().map { it.replace("**", "").trim().trimStart('#', '*', '-', ' ') }
+                .filter { it.isNotBlank() }.joinToString("\n").let { if (it.length > 500) it.take(500) + "…" else it }
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.update_title)
+                .setMessage(getString(R.string.update_body, release.version, com.simpres.app.BuildConfig.VERSION_NAME) +
+                    if (notes.isBlank()) "" else "\n\n$notes")
+                .setNegativeButton(R.string.update_later, null)
+                .setPositiveButton(R.string.update_download) { _, _ -> downloadUpdate(release) }
+                .show()
+        }
+    }
+
+    /** Unduhan tampil dengan persen; selesai unduh langsung membuka pemasang Android. */
+    private fun downloadUpdate(release: com.simpres.app.data.Updater.Release) {
+        val ctx = requireContext().applicationContext
+        val id = com.simpres.app.data.Updater.download(ctx, release)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle(R.string.update_title)
+            .setMessage(getString(R.string.update_downloading, 0))
+            .setNegativeButton(R.string.update_hide, null)
+            .show()
+        launch {
+            while (true) {
+                val p = com.simpres.app.data.Updater.progress(ctx, id)
+                if (p == -1) { dialog.dismiss(); alert(getString(R.string.update_failed)); updateChecked = false; return@launch }
+                if (p == 100) break
+                dialog.setMessage(getString(R.string.update_downloading, p))
+                kotlinx.coroutines.delay(500)
+            }
+            dialog.dismiss()
+            toast(getString(R.string.update_install_hint))
+            com.simpres.app.data.Updater.install(ctx, release.version)
+        }
     }
 
     private fun showUser(view: View) {
@@ -249,6 +293,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     companion object {
         /** Last "today" data per user, kept while the app is open. */
         private var lastToday: Pair<Long?, Today>? = null
+        /** Pembaruan dicek sekali selama aplikasi terbuka. */
+        private var updateChecked = false
     }
 
     /** First-run guide; shown once, can be shown again from Profil. */

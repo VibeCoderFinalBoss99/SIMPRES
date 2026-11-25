@@ -1,0 +1,130 @@
+/* SIMPRES versi web. Ukuran 1px CSS = 1dp Android, warna dan gaya dari gen/res.css. */
+@font-face { font-family: Lexend; font-weight: 300; src: url(../fonts/lexend_light.ttf) format('truetype'); font-display: swap; }
+@font-face { font-family: Lexend; font-weight: 400; src: url(../fonts/lexend_regular.ttf) format('truetype'); font-display: swap; }
+@font-face { font-family: Lexend; font-weight: 500; src: url(../fonts/lexend_medium.ttf) format('truetype'); font-display: swap; }
+@font-face { font-family: Lexend; font-weight: 600; src: url(../fonts/lexend_semibold.ttf) format('truetype'); font-display: swap; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body {
+    font-family: Lexend, system-ui, sans-serif; font-weight: 300; font-size: 14px; line-height: 1.25;
+    color: var(--ink); -webkit-text-size-adjust: 100%; overscroll-behavior: none;
+    -webkit-user-select: none; user-select: none;
+}
+input, textarea { -webkit-user-select: text; user-select: text; }
+
+/* Layar penuh seperti aplikasi: area aman iPhone (poni dan garis bawah) ikut diberi ruang. */
+#app { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--bg);
+    padding-top: env(safe-area-inset-top); }
+.screen > * { flex: 1 1 auto; min-height: 0; }
+.screen.full-bleed { padding-top: 0; }
+.screen.enter { animation: enter .22s ease-out; }
+.screen.back-enter { animation: back-enter .22s ease-out; }
+@keyframes enter { from { transform: translateX(24px); opacity: 0; } }
+@keyframes back-enter { from { transform: translateX(-24px); opacity: 0; } }
+
+/* Bentuk dasar layout Android */
+.ll-v { display: flex; flex-direction: column; align-items: flex-start; }
+.ll-h { display: flex; flex-direction: row; align-items: flex-start; }
+.sv { display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.sv.fill > * { flex-grow: 1; }
+.hsv { display: flex; flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+.sv::-webkit-scrollbar, .hsv::-webkit-scrollbar { display: none; }
+.fl { display: grid; }
+.v { display: block; }
+.tv { white-space: pre-wrap; overflow-wrap: break-word; min-width: 0; }
+.tv .txt { min-width: 0; }
+.one-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+:where(.btn) { border: 0; background: none; }
+.btn { font: inherit; color: inherit; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; text-align: center; }
+.btn:active, [data-click]:active { filter: brightness(.94); }
+.btn:disabled { opacity: .6; cursor: default; }
+.et { display: flex; align-items: center; cursor: text; }
+.et input, .et textarea { flex: 1; min-width: 0; align-self: stretch; border: 0; background: none; outline: none;
+    font: inherit; color: inherit; padding: 0; resize: none; }
+.et textarea { line-height: 1.4; }
+.et input::placeholder, .et textarea::placeholder { color: var(--ink_faint); opacity: 1; }
+.iv { display: inline-flex; flex-shrink: 0; }
+.iv svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.tint svg [fill]:not([fill="none"]) { fill: currentColor; }
+.tint svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
+.gone { display: none !important; }
+.invisible { visibility: hidden; }
+.clickable { cursor: pointer; }
+
+/* Teks pilihan (selector option_text dan tab_text) */
+.s-Option { color: var(--ink); }
+.s-Option.selected, .bg-bg_pill.selected, .bg-bg_tab.selected { color: var(--white) !important; }
+.bg-bg_tab.selected .tv, .bg-bg_pill.selected .tv { color: var(--white) !important; }
+
+/* Saklar (SwitchCompat dengan switch_track dan switch_thumb) */
+.switch { position: relative; display: inline-block; flex-shrink: 0; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; }
+.switch span { position: absolute; inset: 0; border-radius: 11px; background: var(--dot_off); transition: background .2s; }
+.switch span::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--white); transition: transform .2s; }
+.switch input:checked + span { background: var(--success); }
+.switch input:checked + span::after { transform: translateX(18px); }
+.switch input:disabled + span { opacity: 1; }
+
+/* Dialog seperti AlertDialog Android */
+.dialog-scrim { position: fixed; inset: 0; background: var(--scrim); display: flex; align-items: center;
+    justify-content: center; z-index: 50; padding: 24px; animation: fade .15s ease-out; }
+.dialog-scrim.sheet { align-items: flex-end; padding: 0; }
+.dialog { background: var(--surface); border-radius: 20px; padding: 24px 24px 8px; width: 100%; max-width: 360px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.25); max-height: 85vh; overflow: auto; }
+.dialog-scrim.sheet .dialog { max-width: none; border-radius: 24px 24px 0 0; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+.dialog h3 { font-weight: 500; font-size: 18px; margin-bottom: 12px; }
+.dialog p { font-size: 14px; line-height: 1.5; color: var(--ink_muted); white-space: pre-wrap; }
+.dialog .choices { margin: 4px -24px 0; }
+.dialog .choice { display: flex; align-items: center; gap: 16px; padding: 14px 24px; font-size: 15px; cursor: pointer; }
+.dialog .choice::before { content: ''; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ink_muted); flex-shrink: 0; }
+.dialog .choice.on::before { border-color: var(--primary); box-shadow: inset 0 0 0 3px var(--surface); background: var(--primary); }
+.dialog .actions { display: flex; justify-content: flex-end; gap: 4px; margin: 16px -12px 0; }
+.dialog .actions button { border: 0; background: none; font: inherit; font-weight: 500; font-size: 14px; color: var(--primary);
+    padding: 12px; border-radius: 8px; cursor: pointer; }
+.dialog textarea { width: 100%; margin-top: 12px; border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+    font: inherit; color: inherit; background: var(--bg); min-height: 96px; outline: none; resize: none; }
+@keyframes fade { from { opacity: 0; } }
+
+/* Toast seperti Toast Android */
+.toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: #323232; color: #fff; padding: 12px 18px; border-radius: 22px; font-size: 14px; z-index: 60;
+    max-width: 86vw; text-align: center; animation: fade .2s ease-out; pointer-events: none; }
+
+/* Navigasi bawah tetap menempel di bawah layar dengan ruang garis iPhone */
+.bottom-nav-host { padding-bottom: env(safe-area-inset-bottom); background: var(--surface); }
+
+/* Splash saat aplikasi web dibuka */
+.screen.splash { padding-top: 0; }
+
+/* Layar lebar (laptop): tampil seukuran ponsel di tengah supaya sama dengan aplikasi */
+@media (min-width: 600px) {
+    body { background: #dfe3ea; }
+    #app { left: 50%; width: 430px; transform: translateX(-50%); box-shadow: 0 0 40px rgba(0,0,0,.18); }
+    .dialog-scrim, .toast { /* tetap di tengah layar */ }
+}
+
+/* Animasi ikon bertanda android:tag (IconMotion.kt) */
+.anim-pop { animation: pop .42s cubic-bezier(.34,1.56,.64,1) both; }
+.anim-drop { animation: drop .5s cubic-bezier(.34,1.56,.64,1) both; }
+.anim-ring { animation: ring .7s ease-in-out .2s both; transform-origin: 50% 10%; }
+.anim-pulse { animation: pulse .9s ease-out .2s 2; }
+.anim-bounce { animation: pop .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } }
+@keyframes drop { from { transform: translateY(-24px); opacity: 0; } }
+@keyframes ring { 20% { transform: rotate(14deg); } 40% { transform: rotate(-12deg); } 60% { transform: rotate(8deg); } 80% { transform: rotate(-4deg); } }
+@keyframes pulse { 50% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .anim-pop, .anim-drop, .anim-ring, .anim-pulse, .anim-bounce, .screen.enter, .screen.back-enter { animation: none; } }
+.lottie svg { display: block; }
+
+/* Kolom tanggal/jam: tanpa ikon bawaan browser, seperti kolom di aplikasi */
+.et input[type="date"], .et input[type="time"] { -webkit-appearance: none; appearance: none; min-height: 1.4em; text-align: left; }
+.et input::-webkit-calendar-picker-indicator { display: none; }
+.et input::-webkit-date-and-time-value { text-align: left; }
+
+/* Ruang garis bawah iPhone untuk layar tanpa navigasi bawah */
+.screen:not(.has-nav) { padding-bottom: env(safe-area-inset-bottom); }

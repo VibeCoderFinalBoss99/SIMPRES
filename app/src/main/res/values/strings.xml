@@ -441,4 +441,12 @@
     <string name="change_info_hint">Contoh: Nomor HP baru 0812xxxx, jabatan sekarang Bidan Koordinator</string>
     <string name="change_info_send">Kirim ke admin</string>
     <string name="change_info_short">Tulis data yang perlu diubah.</string>
+    <string name="update_title">Versi baru tersedia</string>
+    <string name="update_body">SIMPRES %1$s sudah tersedia. Versi di HP ini %2$s.</string>
+    <string name="update_later">Nanti</string>
+    <string name="update_download">Unduh &amp; pasang</string>
+    <string name="update_downloading">Mengunduh pembaruan… %1$d%%</string>
+    <string name="update_hide">Sembunyikan</string>
+    <string name="update_failed">Unduhan gagal. Periksa internet lalu coba lagi dari Beranda.</string>
+    <string name="update_install_hint">Ketuk Pasang di layar berikutnya. Jika diminta, izinkan SIMPRES memasang aplikasi.</string>
 </resources>
