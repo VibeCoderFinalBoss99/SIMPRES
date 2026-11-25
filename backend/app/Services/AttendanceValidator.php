@@ -29,7 +29,7 @@ class AttendanceValidator
 
     private const EARTH_RADIUS_M = 6371000;
 
-    public function checkIn(User $user, float $lat, float $lng, float $accuracy, bool $isMock, ?CarbonInterface $at = null): array
+    public function checkIn(User $user, float $lat, float $lng, float $accuracy, bool $isMock, ?CarbonInterface $at = null, bool $isEmulator = false): array
     {
         $at ??= now();
         $date = $at->toDateString();
@@ -49,11 +49,15 @@ class AttendanceValidator
             return $this->reject($reason, $distance);
         }
 
-        if ($error = $this->locationError($location, $distance, $accuracy, $isMock)) {
+        $schedule = $this->scheduleFor($user, $date);
+        if ($error = $this->tooEarly($schedule, $at)) {
             return $this->reject($error, $distance);
         }
 
-        $schedule = $this->scheduleFor($user, $date);
+        if ($error = $this->locationError($location, $distance, $accuracy, $isMock, $isEmulator)) {
+            return $this->reject($error, $distance);
+        }
+
         [$status, $lateMinutes] = $this->lateStatus($schedule, $at);
 
         return [
@@ -67,7 +71,7 @@ class AttendanceValidator
         ];
     }
 
-    public function checkOut(User $user, float $lat, float $lng, float $accuracy, bool $isMock, ?CarbonInterface $at = null): array
+    public function checkOut(User $user, float $lat, float $lng, float $accuracy, bool $isMock, ?CarbonInterface $at = null, bool $isEmulator = false): array
     {
         $at ??= now();
         $location = $this->activeLocation($user);
@@ -83,7 +87,7 @@ class AttendanceValidator
             return $this->reject('Anda sudah check-out hari ini.', $distance);
         }
 
-        if ($error = $this->locationError($location, $distance, $accuracy, $isMock)) {
+        if ($error = $this->locationError($location, $distance, $accuracy, $isMock, $isEmulator)) {
             return $this->reject($error, $distance);
         }
 
@@ -122,6 +126,46 @@ class AttendanceValidator
         return ['terlambat', (int) floor($start->diffInMinutes($checkInAt))];
     }
 
+    /**
+     * Check-in baru dibuka beberapa menit sebelum jam masuk shift (Konfigurasi: checkin_open_before_min, bawaan 60).
+     * Tanpa jadwal atau hari libur, tidak ada batas jam.
+     */
+    private function tooEarly(?Schedule $schedule, CarbonInterface $at): ?string
+    {
+        $shift = $schedule?->shift;
+        if (! $shift || $schedule->is_day_off) {
+            return null;
+        }
+
+        $start = $at->copy()->setTimeFromTimeString($shift->start_time);
+        $open = $start->copy()->subMinutes((int) (Settings::get('checkin_open_before_min') ?? 60));
+        if ($at->greaterThanOrEqualTo($open)) {
+            return null;
+        }
+
+        return 'Absen gagal: belum masuk jam kerja. Check-in shift '.$shift->name.' dibuka pukul '
+            .$open->format('H.i').' WITA (jam masuk '.$start->format('H.i').').';
+    }
+
+    /**
+     * Menit pulang lebih cepat dari jam pulang shift. Shift malam yang pulang esok hari (jam pulang lebih kecil
+     * dari jam masuk) dihitung ke hari berikutnya. Tanpa jadwal atau hari libur: 0.
+     */
+    public function earlyLeaveMinutes(?Schedule $schedule, CarbonInterface $date, CarbonInterface $checkOutAt): int
+    {
+        $shift = $schedule?->shift;
+        if (! $shift || $schedule->is_day_off) {
+            return 0;
+        }
+
+        $end = $date->copy()->setTimeFromTimeString($shift->end_time);
+        if ($shift->end_time <= $shift->start_time) {
+            $end->addDay();
+        }
+
+        return $checkOutAt->lessThan($end) ? (int) ceil($checkOutAt->diffInMinutes($end)) : 0;
+    }
+
     /** Jadwal dari roster, atau jadwal tetap pegawai jika tanggal itu tidak diatur di roster. */
     public function scheduleFor(User $user, string $date): ?Schedule
     {
@@ -147,11 +191,20 @@ class AttendanceValidator
         return round($distance, 1);
     }
 
-    private function locationError(?WorkLocation $location, ?float $distance, float $accuracy, bool $isMock): ?string
+    private function locationError(?WorkLocation $location, ?float $distance, float $accuracy, bool $isMock, bool $isEmulator = false): ?string
     {
-        // Batas akurasi dan penolakan lokasi palsu bisa diatur admin di halaman Konfigurasi.
+        // Batas akurasi, penolakan lokasi palsu, dan penolakan emulator bisa diatur admin di halaman Konfigurasi.
         if ($isMock && Settings::get('reject_mock')) {
             return 'Terdeteksi lokasi palsu (fake GPS). Matikan aplikasi lokasi palsu lalu coba lagi.';
+        }
+
+        if ($isEmulator && Settings::get('reject_emulator')) {
+            return 'Absen ditolak: aplikasi berjalan di emulator, bukan di HP asli.';
+        }
+
+        // GPS asli selalu punya nilai akurasi lebih dari 0. Nilai 0 hanya muncul dari lokasi buatan.
+        if ($accuracy <= 0) {
+            return 'Terdeteksi lokasi palsu (akurasi GPS tidak wajar). Matikan aplikasi lokasi palsu lalu coba lagi.';
         }
 
         $maxAccuracy = (int) (Settings::get('max_accuracy_m') ?? self::MAX_ACCURACY_M);

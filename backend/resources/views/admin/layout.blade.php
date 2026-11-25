@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/logo.svg') }}">
     <title>@yield('title', 'Admin') - SIMPRES</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 </head>
@@ -27,7 +28,7 @@
 <div class="layout">
     <aside class="sidebar">
         <div class="brand">
-            <span class="brand-logo">@include('admin.icon', ['name' => 'shield'])</span>
+            <img class="brand-logo img" src="{{ asset('img/logo.svg') }}" alt="Logo SIMPRES" width="40" height="40">
             <span><strong>SIMPRES</strong><small>Admin Web</small></span>
         </div>
 
@@ -88,5 +89,12 @@
         @yield('content')
     </main>
 </div>
+<script>
+    // Form dengan data-confirm meminta konfirmasi dulu (misalnya menonaktifkan akun).
+    document.addEventListener('submit', function (e) {
+        const message = e.target.dataset && e.target.dataset.confirm;
+        if (message && !window.confirm(message)) e.preventDefault();
+    });
+</script>
 </body>
 </html>

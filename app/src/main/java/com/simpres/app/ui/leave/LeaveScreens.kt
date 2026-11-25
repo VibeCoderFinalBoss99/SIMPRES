@@ -135,6 +135,11 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
         showFile(view)
         fileRow.setOnClickListener { picker.launch("image/*") }
         view.onClick(R.id.btnRemoveFile) { attachment = null; showFile(view) }
+        // Lampiran untuk izin keluar jam kerja dan lainnya (opsional). Ketuk lagi untuk mengganti, tekan lama untuk menghapus.
+        view.findViewById<View>(R.id.rowAttach).apply {
+            setOnClickListener { picker.launch("image/*") }
+            setOnLongClickListener { attachment = null; showFile(view); true }
+        }
 
         view.onClick(R.id.btnSubmit) { submit(view) }
     }
@@ -169,6 +174,9 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
     }
 
     private fun showFile(view: View) {
+        ((view.findViewById<ViewGroup>(R.id.rowAttach)).getChildAt(1) as TextView).text = attachment?.let {
+            getString(R.string.attach_selected, it.size / 1024)
+        } ?: getString(R.string.common_tambah_lampiran)
         val name = view.findViewById<TextView>(R.id.tvFileName)
         val size = view.findViewById<TextView>(R.id.tvFileSize)
         val data = attachment
@@ -199,7 +207,7 @@ class LeaveFormFragment : BaseFragment(R.layout.fragment_leave_form) {
 
         launch {
             val file = attachment
-            val r = if (file != null && (type == "sakit" || type == "cuti")) {
+            val r = if (file != null) {
                 val plain = "text/plain".toMediaType()
                 val parts = fields.mapValues { it.value.toRequestBody(plain) }
                 val file = MultipartBody.Part.createFormData("lampiran", "surat.jpg",

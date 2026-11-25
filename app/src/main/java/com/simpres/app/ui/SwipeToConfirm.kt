@@ -12,7 +12,8 @@ import android.view.animation.OvershootInterpolator
  * released near the end; otherwise it springs back. Screen readers get a normal click action instead.
  */
 @SuppressLint("ClickableViewAccessibility")
-fun setupSwipeToConfirm(track: View, knob: View, label: View, onConfirm: () -> Unit) {
+/** Returns a function that puts the knob back at the start (for example after the user cancels a dialog). */
+fun setupSwipeToConfirm(track: View, knob: View, label: View, onConfirm: () -> Unit): () -> Unit {
     var startX = 0f
     var done = false
 
@@ -75,5 +76,11 @@ fun setupSwipeToConfirm(track: View, knob: View, label: View, onConfirm: () -> U
             }
             return super.performAccessibilityAction(host, action, args)
         }
+    }
+
+    return {
+        done = false
+        knob.animate().translationX(0f).setDuration(220L).start()
+        label.animate().alpha(1f).setDuration(220L).start()
     }
 }

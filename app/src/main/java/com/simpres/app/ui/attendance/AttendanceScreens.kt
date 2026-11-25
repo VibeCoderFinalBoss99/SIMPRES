@@ -213,7 +213,7 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
                     replace(R.id.outsideRadiusFragment)
                 } else {
                     showStatus(result.message, retry = true)
-                    alert(result.message)
+                    alert(result.message, getString(R.string.checkin_failed_title))
                 }
             }
             ApiResult.Offline -> {
@@ -247,8 +247,10 @@ class OutsideRadiusFragment : BaseFragment(R.layout.fragment_outside_radius) {
         view.findViewById<TextView>(R.id.tvHeadline).text = getString(R.string.outside_headline, distance)
         view.findViewById<TextView>(R.id.tvDistance).text = distance
         view.findViewById<TextView>(R.id.tvAccuracy).text = Format.meters(AttendanceFlow.accuracyM)
-        view.findViewById<TextView>(R.id.tvRadius).text = "${Session.user?.workLocation?.radiusM ?: 150} m"
-        AttendanceFlow.message?.let { view.findViewById<TextView>(R.id.tvMessage).text = it }
+        view.findViewById<TextView>(R.id.tvRadius).text = "${Session.user?.workLocation?.radiusM ?: 100} m"
+        val place = Session.user?.workLocation
+        view.findViewById<TextView>(R.id.tvMessage).text = AttendanceFlow.message
+            ?: getString(R.string.outside_radius_absen_hanya_bisa_dalam, place?.radiusM ?: 100, place?.name ?: "Puskesmas")
         val again = { replace(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to AttendanceFlow.kind)) }
         view.onClick(R.id.btnRefresh) { again() }
         view.onClick(R.id.btnLocate) { again() }
@@ -271,9 +273,17 @@ private fun fillResult(view: View, checkOut: Boolean) {
     val distance = if (checkOut) a.checkOutDistanceM else a.checkInDistanceM
     view.findViewById<TextView>(R.id.tvTime).text = Format.time(time)
     view.findViewById<TextView>(R.id.tvPlace).text = view.context.getString(R.string.result_place, place, Format.meters(distance))
-    view.findViewById<TextView>(R.id.tvNote).text =
-        if (!checkOut && a.status == "terlambat") view.context.getString(R.string.result_late, a.lateMinutes)
-        else Format.attendanceStatus(a.status)
+    // Keterangan: check-in tepat waktu/terlambat, check-out sesuai jadwal/pulang cepat. Kuning jika ada catatan.
+    val (note, warn) = when {
+        checkOut && a.earlyLeaveMinutes > 0 -> "Pulang cepat ${a.earlyLeaveMinutes} menit" to true
+        checkOut -> "Sesuai jadwal" to false
+        a.status == "terlambat" -> view.context.getString(R.string.result_late, a.lateMinutes) to true
+        else -> "Tepat waktu" to false
+    }
+    view.findViewById<TextView>(R.id.tvNote).apply {
+        text = note
+        setTextColor(androidx.core.content.ContextCompat.getColor(context, if (warn) R.color.warn else R.color.success))
+    }
     AttendanceFlow.message?.let { view.findViewById<TextView>(R.id.tvSubtitle).text = it }
 }
 

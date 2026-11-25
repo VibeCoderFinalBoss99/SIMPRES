@@ -18,6 +18,7 @@ class CheckOutRequest extends FormRequest
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'accuracy' => ['required', 'numeric', 'min:0'],
             'is_mock' => ['required', 'boolean'],
+            'is_emulator' => ['nullable', 'boolean'],
             'client_uuid' => ['nullable', 'uuid'],
             'device_info' => ['nullable', 'string', 'max:255'],
         ];

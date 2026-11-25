@@ -15,6 +15,8 @@ class ScheduleResource extends JsonResource
             'is_day_off' => $this->is_day_off,
             // true = dari shift tetap pegawai (bukan diatur khusus di roster); id bernilai null.
             'is_default' => ! $this->exists,
+            // Nama hari libur nasional dari Konfigurasi, null jika bukan hari libur.
+            'holiday' => \App\Support\Settings::holidays()[$this->date->format('Y-m-d')] ?? null,
             'shift' => $this->shift ? [
                 'id' => $this->shift->id,
                 'name' => $this->shift->name,

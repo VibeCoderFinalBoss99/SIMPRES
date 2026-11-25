@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\WorkLocation;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Pagination\Paginator;
@@ -19,18 +20,23 @@ class AppServiceProvider extends ServiceProvider
         // Tampilan pagination Admin Web memakai public/css/admin.css (tanpa Tailwind).
         Paginator::defaultView('admin.pagination');
 
-        // Email lupa sandi berbahasa Indonesia. Tautannya membuka halaman web untuk membuat sandi baru.
+        // Email lupa sandi berbahasa Indonesia, versi HTML dan teks biasa (email dengan dua versi lebih jarang
+        // dianggap spam). Tautannya membuka halaman web untuk membuat sandi baru.
         ResetPassword::toMailUsing(function ($user, string $token) {
-            $url = route('password.reset', ['token' => $token, 'email' => $user->email]);
+            $minutes = (int) config('auth.passwords.users.expire');
+            $location = WorkLocation::first();
 
             return (new MailMessage)
-                ->subject('Atur Ulang Kata Sandi SIMPRES')
-                ->greeting('Halo, '.$user->name)
-                ->line('Kami menerima permintaan untuk mengatur ulang kata sandi akun SIMPRES Anda.')
-                ->action('Buat Kata Sandi Baru', $url)
-                ->line('Tautan ini berlaku '.config('auth.passwords.users.expire').' menit.')
-                ->line('Jika Anda tidak meminta, abaikan email ini. Kata sandi Anda tidak berubah.')
-                ->salutation('Salam, UPTD Puskesmas Simbang');
+                ->subject('Atur ulang kata sandi akun SIMPRES Anda')
+                ->view(['html' => 'emails.reset-password', 'text' => 'emails.reset-password-text'], [
+                    'user' => $user,
+                    'url' => route('password.reset', ['token' => $token, 'email' => $user->email]),
+                    'minutes' => $minutes,
+                    'requestedAt' => now()->translatedFormat('l, d F Y, H.i').' WITA',
+                    'expiresAt' => now()->addMinutes($minutes)->format('H.i').' WITA',
+                    'office' => $location?->name ?? 'UPTD Puskesmas Simbang',
+                    'address' => $location?->address,
+                ]);
         });
     }
 }

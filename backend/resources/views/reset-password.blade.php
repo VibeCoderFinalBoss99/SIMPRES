@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/logo.svg') }}">
     <title>Atur Ulang Kata Sandi - SIMPRES</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 </head>
@@ -10,7 +11,7 @@
 <div class="login-page">
     <div class="login-box">
         <div class="logo">
-            <span class="brand-logo">@include('admin.icon', ['name' => 'shield'])</span>
+            <img class="brand-logo img" src="{{ asset('img/logo.svg') }}" alt="Logo SIMPRES" width="40" height="40">
             <span><strong>SIMPRES</strong><small>Atur ulang kata sandi</small></span>
         </div>
 

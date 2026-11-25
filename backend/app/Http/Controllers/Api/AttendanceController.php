@@ -62,7 +62,7 @@ class AttendanceController extends Controller
 
         $result = $this->validator->checkIn(
             $user, $request->float('latitude'), $request->float('longitude'),
-            $request->float('accuracy'), $request->boolean('is_mock'),
+            $request->float('accuracy'), $request->boolean('is_mock'), null, $request->boolean('is_emulator'),
         );
 
         if (! $result['allowed']) {
@@ -104,7 +104,7 @@ class AttendanceController extends Controller
     {
         $result = $this->validator->checkOut(
             $request->user(), $request->float('latitude'), $request->float('longitude'),
-            $request->float('accuracy'), $request->boolean('is_mock'),
+            $request->float('accuracy'), $request->boolean('is_mock'), null, $request->boolean('is_emulator'),
         );
 
         if (! $result['allowed']) {
@@ -120,8 +120,13 @@ class AttendanceController extends Controller
             'check_out_distance_m' => $result['distance_m'],
         ]);
 
+        $early = $this->validator->earlyLeaveMinutes(
+            $this->validator->scheduleFor($request->user(), $attendance->date->toDateString()),
+            $attendance->date, $attendance->check_out_at,
+        );
+
         return response()->json([
-            'message' => 'Check-out berhasil.',
+            'message' => $early > 0 ? "Check-out berhasil. Anda pulang {$early} menit lebih cepat dari jadwal." : 'Check-out berhasil.',
             'data' => new AttendanceResource($attendance),
         ]);
     }

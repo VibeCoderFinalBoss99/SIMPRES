@@ -32,5 +32,19 @@ object Locator {
         isMock = isMock(location),
         clientUuid = uuid,
         deviceInfo = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE}".take(255),
+        isEmulator = isEmulator(),
     )
+
+    /**
+     * Emulator Android (misalnya di Android Studio) dikenali dari ciri bawaan sistemnya. Lokasi emulator bisa diatur
+     * bebas dari laptop, jadi server menolak absen dari emulator (bisa dimatikan admin di Konfigurasi untuk pengujian).
+     */
+    fun isEmulator(): Boolean {
+        val f = Build.FINGERPRINT.lowercase()
+        val hw = Build.HARDWARE.lowercase()
+        val product = Build.PRODUCT.lowercase()
+        return f.startsWith("generic") || f.contains("emulator") || f.contains("sdk_gphone") ||
+            hw == "goldfish" || hw == "ranchu" || product.contains("sdk") || product.contains("emulator") ||
+            Build.MODEL.contains("Android SDK built for", ignoreCase = true)
+    }
 }

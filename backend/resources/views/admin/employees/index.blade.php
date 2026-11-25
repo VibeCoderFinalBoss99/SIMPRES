@@ -27,10 +27,8 @@
                 <tr>
                     <th>Pegawai</th>
                     <th>NIP</th>
-                    <th>Unit</th>
                     <th>Jenis kerja</th>
-                    <th>Peran</th>
-                    <th>Status</th>
+                    <th>Peran &amp; status</th>
                     <th>Aksi</th>
                 </tr>
                 </thead>
@@ -40,11 +38,10 @@
                         <td>
                             <div class="person">
                                 <span class="avatar">{{ $initials($user->name) }}</span>
-                                <span><strong>{{ $user->name }}</strong><small>{{ $user->position }} · {{ $user->email }}</small></span>
+                                <span><strong>{{ $user->name }}</strong><small>{{ $user->position }}{{ $user->unit ? ' · '.$user->unit : '' }}</small><small>{{ $user->email }}</small></span>
                             </div>
                         </td>
-                        <td>{{ $user->nip }}</td>
-                        <td>{{ $user->unit ?? '-' }}</td>
+                        <td style="font-size:12.5px">{{ $user->nip }}</td>
                         <td>
                             @if ($user->role === 'admin')
                                 <span class="muted">-</span>
@@ -55,28 +52,28 @@
                                 </small>
                             @endif
                         </td>
-                        <td><span class="badge {{ $user->role === 'admin' ? 'blue' : '' }}">{{ ucfirst($user->role) }}</span></td>
                         <td>
-                            <span class="badge {{ $user->is_active ? 'aktif' : 'nonaktif' }}">
+                            <span class="badge {{ $user->role === 'admin' ? 'blue' : '' }}">{{ ucfirst($user->role) }}</span>
+                            <span class="badge {{ $user->is_active ? 'aktif' : 'nonaktif' }}" style="margin-left:4px">
                                 {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
                         </td>
                         <td>
                             <div class="actions">
-                                <a href="{{ route('admin.pegawai.edit', $user) }}" class="icon-btn" title="Ubah">@include('admin.icon', ['name' => 'edit'])</a>
+                                <a href="{{ route('admin.pegawai.edit', $user) }}" class="btn secondary small" title="Ubah data pegawai">Ubah</a>
                                 @unless ($user->is(auth()->user()))
-                                    <form method="POST" action="{{ route('admin.pegawai.toggle', $user) }}">
+                                    <form method="POST" action="{{ route('admin.pegawai.toggle', $user) }}"
+                                          data-confirm="{{ $user->is_active ? 'Nonaktifkan akun '.$user->name.'? Pegawai akan langsung keluar dari aplikasi.' : 'Aktifkan lagi akun '.$user->name.'?' }}">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="icon-btn {{ $user->is_active ? 'red' : '' }}"
-                                                title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">@include('admin.icon', ['name' => 'power'])</button>
+                                        <button type="submit" class="btn small {{ $user->is_active ? 'danger' : 'secondary' }}">{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button>
                                     </form>
                                 @endunless
                             </div>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="empty">Tidak ada pegawai yang cocok.</td></tr>
+                    <tr><td colspan="5" class="empty">Tidak ada pegawai yang cocok.</td></tr>
                 @endforelse
                 </tbody>
             </table>

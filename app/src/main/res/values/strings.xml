@@ -314,7 +314,7 @@
     <string name="guide_today_title">Absensi hari ini</string>
     <string name="guide_today_body">Jam check-in, check-out, jarakmu ke Puskesmas, dan status kirim data tampil di sini.</string>
     <string name="guide_checkin_title">Tombol absen</string>
-    <string name="guide_checkin_body">Tekan tombol ini untuk check-in. Absensi sah otomatis jika kamu berada dalam radius 150 m dari Puskesmas.</string>
+    <string name="guide_checkin_body">Tekan tombol ini untuk check-in. Absensi sah otomatis jika kamu berada dalam radius Puskesmas yang diatur admin.</string>
     <string name="guide_checkout_title">Geser untuk absen</string>
     <string name="guide_checkout_body">Geser tombol ini sampai ujung kanan untuk check-in saat datang. Setelah check-in, tombol yang sama dipakai untuk check-out saat pulang.</string>
     <string name="guide_sync_title">Status sinkronisasi</string>
@@ -333,7 +333,7 @@
     <string name="outside_radius_212_m">212 m</string>
     <string name="outside_radius_212_m_dari_titik">212 m dari titik</string>
     <string name="outside_radius_9_m">± 9 m</string>
-    <string name="outside_radius_absen_hanya_bisa_dalam">Absen hanya bisa dalam radius 150 m dari Puskesmas Simbang</string>
+    <string name="outside_radius_absen_hanya_bisa_dalam">Absen hanya bisa dalam radius %1$d m dari %2$s</string>
     <string name="outside_radius_batas_radius">Batas radius</string>
     <string name="outside_radius_check_in_tidak_tersedia">Check-in tidak tersedia</string>
     <string name="outside_radius_kamu_di_luar_area">Kamu di luar area kerja</string>
@@ -408,4 +408,14 @@
     <string name="sync_terhubung_ke_internet">Terhubung ke internet</string>
     <string name="config_tampilan">Tampilan</string>
     <string name="config_mode_tampilan">Mode terang / gelap</string>
+    <string name="calendar_prev">Bulan sebelumnya</string>
+    <string name="calendar_next">Bulan berikutnya</string>
+    <string name="calendar_no_record">Tidak ada catatan pada %1$s.</string>
+    <string name="schedule_empty">Belum ada jadwal bulan ini. Hubungi admin untuk mengatur roster.</string>
+    <string name="checkout_early_title">Belum jam pulang</string>
+    <string name="checkout_early_body">Jam pulang shift %1$s adalah %2$s. Jika check-out sekarang, absensi dicatat pulang sekitar %3$d menit lebih cepat.</string>
+    <string name="checkout_early_cancel">Batal</string>
+    <string name="checkout_early_ok">Tetap check-out</string>
+    <string name="checkin_failed_title">Absen gagal</string>
+    <string name="attach_selected">Lampiran terpilih (%1$d KB) · ketuk untuk ganti, tahan untuk hapus</string>
 </resources>

@@ -12,40 +12,56 @@ class Settings
 {
     private const FILE = 'settings.json';
 
-    /** key => [label, nilai awal, jenis] ; jenis: number | text | bool */
+    /**
+     * key => [label, nilai awal, jenis, minimum, maksimum, keterangan] ; jenis: number | bool | list.
+     * Semua pengaturan di sini dipakai server. Radius absensi tidak disimpan di sini, tetapi langsung di
+     * tabel work_locations (sama dengan halaman Lokasi Kerja), lihat ConfigController.
+     */
     public const FIELDS = [
         'Geofence & lokasi' => [
-            'radius_default_m' => ['Radius awal lokasi baru (meter)', 150, 'number'],
-            'max_accuracy_m' => ['Batas akurasi GPS (meter)', 100, 'number'],
-            'near_edge_review' => ['Lokasi dekat batas ditandai perlu review', true, 'bool'],
+            'max_accuracy_m' => ['Batas akurasi GPS (meter)', 100, 'number', 10, 500,
+                'Absen ditolak jika akurasi GPS HP lebih buruk dari angka ini. Disarankan 30-100 m.'],
         ],
         'Jadwal & toleransi' => [
-            'nonshift_hours' => ['Jam kerja non-shift', '07.30-14.00', 'text'],
-            'late_tolerance_min' => ['Toleransi terlambat bawaan (menit)', 10, 'number'],
-            'workdays' => ['Hari kerja', 'Senin-Sabtu', 'text'],
+            'checkin_open_before_min' => ['Check-in dibuka sebelum jam masuk (menit)', 60, 'number', 0, 240,
+                'Contoh 60: shift Pagi 07.30 baru bisa check-in mulai 06.30. Lebih awal ditolak "belum masuk jam kerja".'],
+            'holidays' => ['Hari libur nasional', "2026-12-25 Hari Raya Natal\n2027-01-01 Tahun Baru Masehi", 'list', 0, 0,
+                'Satu baris satu tanggal: YYYY-MM-DD Nama libur. Pegawai dengan shift tetap otomatis libur, tidak dihitung alpa.'],
         ],
         'Deteksi risiko' => [
-            'reject_mock' => ['Tolak lokasi palsu (mock location)', true, 'bool'],
-            'flag_repeat_location' => ['Tandai lokasi sama berulang', true, 'bool'],
-            'device_binding' => ['Kunci perangkat terdaftar (device binding)', false, 'bool'],
-        ],
-        'Sinkronisasi' => [
-            'auto_send' => ['Kirim otomatis saat online', true, 'bool'],
-            'max_retries' => ['Percobaan ulang maksimal', 5, 'number'],
-            'delete_local_photo' => ['Hapus foto lokal setelah terkirim', true, 'bool'],
-        ],
-        'Retensi data' => [
-            'photo_days' => ['Foto tugas lapangan (hari)', 90, 'number'],
-            'location_days' => ['Data lokasi transaksi (hari)', 180, 'number'],
-        ],
-        'Peran & akses' => [
-            'admin_approve_leave' => ['Admin dapat menyetujui izin', true, 'bool'],
-            'validator_review_photo' => ['Validator lapangan dapat meninjau foto', true, 'bool'],
+            'reject_mock' => ['Tolak lokasi palsu (fake GPS / mock location)', true, 'bool', 0, 0,
+                'Android menandai lokasi dari aplikasi fake GPS. Absen dengan tanda ini ditolak.'],
+            'reject_emulator' => ['Tolak absen dari emulator', true, 'bool', 0, 0,
+                'Absen dari emulator Android di laptop ditolak. Matikan hanya untuk pengujian.'],
         ],
     ];
 
-    /** Pengaturan yang langsung dipakai server saat validasi absensi. */
-    public const ENFORCED = ['max_accuracy_m', 'reject_mock'];
+    /** Pengaturan yang langsung dipakai server saat validasi absensi (sekarang semuanya). */
+    public const ENFORCED = ['max_accuracy_m', 'checkin_open_before_min', 'holidays', 'reject_mock', 'reject_emulator'];
+
+    /**
+     * Hari libur nasional dari Konfigurasi, dengan kunci tanggal: ['2026-12-25' => 'Hari Raya Natal'].
+     * Baris yang tanggalnya tidak sah dilewati.
+     *
+     * @return array<string, string>
+     */
+    public static function holidays(): array
+    {
+        // Dibaca sekali per permintaan, karena dipanggil untuk setiap tanggal di rekap dan roster.
+        return once(fn () => self::parseHolidays());
+    }
+
+    private static function parseHolidays(): array
+    {
+        $list = [];
+        foreach (preg_split('/\R/', (string) self::get('holidays')) as $line) {
+            if (preg_match('/^\s*(\d{4}-\d{2}-\d{2})\s*(.*)$/', $line, $m) && checkdate((int) substr($m[1], 5, 2), (int) substr($m[1], 8, 2), (int) substr($m[1], 0, 4))) {
+                $list[$m[1]] = trim($m[2]) ?: 'Hari libur';
+            }
+        }
+
+        return $list;
+    }
 
     public static function all(): array
     {

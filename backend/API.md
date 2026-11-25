@@ -145,10 +145,12 @@ Respons 200: `{"user": { ...sama seperti user di respons login... }}`. Tanpa tok
 ## 2. Absensi
 
 Keputusan sah atau tidaknya absensi dibuat di server:
-1. jarak ke titik Puskesmas (rumus Haversine) maksimal `radius_m` (150 m),
-2. akurasi GPS maksimal 100 m,
-3. `is_mock = true` (lokasi palsu) ditolak,
-4. satu check-in per hari,
+1. jarak ke titik Puskesmas (rumus Haversine) maksimal `radius_m` (diatur admin, disarankan 50-100 m),
+2. akurasi GPS maksimal `max_accuracy_m` (Konfigurasi, bawaan 100 m); akurasi 0 dianggap lokasi buatan dan ditolak,
+3. `is_mock = true` (lokasi palsu) ditolak; `is_emulator = true` ditolak jika "Tolak absen dari emulator" aktif,
+4. satu check-in per hari; check-in baru dibuka `checkin_open_before_min` menit (bawaan 60) sebelum jam masuk shift,
+   lebih awal ditolak dengan pesan "Absen gagal: belum masuk jam kerja...",
+4b. check-out sebelum jam pulang shift tetap diterima, tetapi dicatat `early_leave_minutes` (pulang lebih cepat),
 5. check-out hanya setelah check-in dan belum check-out,
 6. check-in setelah jam masuk shift + toleransi berstatus `terlambat`, `late_minutes` dihitung dari jam masuk shift,
 7. pegawai dengan izin diterima (selain izin keluar) di hari itu tidak perlu check-in.
@@ -188,6 +190,7 @@ Request:
 | longitude | wajib, angka -180 s.d. 180 |
 | accuracy | wajib, angka >= 0 (meter, dari GPS HP) |
 | is_mock | wajib, true/false |
+| is_emulator | opsional, true/false (aplikasi berjalan di emulator) |
 | client_uuid | opsional, UUID buatan HP. Jika dikirim ulang, server mengembalikan data yang sama (200) tanpa membuat data baru |
 | source | opsional, `online` (bawaan) atau `offline` jika dikirim dari antrean HP |
 | device_info | opsional, maksimal 255 karakter |
@@ -212,10 +215,15 @@ Respons 201:
     "check_out_accuracy_m": null,
     "check_out_distance_m": null,
     "source": "online",
-    "client_uuid": "0b7d3c1e-2f4a-4b5c-8d6e-7f8091a2b3c4"
+    "client_uuid": "0b7d3c1e-2f4a-4b5c-8d6e-7f8091a2b3c4",
+    "work_minutes": null,
+    "early_leave_minutes": 0
   }
 }
 ```
+`work_minutes` = lama kerja (menit) setelah check-out. `early_leave_minutes` = menit pulang lebih cepat dari jam pulang shift.
+Semua jam memakai WITA (`APP_TIMEZONE=Asia/Makassar`).
+
 Jika terlambat: `"message": "Check-in berhasil. Anda terlambat 25 menit."`, `status` `terlambat`, `late_minutes` 25.
 
 Ditolak (422), selalu berisi `message` dan `distance_m`:

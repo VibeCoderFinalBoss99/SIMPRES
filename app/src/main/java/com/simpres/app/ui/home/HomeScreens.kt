@@ -35,7 +35,14 @@ import com.simpres.app.ui.clearAfter
 import com.simpres.app.ui.onClick
 import com.simpres.app.ui.setupSwipeToConfirm
 import com.simpres.app.ui.toneForStatus
+import java.time.Duration
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import com.simpres.app.ui.shrinkImage
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -50,6 +57,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     /** Geser di Beranda: check-in sebelum masuk, check-out setelah check-in. */
     private var swipeKind = AttendanceFlow.CHECK_IN
+    private var resetSwipe: () -> Unit = {}
+    private var current: Today? = null
 
     override fun onReady(view: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -60,11 +69,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         view.onClick(R.id.btnBell) { go(R.id.notificationFragment) }
         view.onClick(R.id.tvSeeAll) { go(R.id.historyFragment) }
         view.onClick(R.id.cardSync) { go(R.id.syncFragment) }
-        setupSwipeToConfirm(
+        resetSwipe = setupSwipeToConfirm(
             track = view.findViewById(R.id.swipeCheckOut),
             knob = view.findViewById(R.id.swipeKnob),
             label = view.findViewById(R.id.tvSwipeLabel),
-        ) { if (isAdded) go(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to swipeKind)) }
+        ) { if (isAdded) confirmSwipe() }
 
         showUser(view)
         showWeek(view)
@@ -128,16 +137,25 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             t.schedule.isDayOff -> getString(R.string.today_day_off)
             else -> "${t.schedule.shift ?: "Jadwal"} · ${Format.clock(t.schedule.startTime)}–${Format.clock(t.schedule.endTime)}"
         }
+        current = t
         val a = t.attendance
+        val start = t.schedule?.startTime?.takeIf { !t.schedule.isDayOff }
         view.findViewById<TextView>(R.id.tvCheckInTime).text = Format.time(a?.checkInAt)
-        view.findViewById<TextView>(R.id.tvCheckInStatus).text = when {
-            a == null -> getString(R.string.today_none)
-            a.status == "terlambat" -> getString(R.string.result_late, a.lateMinutes)
-            else -> Format.attendanceStatus(a.status)
-        }
+        // Keterangan kartu Check-in: tepat waktu (hijau) atau terlambat (kuning); sebelum absen: jam masuk shift.
+        showNote(view.findViewById(R.id.tvCheckInStatus), when {
+            a == null && start != null -> "Belum check-in · masuk ${Format.clock(start)}" to R.color.ink_muted
+            a == null -> getString(R.string.today_none) to R.color.ink_muted
+            a.status == "terlambat" -> getString(R.string.result_late, a.lateMinutes) to R.color.warn
+            a.status == "hadir" -> "Tepat waktu" to R.color.success
+            else -> Format.attendanceStatus(a.status) to R.color.ink_muted
+        })
         view.findViewById<TextView>(R.id.tvCheckOutTime).text = Format.time(a?.checkOutAt)
-        view.findViewById<TextView>(R.id.tvCheckOutNote).text =
-            t.schedule?.endTime?.let { "Batas ${Format.clock(it)}" } ?: "-"
+        // Keterangan kartu Check-out: pulang lebih cepat (kuning) atau sesuai jadwal (hijau); sebelumnya: batas pulang.
+        showNote(view.findViewById(R.id.tvCheckOutNote), when {
+            a?.checkOutAt != null && a.earlyLeaveMinutes > 0 -> "Pulang cepat ${a.earlyLeaveMinutes} menit" to R.color.warn
+            a?.checkOutAt != null -> "Sesuai jadwal" to R.color.success
+            else -> (t.schedule?.endTime?.takeIf { start != null }?.let { "Batas ${Format.clock(it)}" } ?: "-") to R.color.ink_muted
+        })
         view.findViewById<TextView>(R.id.tvDistance).text = Format.meters(a?.checkOutDistanceM ?: a?.checkInDistanceM)
         view.findViewById<TextView>(R.id.tvDistanceNote).text = if (a?.checkInAt != null) "Di dalam area" else "Belum ada data"
         view.findViewById<TextView>(R.id.tvActivityTitle).text = when {
@@ -154,6 +172,35 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
      * Absensi yang masih di antrean offline dianggap sudah dilakukan, supaya tidak terkirim dua kali.
      * Setelah check-out, tombol disembunyikan.
      */
+    private fun showNote(tv: TextView, note: Pair<String, Int>) {
+        tv.text = note.first
+        tv.setTextColor(ContextCompat.getColor(requireContext(), note.second))
+    }
+
+    /**
+     * Sebelum check-out lewat geser: jika belum jam pulang shift, tanya dulu, karena absensi akan dicatat
+     * pulang lebih cepat. Shift malam (jam pulang lebih kecil dari jam masuk) pulang esok hari.
+     */
+    private fun confirmSwipe() {
+        val open = { go(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to swipeKind)) }
+        val s = current?.schedule
+        val endText = s?.endTime
+        if (s == null || endText == null || s.isDayOff || swipeKind != AttendanceFlow.CHECK_OUT) return open()
+        val end = LocalTime.parse(endText)
+        val start = s.startTime?.let { LocalTime.parse(it) }
+        val endAt = LocalDate.now().atTime(end).let { if (start != null && !end.isAfter(start)) it.plusDays(1) else it }
+        val now = LocalDateTime.now()
+        if (!now.isBefore(endAt)) return open()
+        val minutes = Duration.between(now, endAt).toMinutes() + 1
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.checkout_early_title)
+            .setMessage(getString(R.string.checkout_early_body, s.shift ?: "kerja", Format.clock(endText), minutes))
+            .setNegativeButton(R.string.checkout_early_cancel) { _, _ -> resetSwipe() }
+            .setPositiveButton(R.string.checkout_early_ok) { _, _ -> open() }
+            .setOnCancelListener { resetSwipe() }
+            .show()
+    }
+
     private fun showSwipe(view: View, t: Today) {
         val queued = Outbox.all().map { it.kind }
         val checkedIn = t.hasCheckedIn || AttendanceFlow.CHECK_IN in queued
@@ -186,115 +233,27 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 }
 
-/** Riwayat: attendance and field duty of one month, filtered by the tabs. */
-class HistoryFragment : BaseFragment(R.layout.fragment_history) {
-    private var month = LocalDate.now()
-    private var tab = R.id.tabAll
-    private var historyList: ViewGroup? = null
-
-    override fun onReady(view: View) {
-        bindBottomNav(view, R.id.historyFragment)
-        singleChoice(view, R.id.tabAll, R.id.tabRoutine, R.id.tabField) { tab = it; load(view) }
-        view.onClick(R.id.btnFilter) { pickMonth(view) }
-        load(view)
-    }
-
-    private fun pickMonth(view: View) {
-        val months = (0 until 6).map { LocalDate.now().minusMonths(it.toLong()) }
-        AlertDialog.Builder(requireContext())
-            .setItems(months.map { Format.monthTitle(it) }.toTypedArray()) { _, i -> month = months[i]; load(view) }
-            .show()
-    }
-
-    private fun load(view: View) = launch {
-        val list = view.findViewById<View>(R.id.itemToday)?.parent as? ViewGroup ?: historyList ?: return@launch
-        historyList = list
-        list.clearAfter(list.childContaining(view.findViewById(R.id.tabs)))
-        val loading = list.addMessage(getString(R.string.msg_loading))
-        val key = Format.month(month)
-        var offline = false
-        val attendance = if (tab == R.id.tabField) emptyList() else when (val r = call { history(key) }) {
-            is ApiResult.Ok -> r.value.data
-            is ApiResult.Failed -> emptyList()
-            ApiResult.Offline -> { offline = true; emptyList() }
-        }
-        val duties = if (tab == R.id.tabRoutine) emptyList() else when (val r = call { fieldDuties() }) {
-            is ApiResult.Ok -> r.value.data
-            is ApiResult.Failed -> emptyList()
-            ApiResult.Offline -> { offline = true; emptyList() }
-        }
-        list.removeView(loading)
-        list.addMessage(Format.monthTitle(month)).apply { textAlignment = View.TEXT_ALIGNMENT_VIEW_START; setPadding(0, 24, 0, 0) }
-
-        if (offline) {
-            list.addMessage(getString(R.string.msg_offline_list)); return@launch
-        }
-        var count = 0
-        attendance.forEach { a ->
-            count++
-            val chip = if (a.status == "terlambat") "Terlambat" else Format.attendanceStatus(a.status)
-            list.addRow(R.drawable.ic_clock, Format.day(a.date),
-                "Masuk ${Format.time(a.checkInAt)} · Pulang ${Format.time(a.checkOutAt)}",
-                chip, toneForStatus(a.status)) { showAttendance(a) }
-        }
-        duties.filter { it.date.startsWith(key) }.forEach { d ->
-            count++
-            list.addRow(R.drawable.ic_location, "Tugas lapangan · ${Format.day(d.date)}", d.locationName,
-                Format.submissionStatus(d.status), toneForStatus(d.status))
-        }
-        if (count == 0) list.addMessage(getString(R.string.msg_empty))
-    }
-
-    private fun showAttendance(a: Attendance) = alert(
-        "Status: ${Format.attendanceStatus(a.status)}" +
-            (if (a.lateMinutes > 0) " (${a.lateMinutes} menit)" else "") +
-            "\nCheck-in: ${Format.time(a.checkInAt)} · ${Format.meters(a.checkInDistanceM)}" +
-            "\nCheck-out: ${Format.time(a.checkOutAt)} · ${Format.meters(a.checkOutDistanceM)}" +
-            "\nSumber: ${if (a.source == "offline") "Offline (dikirim belakangan)" else "Online"}",
-        Format.day(a.date),
-    )
-}
-
 class AttendanceDetailFragment : BaseFragment(R.layout.fragment_attendance_detail) {
     override fun onReady(view: View) = Unit
-}
-
-/** Jadwal kerja bulan ini, one row per day. */
-class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
-    override fun onReady(view: View) {
-        bindBottomNav(view, R.id.scheduleFragment)
-        val month = LocalDate.now()
-        view.findViewById<TextView>(R.id.tvMonth).text = Format.monthTitle(month)
-        val list = view.findViewById<ViewGroup>(R.id.listContent)
-        list.clearAfter(null)
-        val loading = list.addMessage(getString(R.string.msg_loading))
-        launch {
-            val r = call { schedules(Format.month(month)) }
-            list.removeView(loading)
-            when (r) {
-                is ApiResult.Ok -> {
-                    if (r.value.data.isEmpty()) list.addMessage(getString(R.string.msg_empty))
-                    r.value.data.forEach { s ->
-                        val isToday = s.date == LocalDate.now().toString()
-                        when {
-                            s.isDayOff -> list.addRow(R.drawable.ic_calendar, Format.day(s.date), "Libur", "Libur", Tone.NEUTRAL)
-                            else -> list.addRow(R.drawable.ic_calendar, Format.day(s.date),
-                                "${s.shift?.name ?: "Shift"} · ${Format.clock(s.shift?.startTime)}–${Format.clock(s.shift?.endTime)}",
-                                if (isToday) "Hari ini" else null, Tone.PRIMARY)
-                        }
-                    }
-                }
-                is ApiResult.Failed -> list.addMessage(r.message)
-                ApiResult.Offline -> list.addMessage(getString(R.string.msg_offline_list))
-            }
-        }
-    }
 }
 
 /** Koreksi absensi hari ini: the wrong part is the check-in if there is none yet, otherwise the check-out. */
 class CorrectionFragment : BaseFragment(R.layout.fragment_correction) {
     private var reason = "GPS tidak akurat"
     private var fixCheckIn = true
+    /** Lampiran bukti (opsional), sudah diperkecil menjadi JPEG di bawah 2 MB. */
+    private var attachment: ByteArray? = null
+    private val picker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        val bytes = uri?.let { shrinkImage(requireContext(), it) } ?: return@registerForActivityResult
+        attachment = bytes
+        view?.let(::showAttachment)
+    }
+
+    private fun showAttachment(view: View) {
+        (view.findViewById<ViewGroup>(R.id.rowAttach).getChildAt(1) as TextView).text = attachment?.let {
+            getString(R.string.attach_selected, it.size / 1024)
+        } ?: getString(R.string.common_tambah_lampiran)
+    }
 
     override fun onReady(view: View) {
         val time = view.findViewById<EditText>(R.id.etTime)
@@ -319,12 +278,22 @@ class CorrectionFragment : BaseFragment(R.layout.fragment_correction) {
                 view.findViewById<TextView>(R.id.tvTargetNote).text = Format.day(r.value.data.date)
             }
         }
+        view.findViewById<View>(R.id.rowAttach).apply {
+            setOnClickListener { picker.launch("image/*") }
+            setOnLongClickListener { attachment = null; showAttachment(view); true }
+        }
         view.onClick(R.id.btnSubmit) {
             if (time.text.isBlank() || note.text.isBlank()) return@onClick toast(R.string.msg_fill_form)
             val body = mutableMapOf("date" to LocalDate.now().toString(), "reason" to "$reason: ${note.text.trim()}")
             body[if (fixCheckIn) "corrected_check_in" else "corrected_check_out"] = time.text.toString()
             launch {
-                when (val r = call { createCorrection(body) }) {
+                val file = attachment
+                val result = if (file == null) call { createCorrection(body) } else {
+                    val plain = "text/plain".toMediaType()
+                    val part = MultipartBody.Part.createFormData("lampiran", "bukti.jpg", file.toRequestBody("image/jpeg".toMediaType()))
+                    call { createCorrectionWithFile(body.mapValues { it.value.toRequestBody(plain) }, part) }
+                }
+                when (val r = result) {
                     is ApiResult.Ok -> { toast(r.value.get("message").asString); backTo(R.id.homeFragment) }
                     is ApiResult.Failed -> alert(r.message)
                     ApiResult.Offline -> alert(getString(R.string.msg_server_unreachable))

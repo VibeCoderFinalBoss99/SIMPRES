@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -38,6 +39,13 @@ class Schedule extends Model
      */
     public static function fromDefault(User $user, Carbon $date): ?self
     {
+        // Hari libur nasional (Konfigurasi) berlaku untuk semua pegawai yang tanggal itu tidak diatur di roster.
+        if (isset(Settings::holidays()[$date->toDateString()])) {
+            return (new self([
+                'user_id' => $user->id, 'shift_id' => null, 'date' => $date->toDateString(), 'is_day_off' => true,
+            ]))->setRelation('shift', null);
+        }
+
         if (! $user->default_shift_id) {
             return null;
         }

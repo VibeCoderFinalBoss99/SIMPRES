@@ -64,6 +64,10 @@ data class Attendance(
     @SerializedName("check_out_at") val checkOutAt: String?,
     @SerializedName("check_out_distance_m") val checkOutDistanceM: Double?,
     val source: String?,
+    /** Lama kerja (menit), null jika belum check-out. */
+    @SerializedName("work_minutes") val workMinutes: Int? = null,
+    /** Menit pulang lebih cepat dari jam pulang shift (0 jika tidak). */
+    @SerializedName("early_leave_minutes") val earlyLeaveMinutes: Int = 0,
 )
 
 data class TodaySchedule(
@@ -88,7 +92,16 @@ data class Shift(
     @SerializedName("end_time") val endTime: String,
 )
 
-data class Schedule(val id: Long, val date: String, @SerializedName("is_day_off") val isDayOff: Boolean, val shift: Shift?)
+data class Schedule(
+    val id: Long?,
+    val date: String,
+    @SerializedName("is_day_off") val isDayOff: Boolean,
+    val shift: Shift?,
+    /** true = dari shift tetap pegawai, bukan diatur khusus di roster. */
+    @SerializedName("is_default") val isDefault: Boolean = false,
+    /** Nama hari libur nasional (Konfigurasi admin), null jika bukan. */
+    val holiday: String? = null,
+)
 
 data class Leave(
     val id: Long,
@@ -130,6 +143,8 @@ data class LocationBody(
     @SerializedName("is_mock") val isMock: Boolean,
     @SerializedName("client_uuid") val clientUuid: String?,
     @SerializedName("device_info") val deviceInfo: String?,
+    /** true jika aplikasi berjalan di emulator (server menolak jika diatur di Konfigurasi). */
+    @SerializedName("is_emulator") val isEmulator: Boolean = false,
     /** "offline" when sent later from the outbox; null means a normal online check-in. */
     val source: String? = null,
 )
@@ -160,6 +175,10 @@ interface SimpresApi {
     @DELETE("leaves/{id}") suspend fun cancelLeave(@Path("id") id: Long): JsonObject
 
     @POST("corrections") suspend fun createCorrection(@Body body: Map<String, String>): JsonObject
+    @Multipart @POST("corrections") suspend fun createCorrectionWithFile(
+        @PartMap fields: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part file: MultipartBody.Part,
+    ): JsonObject
 
     @GET("field-duties") suspend fun fieldDuties(): ListResponse<FieldDutyItem>
     @Multipart @POST("field-duties") suspend fun createFieldDuty(

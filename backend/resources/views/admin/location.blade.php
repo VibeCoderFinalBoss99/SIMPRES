@@ -79,7 +79,7 @@
                     </div>
                     <div class="field">
                         <label for="radius_m">Radius (meter) *</label>
-                        <input type="number" id="radius_m" name="radius_m" min="10" max="5000" value="{{ old('radius_m', $location->radius_m) }}" required>
+                        <input type="number" id="radius_m" name="radius_m" min="10" max="1000" value="{{ old('radius_m', $location->radius_m) }}" required>
                         @error('radius_m')<div class="error">{{ $message }}</div>@enderror
                     </div>
                     <div class="field">
@@ -92,7 +92,7 @@
                     <label>Unit yang menggunakan</label>
                     <input type="text" value="{{ $units->join(', ') ?: '-' }}" disabled>
                 </div>
-                <div class="note" style="margin:16px 0">@include('admin.icon', ['name' => 'info']) Radius awal 100–200 m, lalu diuji dari dalam dan sekitar gedung sebelum dipakai. Aturan SIMPRES: 150 meter.</div>
+                <div class="note" style="margin:16px 0">@include('admin.icon', ['name' => 'info']) Radius disarankan 50–100 m, lalu diuji dari dalam dan sekitar gedung sebelum dipakai. Batas akurasi GPS diatur di Konfigurasi.</div>
                 <div class="actions">
                     <button type="submit" class="btn">Simpan Lokasi</button>
                     @if ($location->exists)

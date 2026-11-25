@@ -16,7 +16,7 @@
         <div class="tabs" style="margin:0">
             @foreach ($labels as $key => $label)
                 <a href="{{ route('admin.pengajuan.index', ['jenis' => $key, 'status' => $status]) }}" class="{{ $type === $key ? 'active' : '' }}">
-                    {{ $label }} ({{ $waitingCounts[$key] }})
+                    {{ $label }}@if ($waitingCounts[$key] > 0) <span class="count">{{ $waitingCounts[$key] }} menunggu</span>@endif
                 </a>
             @endforeach
         </div>

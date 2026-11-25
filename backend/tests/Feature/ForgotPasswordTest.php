@@ -51,8 +51,8 @@ class ForgotPasswordTest extends TestCase
             $mail = $n->toMail($user);
             $token = $n->token;
 
-            return $mail->subject === 'Atur Ulang Kata Sandi SIMPRES'
-                && str_contains($mail->actionUrl, '/reset-password/'.$n->token);
+            return $mail->subject === 'Atur ulang kata sandi akun SIMPRES Anda'
+                && str_contains((string) $mail->render(), '/reset-password/'.$n->token);
         });
 
         $this->get('/reset-password/'.$token.'?email=siti@simpres.test')->assertOk()->assertSee('Kata sandi baru');

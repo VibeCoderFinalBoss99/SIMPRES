@@ -339,3 +339,22 @@ a.person:hover strong { color: var(--navy); text-decoration: underline; }
 /* Kotak centang di dalam toolbar tidak ikut gaya kotak isian. */
 .toolbar input[type="checkbox"] { min-width: 0; padding: 0; border-radius: 4px; }
 .toolbar .checkbox { font-size: 13px; white-space: nowrap; }
+
+/* Konfigurasi: baris isian bertumpuk (label di atas, isian penuh, keterangan di bawah). */
+.cfg-row { flex-wrap: wrap; }
+.cfg-row.stacked { flex-direction: column; align-items: stretch; gap: 6px; }
+.cfg-row.stacked input[type=number] { width: 100%; max-width: 220px; }
+.cfg-row textarea {
+    width: 100%; min-height: 120px; resize: vertical; font: inherit; font-size: 13px;
+    border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; background: #fff;
+}
+.cfg-row .is-invalid, .cfg-row textarea.is-invalid { border-color: var(--red); }
+
+/* Logo SIMPRES (sama dengan ikon aplikasi Android). */
+img.brand-logo.img { width: 40px; height: 40px; padding: 0; background: none; border-radius: 12px; display: block; flex: none; }
+.login-box .logo img.brand-logo.img { width: 48px; height: 48px; background: none; }
+.cfg-row.stacked { align-items: flex-start; }
+.cfg-row.stacked input[type=number] { width: 160px; text-align: left; padding: 9px 12px; }
+.cfg-row:not(.stacked) > label:first-child { flex: 1; }
+.tabs .count { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); font-size: 11.5px; font-weight: 600; }
+.person small + small { margin-top: 1px; }

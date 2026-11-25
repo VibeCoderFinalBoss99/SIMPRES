@@ -14,7 +14,7 @@ class LocationController extends Controller
     public function edit(): View
     {
         return view('admin.location', [
-            'location' => WorkLocation::first() ?? new WorkLocation(['radius_m' => 150]),
+            'location' => WorkLocation::first() ?? new WorkLocation(['radius_m' => 100]),
         ]);
     }
 
@@ -25,7 +25,7 @@ class LocationController extends Controller
             'address' => ['nullable', 'string', 'max:255'],
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
-            'radius_m' => ['required', 'integer', 'min:10', 'max:5000'],
+            'radius_m' => ['required', 'integer', 'min:10', 'max:1000'],
         ]);
 
         $location = WorkLocation::first();
