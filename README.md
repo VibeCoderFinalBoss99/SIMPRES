@@ -454,7 +454,7 @@ perbaikan, dan screenshot sebelum/sesudah) ada di [docs/BUG_DAN_PERBAIKAN.md](do
 ### Belum dikerjakan (lanjut ke v1.0.0)
 
 - [ ] Kamera CameraX, token login di Android Keystore, dan penguncian perangkat terdaftar.
-- [x] Hosting permanen dengan domain dan HTTPS (selesai: https://kelompok4.tkj3a.my.id).
+- [x] Hosting permanen dengan domain dan HTTPS (selesai: https://simpres.tkj3a.my.id, alamat lama https://kelompok4.tkj3a.my.id tetap aktif).
 - [ ] Jam absensi offline masih memakai jam saat data terkirim, belum jam saat disimpan di HP.
 - [ ] Pengujian bersama pegawai Puskesmas dan evaluasi mitra.
 
