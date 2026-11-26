@@ -6,9 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFieldDutyRequest extends FormRequest
 {
+    /** Tugas lapangan hanya untuk pegawai yang ditetapkan admin sebagai petugas lapangan (jenis kerja). */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->work_type === 'petugas_lapangan';
+    }
+
+    protected function failedAuthorization(): void
+    {
+        throw new \Illuminate\Auth\Access\AuthorizationException(
+            'Tugas lapangan hanya untuk pegawai yang ditetapkan admin sebagai petugas lapangan.'
+        );
     }
 
     public function rules(): array

@@ -21,8 +21,19 @@ class FieldDutyApiTest extends TestCase
         parent::setUp();
         Storage::fake('local');
         $this->travelTo(now()->setDate(2026, 11, 17)->setTime(10, 0));
-        $this->siti = $this->makePegawai();
+        $this->siti = $this->makePegawai(data: ['work_type' => 'petugas_lapangan']);
         Sanctum::actingAs($this->siti);
+    }
+
+    public function test_pegawai_bukan_petugas_lapangan_tidak_bisa_mengirim_tugas_lapangan(): void
+    {
+        $pegawai = $this->makePegawai(data: ['work_type' => 'non_shift']);
+        Sanctum::actingAs($pegawai);
+
+        $this->send()
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Tugas lapangan hanya untuk pegawai yang ditetapkan admin sebagai petugas lapangan.');
+        $this->assertSame(0, $pegawai->fieldDuties()->count());
     }
 
     private function send(array $data = [])

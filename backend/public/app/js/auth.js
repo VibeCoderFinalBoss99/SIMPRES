@@ -180,11 +180,6 @@ defineScreen('config', {
         if (u) {
             setText(find(view, 'tvUserName'), u.name);
             setText(find(view, 'tvUserRole'), [u.position, u.unit].filter(Boolean).join(' · '));
-            // Mode Tugas Lapangan mengikuti jenis kerja yang diatur admin.
-            const sw = find(view, 'swFieldMode');
-            sw.checked = u.work_type === 'petugas_lapangan';
-            sw.disabled = true;
-            sw.parentElement.setAttribute('aria-label', S(sw.checked ? 'config_field_on' : 'config_field_off'));
         }
         const themeValue = find(view, 'tvThemeValue');
         setText(themeValue, ThemeMode.label());

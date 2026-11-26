@@ -90,9 +90,10 @@ class RecapTest extends TestCase
         $this->assertStringStartsWith("\xEF\xBB\xBF", $csv);
 
         $lines = array_values(array_filter(explode("\n", trim(substr($csv, 3)))));
-        $this->assertSame('No;NIP;Nama;Jabatan;Hadir;Terlambat;Izin;Alpa;"Total menit terlambat"', $lines[0]);
-        $this->assertSame('1;"=""199002022015021002""";"Budi Santoso";Perawat;1;0;0;2;0', $lines[1]);
-        $this->assertSame('2;"=""198501012010012001""";"Siti Aminah";Perawat;1;2;1;0;30', $lines[2]);
+        $this->assertSame('No;NIP;Nama;Jabatan;"Masuk (hari)";"Tepat waktu (hari)";"Terlambat (hari)";"Izin/Sakit (hari)";"Alpa (hari)";"Total terlambat (menit)"', $lines[0]);
+        // Masuk = tepat waktu + terlambat.
+        $this->assertSame('1;"=""199002022015021002""";"Budi Santoso";Perawat;1;1;0;0;2;0', $lines[1]);
+        $this->assertSame('2;"=""198501012010012001""";"Siti Aminah";Perawat;3;1;2;1;0;30', $lines[2]);
     }
 
     public function test_unduh_xlsx_berisi_rekap_dan_total(): void

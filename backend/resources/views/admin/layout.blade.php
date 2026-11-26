@@ -33,7 +33,8 @@
     $initials = collect(explode(' ', $admin->name))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->join('');
 @endphp
 <div class="layout">
-    <aside class="sidebar">
+    <div class="sidebar-backdrop" data-menu-close></div>
+    <aside class="sidebar" id="sidebar">
         <div class="brand">
             <img class="brand-logo img" src="{{ asset('img/logo.svg') }}" alt="Logo SIMPRES" width="40" height="40">
             <span><strong>SIMPRES</strong><small>Admin Web</small></span>
@@ -63,7 +64,10 @@
 
     <main class="main">
         <header class="topbar">
-            <div>
+            <button type="button" class="menu-toggle" aria-label="Buka menu" aria-controls="sidebar" aria-expanded="false" data-menu-open>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <div class="topbar-title">
                 <h1>@yield('title')</h1>
                 <p class="subtitle">@yield('subtitle')</p>
             </div>
@@ -103,6 +107,14 @@
         const message = e.target.dataset && e.target.dataset.confirm;
         if (message && !window.confirm(message)) e.preventDefault();
     });
+    // Menu samping di HP: dibuka dengan tombol garis tiga, ditutup dengan ketuk area gelap atau Esc.
+    (function () {
+        const body = document.body, toggle = document.querySelector('[data-menu-open]');
+        const set = open => { body.classList.toggle('menu-open', open); toggle.setAttribute('aria-expanded', open); };
+        toggle.addEventListener('click', () => set(true));
+        document.querySelector('[data-menu-close]').addEventListener('click', () => set(false));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+    })();
 </script>
 @include('admin.password-toggle')
 </body>

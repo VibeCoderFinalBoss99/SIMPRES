@@ -45,6 +45,25 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
     protected fun launch(block: suspend CoroutineScope.() -> Unit) =
         viewLifecycleOwner.lifecycleScope.launch(block = block)
 
+    /**
+     * Tarik ke bawah untuk memuat ulang: [scroll] dibungkus SwipeRefreshLayout lewat kode, jadi layout XML
+     * (yang juga dipakai versi web) tidak berubah. [reload] mengembalikan Job; putaran berhenti saat Job selesai.
+     */
+    protected fun enableSwipeRefresh(scroll: View, reload: () -> List<kotlinx.coroutines.Job>) {
+        val parent = scroll.parent as? android.view.ViewGroup ?: return
+        val index = parent.indexOfChild(scroll)
+        val params = scroll.layoutParams
+        parent.removeView(scroll)
+        val swipe = androidx.swiperefreshlayout.widget.SwipeRefreshLayout(requireContext())
+        swipe.setColorSchemeResources(com.simpres.app.R.color.primary)
+        swipe.addView(scroll, android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT)
+        parent.addView(swipe, index, params)
+        swipe.setOnRefreshListener {
+            val jobs = reload()
+            launch { jobs.forEach { it.join() }; swipe.isRefreshing = false }
+        }
+    }
+
     /** Shows a server/validation message in a simple dialog. */
     protected fun alert(message: String, title: String? = null) {
         AlertDialog.Builder(requireContext()).setTitle(title).setMessage(message)

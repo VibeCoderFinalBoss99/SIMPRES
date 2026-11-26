@@ -22,6 +22,20 @@ object Locator {
         cont.invokeOnCancellation { cancel.cancel() }
     }
 
+    /**
+     * Lokasi cepat (hemat baterai) untuk mengecek fake GPS saat Beranda dibuka.
+     * Aplikasi lokasi palsu mengisi semua sumber lokasi, jadi tandanya tetap terbaca di mode ini.
+     */
+    @SuppressLint("MissingPermission")
+    suspend fun quick(context: Context): Location? = suspendCancellableCoroutine { cont ->
+        val cancel = CancellationTokenSource()
+        LocationServices.getFusedLocationProviderClient(context)
+            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cancel.token)
+            .addOnSuccessListener { cont.resume(it) }
+            .addOnFailureListener { cont.resume(null) }
+        cont.invokeOnCancellation { cancel.cancel() }
+    }
+
     fun isMock(location: Location): Boolean =
         if (Build.VERSION.SDK_INT >= 31) location.isMock else @Suppress("DEPRECATION") location.isFromMockProvider
 

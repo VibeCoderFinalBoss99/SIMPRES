@@ -127,7 +127,6 @@
     <string name="config_ajukan_perubahan_informasi">Ajukan Perubahan Informasi</string>
     <string name="config_geofence_lokasi">Geofence &amp; lokasi</string>
     <string name="config_konfigurasi">Konfigurasi</string>
-    <string name="config_mode_tugas_lapangan">Mode Tugas Lapangan</string>
     <string name="config_nama_pegawai">Nama Pegawai</string>
     <string name="config_reset_kata_sandi">Reset Kata Sandi</string>
     <string name="config_shift_non_shift_petugas">Shift / Non - Shift / Petugas Lapangan</string>
@@ -435,12 +434,13 @@
     <string name="home_info_title">Informasi Pegawai</string>
     <string name="guide_quick_title">Izin, cuti, dan koreksi</string>
     <string name="guide_quick_body">Ajukan izin atau cuti, dan koreksi jam absen langsung dari Beranda. Statusnya muncul di notifikasi.</string>
-    <string name="config_field_on">Mode tugas lapangan aktif (diatur admin)</string>
-    <string name="config_field_off">Bukan petugas lapangan (diatur admin)</string>
     <string name="change_info_body">Nama, NIP, jabatan, unit, dan nomor HP hanya bisa diubah admin. Tulis data yang perlu diubah, admin akan menerimanya di Admin Web.</string>
     <string name="change_info_hint">Contoh: Nomor HP baru 0812xxxx, jabatan sekarang Bidan Koordinator</string>
     <string name="change_info_send">Kirim ke admin</string>
     <string name="change_info_short">Tulis data yang perlu diubah.</string>
+    <string name="fake_gps_channel">Peringatan lokasi</string>
+    <string name="fake_gps_title">Fake GPS terdeteksi</string>
+    <string name="fake_gps_body">Anda terdeteksi menggunakan fake GPS. Matikan aplikasi lokasi palsu supaya bisa absen.</string>
     <string name="update_title">Versi baru tersedia</string>
     <string name="update_body">SIMPRES %1$s sudah tersedia. Versi di HP ini %2$s.</string>
     <string name="update_later">Nanti</string>

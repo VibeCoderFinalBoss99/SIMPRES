@@ -34,11 +34,12 @@ class RecapController extends Controller
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF"); // BOM supaya Excel membaca UTF-8
             // Pemisah titik koma: format standar Excel dengan pengaturan wilayah Indonesia.
-            fputcsv($out, ['No', 'NIP', 'Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin', 'Alpa', 'Total menit terlambat'], ';');
+            fputcsv($out, self::HEADERS, ';');
 
-            foreach ($rows->values() as $i => $row) {
+            foreach ($this->exportRows($rows) as $line) {
                 // NIP diberi tanda = "..." supaya Excel tidak mengubahnya menjadi angka 1,98501E+17.
-                fputcsv($out, [$i + 1, '="'.$row->nip.'"', $row->name, $row->position, $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes], ';');
+                $line[1] = '="'.$line[1].'"';
+                fputcsv($out, $line, ';');
             }
 
             fclose($out);
@@ -51,10 +52,8 @@ class RecapController extends Controller
         $month = $this->month($request);
         $rows = $this->rows($month)->values();
 
-        $data = $rows->map(fn ($row, $i) => [$i + 1, (string) $row->nip, $row->name, (string) $row->position,
-            $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes])->all();
-        $total = [['', '', 'Total', '', $rows->sum('hadir'), $rows->sum('terlambat'), $rows->sum('izin'),
-            $rows->sum('alpa'), $rows->sum('late_minutes')]];
+        $data = $this->exportRows($rows);
+        $total = [$this->exportTotal($rows)];
 
         $path = XlsxWriter::make(
             'Rekap '.$month->format('Y-m'),
@@ -62,7 +61,7 @@ class RecapController extends Controller
             self::HEADERS,
             $data,
             $total,
-            [5, 22, 26, 20, 8, 11, 8, 8, 22],
+            [5, 22, 26, 20, 13, 17, 16, 17, 11, 22],
         );
 
         return response()->download($path, 'rekap-absensi-'.$month->format('Y-m').'.xlsx', [
@@ -76,12 +75,11 @@ class RecapController extends Controller
         $month = $this->month($request);
         $rows = $this->rows($month)->values();
 
-        $columns = [['No', 32, 'R'], ['NIP', 140, 'L'], ['Nama', 170, 'L'], ['Jabatan', 120, 'L'],
-            ['Hadir', 52, 'R'], ['Terlambat', 64, 'R'], ['Izin', 46, 'R'], ['Alpa', 46, 'R'], ['Menit terlambat', 100, 'R']];
-        $data = $rows->map(fn ($row, $i) => [$i + 1, (string) $row->nip, $row->name, (string) $row->position,
-            $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes])->all();
-        $total = ['', '', 'Total', '', $rows->sum('hadir'), $rows->sum('terlambat'), $rows->sum('izin'),
-            $rows->sum('alpa'), $rows->sum('late_minutes')];
+        $columns = [['No', 26, 'R'], ['NIP', 126, 'L'], ['Nama', 150, 'L'], ['Jabatan', 106, 'L'],
+            ['Masuk', 50, 'R'], ['Tepat waktu', 62, 'R'], ['Terlambat', 60, 'R'], ['Izin/Sakit', 58, 'R'],
+            ['Alpa', 44, 'R'], ['Telat (menit)', 88, 'R']];
+        $data = $this->exportRows($rows);
+        $total = $this->exportTotal($rows);
 
         $pdf = PdfTable::make($this->titles($month), $columns, $data, $total, self::NOTE);
 
@@ -91,10 +89,24 @@ class RecapController extends Controller
         ]);
     }
 
-    private const HEADERS = ['No', 'NIP', 'Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin', 'Alpa', 'Total menit terlambat'];
+    /** Semua angka hari dihitung dalam bulan yang dipilih. Masuk = tepat waktu + terlambat. */
+    private const HEADERS = ['No', 'NIP', 'Nama', 'Jabatan', 'Masuk (hari)', 'Tepat waktu (hari)', 'Terlambat (hari)',
+        'Izin/Sakit (hari)', 'Alpa (hari)', 'Total terlambat (menit)'];
 
-    private const NOTE = 'Alpa = absensi berstatus alpa ditambah hari kerja terjadwal (bukan libur) yang sudah lewat tanpa absensi. '
-        .'Tugas lapangan yang diterima dihitung hadir.';
+    private function exportRows(Collection $rows): array
+    {
+        return $rows->values()->map(fn ($row, $i) => [$i + 1, (string) $row->nip, $row->name, (string) $row->position,
+            $row->masuk, $row->hadir, $row->terlambat, $row->izin, $row->alpa, $row->late_minutes])->all();
+    }
+
+    private function exportTotal(Collection $rows): array
+    {
+        return ['', '', 'Total', '', $rows->sum('masuk'), $rows->sum('hadir'), $rows->sum('terlambat'),
+            $rows->sum('izin'), $rows->sum('alpa'), $rows->sum('late_minutes')];
+    }
+
+    private const NOTE = 'Semua angka dalam satuan hari, kecuali Telat (menit). Masuk = tepat waktu + terlambat. Alpa = absensi berstatus alpa ditambah hari kerja terjadwal (bukan libur) yang sudah lewat tanpa absensi. '
+        .'Tugas lapangan yang diterima dihitung tepat waktu.';
 
     private function titles(Carbon $month): array
     {
@@ -154,6 +166,7 @@ class RecapController extends Controller
             $row->lapangan = (int) ($fieldDays[$row->id] ?? 0);
             $row->hadir += $row->lapangan;
             $row->alpa += (int) ($missing[$row->id] ?? 0);
+            $row->masuk = $row->hadir + $row->terlambat;
 
             return $row;
         });

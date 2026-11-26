@@ -274,6 +274,50 @@ fun ViewGroup.addDayCard(
     return card
 }
 
+/**
+ * Detail satu hari dalam jendela yang bergaya sama dengan kartu Riwayat: kartu hari (lencana tanggal, judul, label
+ * status, masuk/pulang/jam kerja) lalu baris keterangan tambahan sebagai label kecil.
+ */
+fun Context.showDayDetail(
+    date: LocalDate,
+    mark: Mark?,
+    title: String,
+    chips: List<Pair<String, Tone>>,
+    infos: List<Info>,
+    details: List<Pair<String, String>>,
+) {
+    val ctx = this
+    val box = LinearLayout(ctx).apply {
+        orientation = LinearLayout.VERTICAL
+        background = ctx.rounded(R.color.bg, 22)
+        setPadding(ctx.dp(14), ctx.dp(6), ctx.dp(14), ctx.dp(8))
+    }
+    box.addDayCard(date, mark, title, chips, infos)
+    details.forEach { (label, value) ->
+        box.addView(LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            background = ctx.rounded(R.color.surface, 14)
+            setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(14), ctx.dp(12))
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .apply { topMargin = ctx.dp(8) }
+            addView(ctx.text(R.style.T_Small, label, R.color.ink_muted).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+            })
+            addView(ctx.text(R.style.T_Label, value).apply { gravity = Gravity.END })
+        })
+    }
+    val close = ctx.text(R.style.T_Link, getString(R.string.common_tutup), R.color.primary).apply {
+        gravity = Gravity.CENTER
+        setPadding(0, ctx.dp(14), 0, ctx.dp(8))
+    }
+    box.addView(close)
+    val dialog = androidx.appcompat.app.AlertDialog.Builder(ctx).setView(box).create()
+    dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+    close.setOnClickListener { dialog.dismiss() }
+    dialog.show()
+}
+
 /** "6 j 37 m" dari menit. */
 fun durationText(minutes: Int?): String = when {
     minutes == null -> "-"

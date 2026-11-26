@@ -198,6 +198,8 @@ class CheckInFragment : BaseFragment(R.layout.fragment_checkin) {
             showStatus(getString(R.string.msg_gps_failed), retry = true)
             return@launch
         }
+        // Fake GPS: beri peringatan di HP. Data tetap dikirim, server yang menolak absennya.
+        if (Locator.isMock(location)) com.simpres.app.data.Notifier.showFakeGps(requireContext().applicationContext)
         showLocalPreview(location)
         showStatus(getString(R.string.checkin_sending), retry = false)
 
@@ -290,6 +292,9 @@ class OutsideRadiusFragment : BaseFragment(R.layout.fragment_outside_radius) {
         val again = { replace(R.id.checkInFragment, bundleOf(AttendanceFlow.ARG_KIND to AttendanceFlow.kind)) }
         view.onClick(R.id.btnRefresh) { again() }
         view.onClick(R.id.btnLocate) { again() }
+        // Tugas Lapangan hanya untuk pegawai yang ditetapkan admin sebagai petugas lapangan (Data Pegawai > Jenis kerja).
+        view.findViewById<View>(R.id.rowFieldDuty).visibility =
+            if (Session.user?.workType == "petugas_lapangan") View.VISIBLE else View.GONE
         view.onClick(R.id.rowFieldDuty) { go(R.id.fieldDutyFragment) }
     }
 }
@@ -402,6 +407,7 @@ class FieldDutyFragment : BaseFragment(R.layout.fragment_field_duty) {
             gps = Locator.current(requireContext())
             val coords = view.findViewById<TextView>(R.id.tvGpsCoords)
             val fix = gps
+            if (fix != null && Locator.isMock(fix)) com.simpres.app.data.Notifier.showFakeGps(requireContext().applicationContext)
             if (fix == null) coords.setText(R.string.msg_gps_failed)
             else coords.text = getString(R.string.duty_gps_value, fix.latitude, fix.longitude, fix.accuracy.toInt())
         }

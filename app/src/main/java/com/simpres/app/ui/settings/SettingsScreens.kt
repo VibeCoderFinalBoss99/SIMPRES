@@ -25,13 +25,6 @@ class ConfigFragment : BaseFragment(R.layout.fragment_config) {
         com.simpres.app.data.Session.user?.let { u ->
             view.findViewById<TextView>(R.id.tvUserName).text = u.name
             view.findViewById<TextView>(R.id.tvUserRole).text = listOfNotNull(u.position, u.unit).joinToString(" · ")
-            // Mode Tugas Lapangan mengikuti jenis kerja yang diatur admin, bukan saklar yang bisa diubah pegawai.
-            view.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.swFieldMode).apply {
-                isChecked = u.workType == "petugas_lapangan"
-                isEnabled = false
-                isClickable = false
-                contentDescription = getString(if (isChecked) R.string.config_field_on else R.string.config_field_off)
-            }
         }
 
         // Mode tampilan: Ikuti sistem / Terang / Gelap. Layar langsung berganti setelah dipilih.

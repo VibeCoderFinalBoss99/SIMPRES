@@ -71,6 +71,12 @@ input, textarea { -webkit-user-select: text; user-select: text; }
 .switch input:disabled + span { opacity: 1; }
 
 /* Dialog seperti AlertDialog Android */
+/* Tarik untuk memuat ulang (Beranda, Riwayat) */
+.ptr { height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: height .15s; }
+.ptr-ring { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--primary); }
+.ptr.ready .ptr-ring { border-color: var(--primary); border-top-color: var(--border); }
+.ptr.busy .ptr-ring { border-color: var(--border); border-top-color: var(--primary); animation: ptr-spin .8s linear infinite; }
+@keyframes ptr-spin { to { transform: rotate(360deg); } }
 .dialog-scrim { position: fixed; inset: 0; background: var(--scrim); display: flex; align-items: center;
     justify-content: center; z-index: 50; padding: 24px; animation: fade .15s ease-out; }
 .dialog-scrim.sheet { align-items: flex-end; padding: 0; }

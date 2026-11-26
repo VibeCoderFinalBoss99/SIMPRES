@@ -92,6 +92,25 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         loadUnread(view)
         showGuide(view)
         checkUpdate()
+        checkFakeGps()
+        enableSwipeRefresh(view.findViewById(R.id.homeScroll)) {
+            showQueue(view)
+            listOf(loadToday(view), loadRecap(view), loadUnread(view))
+        }
+    }
+
+    /** Setiap Beranda dibuka: jika lokasi HP berasal dari aplikasi fake GPS, beri notifikasi dan peringatan. */
+    private fun checkFakeGps() {
+        val ctx = requireContext().applicationContext
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) return
+        launch {
+            val location = com.simpres.app.data.Locator.quick(ctx) ?: return@launch
+            if (!com.simpres.app.data.Locator.isMock(location)) return@launch
+            com.simpres.app.data.Notifier.showFakeGps(ctx)
+            if (isAdded) alert(getString(R.string.fake_gps_body), getString(R.string.fake_gps_title))
+        }
     }
 
     /** Sekali setiap aplikasi dibuka: jika ada rilis lebih baru di GitHub, tawarkan unduh dan pasang. */

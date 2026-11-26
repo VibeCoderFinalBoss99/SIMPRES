@@ -28,6 +28,7 @@ defineScreen('home', {
         loadToday(view, ctx);
         loadRecap(view, ctx);
         loadUnread(view, ctx);
+        enablePullRefresh(find(view, 'homeScroll'), () => { showQueue(view); return Promise.all([loadToday(view, ctx), loadRecap(view, ctx), loadUnread(view, ctx)]); });
         later(ctx, 300, () => CoachMarks.showOnce('home', [
             { target: find(view, 'gridToday'), title: 'guide_today_title', body: 'guide_today_body' },
             { target: find(view, 'swipeCheckOut'), title: 'guide_checkout_title', body: 'guide_checkout_body' },
@@ -197,6 +198,7 @@ defineScreen('history', {
             choiceDialog(null, months.map(m => Format.monthTitle(m)), -1, i => { ctx.month = months[i]; loadHistory(view, ctx); });
         });
         loadHistory(view, ctx);
+        enablePullRefresh(find(view, 'scroll'), () => loadHistory(view, ctx));
     },
 });
 
@@ -278,19 +280,20 @@ function addHistoryCard(list, ctx, d, mark, data, today) {
         note = [note, `Lokasi: ${duty.location_name}`].filter(Boolean).join('\n');
     }
     if (sameDay(d, today)) chips.unshift(['Hari ini', Tone.PRIMARY]);
-    ctx.cards[key] = addDayCard(list, d, mark, title, chips, infos, note, a ? () => showAttendance(a, s) : null);
+    const detailChips = chips.filter(c => c[0] !== 'Dikirim offline');
+    ctx.cards[key] = addDayCard(list, d, mark, title, chips, infos, note, a ? () => showAttendance(d, a, s, mark, title, detailChips) : null);
 }
 
-function showAttendance(a, s) {
-    alertDialog(
-        `Status: ${Format.attendanceStatus(a.status)}` + (a.late_minutes > 0 ? ` (${a.late_minutes} menit)` : '')
-        + (shiftText(s) ? `\nJadwal: ${shiftText(s)}` : '')
-        + `\nCheck-in: ${Format.time(a.check_in_at)} · ${Format.meters(a.check_in_distance_m)}`
-        + `\nCheck-out: ${Format.time(a.check_out_at)} · ${Format.meters(a.check_out_distance_m)}`
-        + (a.early_leave_minutes > 0 ? `\nPulang lebih cepat ${a.early_leave_minutes} menit` : '')
-        + `\nJam kerja: ${durationText(a.work_minutes)}`
-        + `\nSumber: ${a.source === 'offline' ? 'Offline (dikirim belakangan)' : a.source === 'web' ? 'Web' : 'Online'}`,
-        Format.day(a.date));
+/** Detail absensi satu hari, bergaya kartu Riwayat (tanpa baris sumber data). */
+function showAttendance(d, a, s, mark, title, chips) {
+    const details = [
+        shiftText(s) ? ['Jadwal', shiftText(s)] : null,
+        ['Jarak saat check-in', Format.meters(a.check_in_distance_m)],
+        a.check_out_at ? ['Jarak saat check-out', Format.meters(a.check_out_distance_m)] : null,
+    ].filter(Boolean);
+    showDayDetail(d, mark, title, chips,
+        [['Masuk', Format.time(a.check_in_at)], ['Pulang', Format.time(a.check_out_at)], ['Jam kerja', durationText(a.work_minutes)]],
+        details);
 }
 
 // ------------------------------------------------------------------ Jadwal

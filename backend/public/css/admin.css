@@ -368,3 +368,79 @@ img.brand-logo.img { width: 40px; height: 40px; padding: 0; background: none; bo
     border: 0; background: transparent; color: var(--muted); cursor: pointer; border-radius: 8px;
 }
 .pw-toggle:hover { background: var(--navy-soft); color: var(--navy); }
+
+/* ---------- Rekap: satuan angka ---------- */
+.stat .value small { font-size: 14px; font-weight: 400; color: var(--muted); }
+.unit { color: var(--muted); font-size: 12px; font-weight: 300; }
+.unit.block { display: block; margin-top: 2px; }
+td.num, th.num { text-align: center; }
+table.recap td.num:last-child, table.recap th.num:last-child { text-align: right; white-space: nowrap; }
+.card-head .muted { font-size: 12.5px; }
+
+/* ---------- Responsif: tablet dan HP ---------- */
+.menu-toggle, .sidebar-backdrop { display: none; }
+.topbar-title { min-width: 0; }
+
+@media (max-width: 1100px) {
+    .main { padding: 22px 22px 36px; }
+    .search { width: 200px; }
+}
+
+@media (max-width: 900px) {
+    /* Menu samping menjadi laci yang dibuka dengan tombol garis tiga. */
+    .sidebar {
+        display: flex; position: fixed; left: 0; top: 0; bottom: 0; z-index: 40; height: 100%;
+        transform: translateX(-100%); transition: transform .22s ease; overflow-y: auto;
+        box-shadow: 0 0 30px rgba(0, 0, 0, .25);
+    }
+    body.menu-open .sidebar { transform: none; }
+    .sidebar-backdrop { position: fixed; inset: 0; background: rgba(16, 19, 23, .45); z-index: 30; }
+    body.menu-open .sidebar-backdrop { display: block; }
+    body.menu-open { overflow: hidden; }
+    .menu-toggle {
+        display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px;
+        background: #fff; border: 1px solid var(--border); color: var(--text); cursor: pointer;
+    }
+    .topbar { flex-wrap: wrap; align-items: center; gap: 12px; }
+    .topbar-title { flex: 1; }
+    .topbar-tools { width: 100%; }
+    .search { flex: 1; width: auto; }
+}
+
+@media (max-width: 760px) {
+    .main { padding: 14px 14px 32px; }
+    h1 { font-size: 21px; }
+    .subtitle { font-size: 13px; }
+    .card { padding: 16px; border-radius: 14px; }
+    .card.flush .card-head { padding: 14px 16px 4px; flex-wrap: wrap; gap: 4px; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .stat { padding: 14px; border-radius: 14px; }
+    .stat .value { font-size: 22px; }
+    .stat .hint { font-size: 11.5px; }
+    th, td { padding: 10px 14px; }
+    .table-foot, .legend, .pagination { padding: 12px 14px; }
+    .toolbar > *, .toolbar form { flex: 1 1 auto; }
+    .toolbar input, .toolbar select { min-width: 0; width: 100%; }
+    .toolbar .grow, .toolbar > .muted { display: none; }
+    .toolbar .btn { flex: 1 1 calc(50% - 10px); }
+    .page-head { flex-direction: column; align-items: stretch; }
+    .detail dl, dl.detail { grid-template-columns: 1fr; gap: 2px 0; }
+    .detail dd { margin-bottom: 10px; }
+    .review-item { padding: 14px; }
+    .bars { gap: 8px; height: 170px; }
+    .login-box { padding: 24px; }
+
+    /* Tabel "stack": setiap baris menjadi kartu dengan label di kiri dan nilai di kanan. */
+    table.stack thead { display: none; }
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack tr { padding: 12px 16px; border-top: 1px solid var(--border); }
+    table.stack tbody tr:first-child { border-top: 0; }
+    table.stack td { border: 0; padding: 4px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; text-align: right; }
+    table.stack td::before { content: attr(data-label); color: var(--muted); font-size: 12.5px; text-align: left; }
+    table.stack td[data-label="No"] { display: none; }
+    table.stack td[data-label="Pegawai"] { padding-bottom: 8px; }
+    table.stack td[data-label="Pegawai"]::before { display: none; }
+    table.stack td.num, table.recap td.num:last-child { text-align: right; white-space: normal; }
+    table.stack td.empty { justify-content: center; }
+    table.stack td.empty::before { display: none; }
+}

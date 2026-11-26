@@ -103,6 +103,34 @@ object Notifier {
         prefs.edit().putLong(key, maxOf(prefs.getLong(key, -1L), id)).apply()
     }
 
+    private const val FAKE_GPS_CHANNEL = "peringatan_lokasi"
+    private const val FAKE_GPS_ID = 900_001
+
+    /**
+     * Peringatan saat lokasi HP berasal dari aplikasi fake GPS. Memakai id tetap, jadi notifikasi yang sama
+     * diganti, tidak menumpuk. Absen tetap dikirim ke server, dan server yang menolaknya.
+     */
+    fun showFakeGps(context: Context) {
+        val allowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        if (!allowed) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(FAKE_GPS_CHANNEL, context.getString(R.string.fake_gps_channel), NotificationManager.IMPORTANCE_HIGH)
+            context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        }
+        val body = context.getString(R.string.fake_gps_body)
+        val notification = NotificationCompat.Builder(context, FAKE_GPS_CHANNEL)
+            .setSmallIcon(R.drawable.ic_location)
+            .setColor(ContextCompat.getColor(context, R.color.danger))
+            .setContentTitle(context.getString(R.string.fake_gps_title))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+        NotificationManagerCompat.from(context).notify(FAKE_GPS_ID, notification)
+    }
+
     private fun show(context: Context, id: Long, title: String, body: String) {
         val allowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Beranda: kepala biru (logo, salam, lonceng), kartu Presensi Hari Ini (jam masuk/pulang + tombol geser),
+    Beranda: kepala biru (logo, lonceng, salam), kartu Presensi Hari Ini (jam masuk/pulang + tombol geser),
     menu cepat (Izin & Cuti, Koreksi), Rekapitulasi bulan ini, dan Informasi Pegawai.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,6 +9,7 @@
     android:orientation="vertical"
     android:background="@color/bg">
     <ScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -41,26 +42,12 @@
                         android:layout_height="44dp"
                         android:src="@mipmap/ic_launcher_round"
                         android:contentDescription="@string/common_simpres" />
-                    <LinearLayout
+                    <!-- Hanya logo dan lonceng, tanpa tulisan nama aplikasi (lebih bersih). -->
+                    <View
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-                        <TextView
-                            style="@style/T.Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/home_app_caption"
-                            android:textColor="#CCE0EBFF"
-                            android:letterSpacing="0.08" />
-                        <TextView
-                            style="@style/T.Title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/common_sistem_presensi_simbang"
-                            android:textColor="@color/white" />
-                    </LinearLayout>
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
                     <FrameLayout
                         android:id="@+id/btnBell"
                         android:layout_width="46dp"

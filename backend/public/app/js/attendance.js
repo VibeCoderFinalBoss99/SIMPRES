@@ -290,6 +290,8 @@ defineScreen('outsideRadius', {
         const again = () => replace('checkIn', { kind: AttendanceFlow.kind });
         onClick(view, 'btnRefresh', again);
         onClick(view, 'btnLocate', again);
+        // Tugas Lapangan hanya untuk pegawai yang ditetapkan admin sebagai petugas lapangan.
+        show(find(view, 'rowFieldDuty'), Session.user?.work_type === 'petugas_lapangan');
         onClick(view, 'rowFieldDuty', () => go('fieldDuty'));
     },
 });

@@ -173,6 +173,53 @@ function addDayCard(list, date, mark, title, chips, infos, note = null, onClick 
     return card;
 }
 
+/** Detail satu hari bergaya kartu Riwayat: kartu hari, lalu baris keterangan tambahan. Sama dengan showDayDetail Android. */
+function showDayDetail(date, mark, title, chips, infos, details) {
+    const body = col('align-self:stretch;margin-top:-10px');
+    addDayCard(body, date, mark, title, chips, infos);
+    details.forEach(([label, value]) => {
+        const r = row('align-self:stretch;align-items:center;margin-top:8px;padding:12px 14px;border-radius:14px;background:var(--bg)');
+        const l = textView('T_Small', label, 'ink_muted');
+        l.style.flex = '1 1 0';
+        const v = textView('T_Label', value);
+        v.style.textAlign = 'right';
+        r.append(l, v);
+        body.appendChild(r);
+    });
+    dialog({ body, buttons: [{ text: S('common_tutup') }] });
+}
+
+/**
+ * Tarik ke bawah untuk memuat ulang (iPhone tidak punya bawaan di mode Layar Utama). Hanya ikon putar, tanpa tulisan.
+ * reload() mengembalikan Promise; ikon hilang setelah selesai.
+ */
+function enablePullRefresh(scroll, reload) {
+    if (!scroll) return;
+    const spin = el('<div class="ptr"><div class="ptr-ring"></div></div>');
+    scroll.parentElement.insertBefore(spin, scroll);
+    let startY = null, pull = 0, busy = false;
+    scroll.addEventListener('touchstart', e => { startY = scroll.scrollTop <= 0 && !busy ? e.touches[0].clientY : null; pull = 0; }, { passive: true });
+    scroll.addEventListener('touchmove', e => {
+        if (startY === null) return;
+        pull = Math.max(0, Math.min(90, (e.touches[0].clientY - startY) * 0.5));
+        spin.style.height = pull + 'px';
+        spin.classList.toggle('ready', pull >= 60);
+    }, { passive: true });
+    scroll.addEventListener('touchend', async () => {
+        if (startY === null) return;
+        startY = null;
+        if (pull < 60) { spin.style.height = '0'; return; }
+        busy = true;
+        spin.style.height = '56px';
+        spin.classList.add('busy');
+        try { await reload(); } finally {
+            busy = false;
+            spin.classList.remove('busy', 'ready');
+            spin.style.height = '0';
+        }
+    });
+}
+
 function durationText(minutes) {
     if (minutes === null || minutes === undefined) return '-';
     return minutes < 60 ? `${minutes} m` : `${Math.floor(minutes / 60)} j ${minutes % 60} m`;

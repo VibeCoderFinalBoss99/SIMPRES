@@ -97,6 +97,7 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history) {
         singleChoice(view, R.id.tabAll, R.id.tabRoutine, R.id.tabField) { tab = it; load(view) }
         view.onClick(R.id.btnFilter) { pickMonth(view) }
         load(view)
+        enableSwipeRefresh(view.findViewById(R.id.scroll)) { listOf(load(view)) }
     }
 
     private fun pickMonth(view: View) {
@@ -194,20 +195,23 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history) {
         }
         if (d == today) chips.add(0, "Hari ini" to Tone.PRIMARY)
 
-        cards[d] = list.addDayCard(d, mark, title, chips, infos, note, a?.let { { showAttendance(it, s) } })
+        val detailChips = chips.filter { it.first != "Dikirim offline" }
+        cards[d] = list.addDayCard(d, mark, title, chips, infos, note,
+            a?.let { { showAttendance(d, it, s, mark, title, detailChips) } })
     }
 
-    private fun showAttendance(a: Attendance, s: Schedule?) = alert(
-        "Status: ${Format.attendanceStatus(a.status)}" +
-            (if (a.lateMinutes > 0) " (${a.lateMinutes} menit)" else "") +
-            (shiftText(s)?.let { "\nJadwal: $it" } ?: "") +
-            "\nCheck-in: ${Format.time(a.checkInAt)} · ${Format.meters(a.checkInDistanceM)}" +
-            "\nCheck-out: ${Format.time(a.checkOutAt)} · ${Format.meters(a.checkOutDistanceM)}" +
-            (if (a.earlyLeaveMinutes > 0) "\nPulang lebih cepat ${a.earlyLeaveMinutes} menit" else "") +
-            "\nJam kerja: ${durationText(a.workMinutes)}" +
-            "\nSumber: ${if (a.source == "offline") "Offline (dikirim belakangan)" else "Online"}",
-        Format.day(a.date),
-    )
+    /** Detail absensi satu hari, bergaya kartu Riwayat (tanpa baris sumber data). */
+    private fun showAttendance(d: LocalDate, a: Attendance, s: Schedule?, mark: Mark?, title: String, chips: List<Pair<String, Tone>>) {
+        val details = listOfNotNull(
+            shiftText(s)?.let { "Jadwal" to it },
+            "Jarak saat check-in" to Format.meters(a.checkInDistanceM),
+            a.checkOutAt?.let { "Jarak saat check-out" to Format.meters(a.checkOutDistanceM) },
+        )
+        requireContext().showDayDetail(d, mark, title, chips,
+            listOf(Info("Masuk", Format.time(a.checkInAt)), Info("Pulang", Format.time(a.checkOutAt)),
+                Info("Jam kerja", durationText(a.workMinutes))),
+            details)
+    }
 }
 
 /**
