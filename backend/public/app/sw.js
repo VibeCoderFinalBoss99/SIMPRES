@@ -3,7 +3,7 @@
  * (absensi offline masuk antrean). Data API tidak pernah disimpan di cache.
  * Ganti VERSION setiap kali file web berubah, supaya HP pengguna mengambil versi baru.
  */
-const VERSION = 'simpres-web-1';
+const VERSION = 'simpres-web-2';
 const FILES = [
     './', 'index.html', 'app.css', 'manifest.webmanifest',
     'gen/res.css', 'gen/res.js',
