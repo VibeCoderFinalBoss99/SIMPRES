@@ -39,6 +39,11 @@ class Schedule extends Model
      */
     public static function fromDefault(User $user, Carbon $date): ?self
     {
+        // Sebelum akun pegawai dibuat belum ada jadwal, jadi hari-hari itu tidak dihitung alpa.
+        if ($user->created_at && $date->copy()->startOfDay()->lt($user->created_at->copy()->startOfDay())) {
+            return null;
+        }
+
         // Hari libur nasional (Konfigurasi) berlaku untuk semua pegawai yang tanggal itu tidak diatur di roster.
         if (isset(Settings::holidays()[$date->toDateString()])) {
             return (new self([

@@ -444,3 +444,7 @@ table.recap td.num:last-child, table.recap th.num:last-child { text-align: right
     table.stack td.empty { justify-content: center; }
     table.stack td.empty::before { display: none; }
 }
+
+/* Lokasi kerja: setiap lokasi di daftar bisa diklik untuk diubah. */
+a.loc-item { color: inherit; }
+a.loc-item:hover { text-decoration: none; border-color: var(--navy); }

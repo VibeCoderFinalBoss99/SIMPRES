@@ -1,27 +1,39 @@
 @extends('admin.layout')
 
 @section('title', 'Lokasi Kerja')
-@section('subtitle', 'Atur titik lokasi dan radius geofence. Validasi jarak dilakukan oleh server.')
+@section('subtitle', 'Titik Puskesmas dan tempat dinas petugas lapangan. Pegawai absen di lokasi yang dipilih untuknya di Data Pegawai.')
 
 @php
     $locations = \App\Models\WorkLocation::orderBy('id')->get();
     $units = \App\Models\User::where('work_location_id', $location->id)->whereNotNull('unit')->distinct()->pluck('unit');
+    $staff = $location->exists
+        ? \App\Models\User::where('work_location_id', $location->id)->where('role', 'pegawai')->orderBy('name')->get()
+        : collect();
+    $workTypes = ['non_shift' => 'Non-shift', 'shift' => 'Shift', 'petugas_lapangan' => 'Petugas lapangan'];
 @endphp
 
 @section('content')
     <div class="grid-loc">
         <div class="card">
-            <h2>Daftar lokasi</h2>
+            <div class="card-head"><h2>Daftar lokasi</h2>
+                <a href="{{ route('admin.lokasi.edit', ['baru' => 1]) }}" class="btn small">+ Tambah lokasi</a></div>
             @foreach ($locations as $loc)
-                <div class="loc-item {{ $loc->id === $location->id ? 'active' : '' }}">
+                <a href="{{ route('admin.lokasi.edit', ['id' => $loc->id]) }}" class="loc-item {{ $loc->id === $location->id ? 'active' : '' }}">
                     <span class="pinbox">@include('admin.icon', ['name' => 'pin'])</span>
                     <span style="flex:1">
                         <strong>{{ $loc->name }}</strong>
                         <span class="muted" style="display:block">Radius {{ $loc->radius_m }} m · {{ $loc->users()->count() }} akun</span>
                     </span>
                     <span class="badge {{ $loc->is_active ? 'aktif' : '' }}">{{ $loc->is_active ? 'Aktif' : 'Nonaktif' }}</span>
-                </div>
+                </a>
             @endforeach
+            @if (! $location->exists)
+                <div class="loc-item active"><span class="pinbox">@include('admin.icon', ['name' => 'pin'])</span>
+                    <span style="flex:1"><strong>Lokasi baru</strong><span class="muted" style="display:block">Isi detailnya di formulir</span></span></div>
+            @endif
+            <div class="note" style="margin-top:14px">@include('admin.icon', ['name' => 'info'])
+                <span>Untuk petugas lapangan, tambahkan tempat dinasnya (misalnya Pustu atau Posyandu), lalu pilih lokasi itu
+                    di Data Pegawai. Check-in petugas dicek terhadap radius tempat dinas tersebut.</span></div>
         </div>
 
         <div>
@@ -38,14 +50,17 @@
                 <div id="loc-map" class="map" style="position:relative;height:360px" role="application" aria-label="Peta lokasi kerja"></div>
             </div>
             <div class="note" style="margin:-6px 0 18px">@include('admin.icon', ['name' => 'info'])
-                Klik di peta atau geser penanda untuk memilih titik Puskesmas. Lingkaran menunjukkan radius absensi.
+                Klik di peta atau geser penanda untuk memilih titik lokasi. Lingkaran menunjukkan radius absensi.
                 Koordinat dari Google Maps (klik kanan di titik, lalu klik angkanya) bisa ditempel di kolom "Tempel koordinat".
             </div>
 
-            <form method="POST" action="{{ route('admin.lokasi.update') }}" class="card">
+            <form method="POST" action="{{ $location->exists ? route('admin.lokasi.update') : route('admin.lokasi.store') }}" class="card">
                 @csrf
-                @method('PUT')
-                <h2>Detail lokasi</h2>
+                @if ($location->exists)
+                    @method('PUT')
+                    <input type="hidden" name="id" value="{{ $location->id }}">
+                @endif
+                <h2>{{ $location->exists ? 'Detail lokasi' : 'Tambah lokasi baru' }}</h2>
                 <div class="form-grid">
                     <div class="field">
                         <label for="name">Nama lokasi *</label>
@@ -94,12 +109,30 @@
                 </div>
                 <div class="note" style="margin:16px 0">@include('admin.icon', ['name' => 'info']) Radius disarankan 50–100 m, lalu diuji dari dalam dan sekitar gedung sebelum dipakai. Batas akurasi GPS diatur di Konfigurasi.</div>
                 <div class="actions">
-                    <button type="submit" class="btn">Simpan Lokasi</button>
+                    <button type="submit" class="btn">{{ $location->exists ? 'Simpan Lokasi' : 'Tambah Lokasi' }}</button>
                     @if ($location->exists)
                         <a href="https://www.google.com/maps?q={{ $location->latitude }},{{ $location->longitude }}" target="_blank" rel="noopener" class="btn secondary">Buka di Google Maps</a>
                     @endif
                 </div>
             </form>
+
+            @if ($location->exists)
+                <div class="card flush">
+                    <div class="card-head"><h2>Pegawai yang absen di lokasi ini ({{ $staff->count() }})</h2>
+                        <a href="{{ route('admin.pegawai.index') }}" class="muted">Atur di Data Pegawai</a></div>
+                    @forelse ($staff as $person)
+                        <div class="list-row" style="padding:10px 22px">
+                            <a href="{{ route('admin.pegawai.edit', $person) }}" class="person grow">
+                                <span class="avatar">{{ collect(explode(' ', $person->name))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->join('') }}</span>
+                                <span><strong>{{ $person->name }}</strong><small>{{ $person->position ?: '-' }}</small></span>
+                            </a>
+                            <span class="badge {{ $person->work_type === 'petugas_lapangan' ? 'blue' : '' }}">{{ $workTypes[$person->work_type] ?? '-' }}</span>
+                        </div>
+                    @empty
+                        <div class="empty">Belum ada pegawai di lokasi ini.</div>
+                    @endforelse
+                </div>
+            @endif
         </div>
     </div>
 

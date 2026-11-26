@@ -194,8 +194,10 @@ class RecapController extends Controller
 
         $missing = [];
         foreach (User::with('defaultShift')->whereIn('id', $userIds)->get() as $user) {
+            // Pegawai baru: hari sebelum akunnya dibuat tidak dihitung alpa (termasuk roster yang terisi lebih dulu).
+            $joined = $user->created_at?->toDateString();
             $missing[$user->id] = $user->schedulesBetween(Carbon::parse($start), Carbon::parse($lastPastDay))
-                ->reject(fn ($schedule, $date) => $schedule->is_day_off
+                ->reject(fn ($schedule, $date) => $schedule->is_day_off || ($joined && $date < $joined)
                     || isset($attended[$user->id][$date]) || isset($duties[$user->id][$date]))
                 ->count();
         }

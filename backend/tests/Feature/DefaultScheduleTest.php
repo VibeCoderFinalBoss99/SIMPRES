@@ -22,7 +22,7 @@ class DefaultScheduleTest extends TestCase
         // Selasa, 17 November 2026.
         $this->travelTo(now()->setDate(2026, 11, 17)->setTime(7, 25));
         $pagi = $this->makeShift();
-        $this->budi = $this->makePegawai(null, ['name' => 'Budi Santoso', 'work_type' => 'non_shift', 'default_shift_id' => $pagi->id]);
+        $this->budi = $this->makePegawai(null, ['name' => 'Budi Santoso', 'work_type' => 'non_shift', 'default_shift_id' => $pagi->id, 'created_at' => '2026-10-01 08:00:00']);
     }
 
     private function gps(): array

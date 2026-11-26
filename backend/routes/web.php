@@ -44,6 +44,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/lokasi', [LocationController::class, 'edit'])->name('admin.lokasi.edit');
         Route::put('/lokasi', [LocationController::class, 'update'])->name('admin.lokasi.update');
+        Route::post('/lokasi', [LocationController::class, 'store'])->name('admin.lokasi.store');
 
         Route::resource('shift', ShiftController::class)->except(['show'])->names('admin.shift');
 

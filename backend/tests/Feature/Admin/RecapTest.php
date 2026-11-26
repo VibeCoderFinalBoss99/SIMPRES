@@ -23,8 +23,8 @@ class RecapTest extends TestCase
         $this->travelTo(now()->setDate(2026, 11, 20)->setTime(10, 0));
         User::query()->delete();
 
-        $this->siti = $this->makePegawai(null, ['name' => 'Siti Aminah', 'nip' => '198501012010012001']);
-        $this->budi = $this->makePegawai(null, ['name' => 'Budi Santoso', 'nip' => '199002022015021002']);
+        $this->siti = $this->makePegawai(null, ['name' => 'Siti Aminah', 'nip' => '198501012010012001', 'created_at' => '2026-10-01 08:00:00']);
+        $this->budi = $this->makePegawai(null, ['name' => 'Budi Santoso', 'nip' => '199002022015021002', 'created_at' => '2026-10-01 08:00:00']);
         $this->actingAs($this->makeAdmin());
 
         $this->attend($this->siti, '2026-11-16', 'hadir');

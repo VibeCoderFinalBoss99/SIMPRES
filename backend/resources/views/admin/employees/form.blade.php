@@ -81,6 +81,8 @@
                         </option>
                     @endforeach
                 </select>
+                <div class="hint">Tempat pegawai ini absen. Untuk petugas lapangan, pilih tempat dinasnya. Lokasi baru ditambah di menu
+                    <a href="{{ route('admin.lokasi.edit', ['baru' => 1]) }}">Lokasi Kerja</a>.</div>
                 @error('work_location_id')<div class="error">{{ $message }}</div>@enderror
             </div>
 
